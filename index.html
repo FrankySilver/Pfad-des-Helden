@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Episches Text-RPG</title>
+    <title>Pfad des Helden - Episches Text-RPG (DM-Edition)</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -366,6 +366,7 @@
     <header>
         <h1>🛡️ Pfad des Helden</h1>
         <div class="header-right">
+            <button class="icon-btn" onclick="openGeminiDmAdvisor()" title="Gemini DM-Ratgeber & Spielhilfe">🧙‍♂️</button>
             <button class="icon-btn hidden" id="npc-btn" onclick="openNpcModal()" title="Charaktere & Händler treffen">👥</button>
             <button class="icon-btn hidden" id="questlog-btn" onclick="openQuestModal()" title="Quest-Logbuch">📜</button>
             <button class="icon-btn hidden" id="handbook-btn" onclick="openHandbook()" title="Helden-Handbuch & Ruhmeshalle">📖</button>
@@ -450,7 +451,7 @@
                 <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Eine epische 10-Stunden-Kampagne über 4 Akte</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Eine epische 10-Stunden-Kampagne über 4 Akte (DM-Edition)</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -537,7 +538,7 @@
                     <div class="story-text" id="story-box"></div>
                     
                     <div class="custom-input-box">
-                        <input type="text" id="player-action-input" placeholder="Tippe, was du tun möchtest (z.B. 'gehe jagen', 'häuten', 'fleisch nehmen', 'verkaufen')..." onkeydown="handleCustomInputKey(event)">
+                        <input type="text" id="player-action-input" placeholder="Tippe, was du tun möchtest (z.B. 'gehe in den wald', 'untersuche höhle', 'schmiede waffe')..." onkeydown="handleCustomInputKey(event)">
                         <button onclick="submitCustomAction()">Handeln</button>
                     </div>
                 </div>
@@ -553,6 +554,20 @@
     </div>
 
     <!-- Modals -->
+    <div id="gemini-dm-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🧙‍♂️ Gemini DM-Ratgeber & Spielhilfe</h3>
+            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Dein persönlicher Dungeon Master erklärt dir Spielmechaniken, gibt Hinweise zu deinen Quests und berät dich bei deinen nächsten Schritten.</p>
+            <div id="gemini-dm-content" style="background: #111116; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.9rem; line-height: 1.6; max-height: 250px; overflow-y: auto; margin-bottom: 1rem;"></div>
+            <div class="form-group">
+                <label>Frage deinen DM:</label>
+                <input type="text" id="dm-question-input" placeholder="z.B. 'Wie komme ich an Mithril?' oder 'Was soll ich als nächstes tun?'">
+            </div>
+            <button class="choice-btn" onclick="askGeminiDm()" style="text-align: center; width: 100%; margin-bottom: 0.6rem; background: var(--highlight); color: #000; font-weight: bold;">DM um Rat fragen</button>
+            <button class="choice-btn" onclick="closeGeminiDmAdvisor()" style="text-align: center; width: 100%;">Schließen</button>
+        </div>
+    </div>
+
     <div id="handbook-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">📖 Helden-Handbuch & Ruhmeshalle</h3>
@@ -579,7 +594,7 @@
     <div id="npc-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">👥 NPCs & Spezialisierte Händler</h3>
-            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Verkaufe hier deine Jagd-Beute (Felle, Fleisch, Knochen) an den Händler oder Fleischer!</p>
+            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Verkaufe deine Jagdbeute oder sprich mit Händlern und Quests-Gebern.</p>
             <div id="npc-list-content" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem;"></div>
             <button class="choice-btn" onclick="closeNpcModal()" style="text-align: center; width: 100%;">Schließen</button>
         </div>
@@ -596,7 +611,7 @@
     <div id="crafting-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🔨 Handwerksviertel & Waffenschmiede</h3>
-            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Kaufe Standard-Waffen oder nutze seltene Hölzer & Erze, um legendäre Meisterwaffen zu schmieden!</p>
+            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Wähle Materialien und schmiede in mehreren Schritten legendäre Waffen!</p>
             <div id="crafting-list-content" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem;"></div>
             <button class="choice-btn" onclick="closeCraftingModal()" style="text-align: center; width: 100%;">Zurück</button>
         </div>
@@ -657,11 +672,10 @@
                 ring: { name: "Keiner", icon: "💍" }
             },
             currentScene: 'start',
-            pendingCheck: null,
-            pendingHuntAnimal: null // Hält das erlegte Tier fest, bis der Spieler entscheidet, was er tut
+            pendingCheck: null, // Hält fest, welcher Typ von Probe gerade ansteht
+            pendingContext: null // Hält zusätzliche Daten für Multi-Step-Aktionen
         };
 
-        // Jagd-Items die man verkaufen kann
         const huntLootItems = {
             hirsch_fell: { id: 'hirsch_fell', name: "Hirschfell", icon: "🦌", type: "hunt", value: 15 },
             hirsch_fleisch: { id: 'hirsch_fleisch', name: "Frisches Wildfleisch", icon: "🥩", type: "hunt", value: 10 },
@@ -673,9 +687,9 @@
         };
 
         const worldNpcs = [
-            { id: 'npc_vane', name: "Händler Vane", title: "Allwaren & Beute-Ankauf", icon: "🛒", desc: "Kauft deine Jagdbeute (Felle, Fleisch, Knochen) ab und verkauft Proviant.", type: 'merchant' },
-            { id: 'npc_thorgar', name: "Meisterschmied Thorgar", title: "Waffenschmiede Eisenhall", icon: "⚒️", desc: "Verkauft Basiswaffen und schmiedet legendäre Artefakte.", type: 'forge' },
-            { id: 'npc_lyra', name: "Alchemistin Lyra", title: "Tränke & Elixiere", icon: "🧪", desc: "Braut Heil- und Manatränke für deine Reisen.", type: 'alchemist' }
+            { id: 'npc_vane', name: "Händler Vane", title: "Allwaren & Beute-Ankauf", icon: "🛒", desc: "Kauft deine Jagdbeute ab.", type: 'merchant' },
+            { id: 'npc_thorgar', name: "Meisterschmied Thorgar", title: "Waffenschmiede Eisenhall", icon: "⚒️", desc: "Schmiedet legendäre Waffen in Mehr-Schritt-Prozessen.", type: 'forge' },
+            { id: 'npc_zylar', name: "Mystiker Zylar", title: "Weiser & Questgeber", icon: "🔮", desc: "Gibt Hinweise zu den Schattenkriegen.", type: 'questgiver' }
         ];
 
         const allMaterials = [
@@ -692,31 +706,14 @@
             { id: 'w_bronzesword', name: "Einfaches Bronzeschwert", icon: "🗡️", cost: 25, type: 'buy', slot: 'rhand' },
             { id: 'w_ironaxe', name: "Eisenaxt", icon: "🪓", cost: 45, type: 'buy', slot: 'rhand' },
             { id: 'w_huntersbow', name: "Jagdbogen", icon: "🏹", cost: 50, type: 'buy', slot: 'rhand' },
-            { id: 'w_staff', name: "Magierstab", icon: "🪄", cost: 60, type: 'buy', slot: 'rhand' },
             { id: 'w_mithrilblade', name: "Mithril-Klinge der Ewigkeit", icon: "⚔️", req: { ore_mithril: 2, wood_oak: 1 }, goldReq: 100, type: 'craft', slot: 'rhand' },
-            { id: 'w_adamantaxe', name: "Adamant-Kriegsaxt", icon: "🪓", req: { ore_adamant: 2, wood_mahogany: 1 }, goldReq: 200, type: 'craft', slot: 'rhand' },
-            { id: 'w_elvenbow', name: "Elfen-Meisterbogen", icon: "🏹", req: { wood_ash: 3, ore_iron: 2 }, goldReq: 150, type: 'craft', slot: 'rhand' }
-        ];
-
-        const allCompanions = [
-            { id: 'wolf', name: "Wilder Wolf", icon: "🐺", bonus: "+5 Angriff" },
-            { id: 'falke', name: "Jagdfalke", icon: "🦅", bonus: "+5 Sicht" },
-            { id: 'katze', name: "Schattenkatze", icon: "🐈", bonus: "+10 Diebeskunst" },
-            { id: 'baer', name: "Grizzlybär", icon: "🐻", bonus: "+30 HP" },
-            { id: 'drache', name: "Drachenwelpe", icon: "🐉", bonus: "+20 Feuerschaden" },
-            { id: 'golem', name: "Steingolem", icon: "🗿", bonus: "+25 Rüstung" }
+            { id: 'w_adamantaxe', name: "Adamant-Kriegsaxt", icon: "🪓", req: { ore_adamant: 2, wood_mahogany: 1 }, goldReq: 200, type: 'craft', slot: 'rhand' }
         ];
 
         function initAchievements() {
             let list = {};
             for (let i = 1; i <= 50; i++) {
-                let isHard = i >= 46;
-                list[`ach_${i}`] = {
-                    name: isHard ? `Legende ${i-45}` : `Meilenstein ${i}`,
-                    desc: isHard ? `Extrem schwere Herausforderung #${i-45}` : `Errungenschaft Nummer ${i} im Abenteuer`,
-                    unlocked: false,
-                    hard: isHard
-                };
+                list[`ach_${i}`] = { name: `Meilenstein ${i}`, desc: `Errungenschaft #${i}`, unlocked: false };
             }
             list['ach_1'].name = "Erster Blutrausch"; list['ach_1'].desc = "Besiege dein erstes Monster";
             list['ach_10'].name = "Monsterjäger"; list['ach_10'].desc = "Besiege 10 Monster";
@@ -727,10 +724,10 @@
         playerData.achievements = initAchievements();
 
         const actsInfo = {
-            1: { name: "Akt 1: Der Schatten erwacht", desc: "Der Dungeon Master beschreibt deine Schritte. Die Welt ist voller Gefahren." },
-            2: { name: "Akt 2: Die vergessenen Minen", desc: "Du bist in die Tiefen des Erdbodens vorgedrungen." },
-            3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Der Konflikt spitzt sich zu." },
-            4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Die letzte Stunde hat geschlagen." }
+            1: { name: "Akt 1: Der Schatten erwacht", desc: "Der Dungeon Master leitet deine Schritte durch den Aschenwald." },
+            2: { name: "Akt 2: Die vergessenen Minen", desc: "Tiefe Schächte und Erzvorkommen." },
+            3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Bündnisse und Vorbereitung auf den Krieg." },
+            4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Der Kampf gegen Drachenfürst Malakor." }
         };
 
         const races = {
@@ -762,7 +759,6 @@
         };
 
         let audioCtx = null;
-        let musicInterval = null;
         let playTimeInterval = null;
         let bgmVolume = 0.3;
         let sfxVolume = 0.8;
@@ -800,7 +796,7 @@
         function closeSettings() {
             playSfx('click');
             document.getElementById('settings-menu').classList.add('hidden');
-            if (playerData.currentScene && !document.getElementById('game-view').classList.contains('hidden')) {
+            if (!document.getElementById('game-view').classList.contains('hidden')) {
                 document.getElementById('game-view').classList.remove('hidden');
             } else {
                 document.getElementById('main-menu').classList.remove('hidden');
@@ -819,6 +815,41 @@
             document.getElementById('npc-btn').classList.add('hidden');
             document.getElementById('main-menu').classList.remove('hidden');
             checkSaveGame();
+        }
+
+        // GEMINI DM-RATGEBER LOGIK
+        function openGeminiDmAdvisor() {
+            playSfx('click');
+            updateDmAdvisorText("Grüße, Held! Ich bin dein Gemini Dungeon Master. Frag mich alles über deine nächsten Quests, wie du an seltene Erze kommst oder welche Taktik du in Dungeons anwenden solltest.");
+            document.getElementById('gemini-dm-modal').classList.remove('hidden');
+        }
+        function closeGeminiDmAdvisor() { playSfx('click'); document.getElementById('gemini-dm-modal').classList.add('hidden'); }
+
+        function updateDmAdvisorText(msg) {
+            document.getElementById('gemini-dm-content').innerHTML = `🧙‍♂️ <strong>Gemini DM:</strong> ${msg}`;
+        }
+
+        function askGeminiDm() {
+            playSfx('click');
+            const qInput = document.getElementById('dm-question-input');
+            const q = qInput.value.trim().toLowerCase();
+            if (!q) return;
+
+            let response = "Das ist eine interessante Frage für deine Reise in " + locations[playerData.location].name + ". ";
+            if (q.includes("mithril") || q.includes("erz") || q.includes("material")) {
+                response += "Mithril und andere Erze findest du tief in Dungeons oder bei der Jagd in Akt 2. Nutze den Befehl 'dungeon'!";
+            } else if (q.includes("quest") || q.includes("ziel") || q.includes("nächste")) {
+                response += "Schau in dein Quest-Logbuch (📜 oben rechts). Erfülle deinen Rassenauftrag oder erkunde den Aschenwald.";
+            } else if (q.includes("geld") || q.includes("gold") || q.includes("reich")) {
+                response += "Gehe auf die Jagd, erlege Tiere, nimm Felle und Fleisch mit und verkaufe sie beim Händler Vane (👥 oben rechts).";
+            } else if (q.includes("kampf") || q.includes("boss") || q.includes("hp")) {
+                response += `Du hast aktuell ${playerData.hp}/${playerData.maxHp} HP. Achte darauf, dich am Lagerfeuer ('schlafen') zu erholen, bevor du den Boss herausforderst!`;
+            } else {
+                response += `Als dein DM rate ich dir: Nutze den d20-Würfel rechts unten weise und erkunde die Wildnis mit Befehlen wie 'gehe in den wald' oder 'dungeon'.`;
+            }
+
+            updateDmAdvisorText(response);
+            qInput.value = '';
         }
 
         function openHandbook() {
@@ -860,17 +891,14 @@
         }
         function closeQuestModal() { playSfx('click'); document.getElementById('questlog-modal').classList.add('hidden'); }
 
-        // NPC & HÄNDLER MODAL (Hier kann man Jagdbeute verkaufen!)
         function openNpcModal() {
             playSfx('click');
             let content = document.getElementById('npc-list-content');
             content.innerHTML = '';
 
-            // Händler Vane / Ankauf von Jagdbeute
             let sellDiv = document.createElement('div');
             sellDiv.className = 'npc-item';
-            sellDiv.innerHTML = `<strong>🛒 Händler Vane (Ankauf von Jagdbeute)</strong><br><small>Verkaufe deine gesammelten Felle, Fleisch und Knochen gegen Gold!</small>`;
-            
+            sellDiv.innerHTML = `<strong>🛒 Händler Vane (Beute-Ankauf)</strong><br><small>Verkaufe deine Felle, Fleisch und Knochen gegen Gold!</small>`;
             let sellBtn = document.createElement('button');
             sellBtn.className = 'choice-btn';
             sellBtn.style.marginTop = '0.4rem';
@@ -880,19 +908,13 @@
             sellBtn.onclick = () => {
                 playSfx('click');
                 let huntItems = playerData.inventory.filter(i => i.type === 'hunt');
-                if (huntItems.length === 0) {
-                    alert("Du hast keine Jagdbeute (Felle, Fleisch, etc.) im Rucksack zum Verkaufen!");
-                    return;
-                }
-                let totalEarnings = 0;
-                huntItems.forEach(item => {
-                    totalEarnings += item.value || 10;
-                });
-                // Jagd-Items aus Inventar entfernen
+                if (huntItems.length === 0) { alert("Keine Jagdbeute im Rucksack!"); return; }
+                let total = 0;
+                huntItems.forEach(i => total += i.value || 10);
                 playerData.inventory = playerData.inventory.filter(i => i.type !== 'hunt');
-                playerData.gold += totalEarnings;
-                playerData.stats.totalGoldFound += totalEarnings;
-                alert(`Händler Vane: "Exzellente Qualität!" Du hast ${huntItems.length} Beute-Teile für ${totalEarnings} Gold verkauft!`);
+                playerData.gold += total;
+                playerData.stats.totalGoldFound += total;
+                alert(`Vane: "Hervorragende Ware!" Du hast ${total} Gold erhalten.`);
                 updateSidebar();
                 openNpcModal();
             };
@@ -906,7 +928,6 @@
                 div.innerHTML = `<div><strong>${npc.icon} ${npc.name}</strong> (${npc.title})<br><small>${npc.desc}</small></div>`;
                 content.appendChild(div);
             });
-
             document.getElementById('npc-modal').classList.remove('hidden');
         }
         function closeNpcModal() { playSfx('click'); document.getElementById('npc-modal').classList.add('hidden'); }
@@ -916,7 +937,7 @@
             let content = document.getElementById('companion-list-content');
             content.innerHTML = `<p style="font-size:0.8rem; color:#aaa;">Aktive Begleiter: ${playerData.activeCompanions.length} / 2</p>`;
             if (playerData.unlockedCompanions.length === 0) {
-                content.innerHTML += `<p style="color:#e74c3c;">Du hast noch keine Begleiter gefunden!</p>`;
+                content.innerHTML += `<p style="color:#e74c3c;">Noch keine Begleiter gefunden!</p>`;
             } else {
                 playerData.unlockedCompanions.forEach(c => {
                     let isActive = playerData.activeCompanions.some(ac => ac.id === c.id);
@@ -981,7 +1002,7 @@
                 if (playerData.gold >= item.cost) {
                     playerData.gold -= item.cost;
                     playerData.equipment.rhand = { name: item.name, icon: item.icon };
-                    alert(`Gekauft und ausgerüstet: ${item.name}!`);
+                    alert(`Gekauft: ${item.name}!`);
                 } else { alert("Nicht genug Gold!"); }
             } else {
                 if (playerData.gold < item.goldReq) { alert("Nicht genug Gold!"); return; }
@@ -989,7 +1010,7 @@
                 for (let [matId, qty] of Object.entries(item.req)) {
                     if (playerData.inventory.filter(i => i.id === matId).length < qty) hasMats = false;
                 }
-                if (!hasMats) { alert("Dir fehlen seltene Materialien im Rucksack!"); return; }
+                if (!hasMats) { alert("Dir fehlen Materialien im Rucksack!"); return; }
                 playerData.gold -= item.goldReq;
                 for (let [matId, qty] of Object.entries(item.req)) {
                     for (let q = 0; q < qty; q++) {
@@ -1006,7 +1027,7 @@
 
         function quitToMainMenu() {
             playSfx('click');
-            if (confirm("Möchtest du das Spiel beenden?")) {
+            if (confirm("Spiel beenden?")) {
                 if (playTimeInterval) clearInterval(playTimeInterval);
                 document.getElementById('game-view').classList.add('hidden');
                 document.getElementById('sidebar').classList.add('hidden');
@@ -1176,7 +1197,7 @@
 
         function initStoryWelcome() {
             let storyBox = document.getElementById('story-box');
-            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen, ${playerData.name}!\n\nDu stehst im ${locations[playerData.location].name}. Der Wind rauscht. Wenn du jagst, musst du erlegte Tiere selbst ausnehmen und die Rohstoffe im Rucksack verstauen, um sie beim Händler zu verkaufen.\n\n*Tippe z.B. 'gehe jagen', 'dungeon', 'händler' oder 'schmiede', um zu beginnen.*`;
+            storyBox.innerText = `🎲 **Dungeon Master (Gemini):** Willkommen, ${playerData.name}!\n\nDu stehst im ${locations[playerData.location].name}. Jede Aktion verlangt nun nach sorgfältigen Schritten und d20-Proben. Du kannst den 🧙‍♂️ DM-Ratgeber oben anklicken, wenn du Fragen hast.\n\n*Tippe z.B. 'gehe jagen', 'dungeon erkunden', 'schmiede waffe' oder 'suche kräuter', um zu starten.*`;
         }
 
         function appendStory(text) {
@@ -1187,6 +1208,7 @@
 
         function handleCustomInputKey(event) { if (event.key === 'Enter') submitCustomAction(); }
 
+        // ECHTES MULTI-STEP DUNGEON MASTER SYSTEM FÜR ALLES
         function submitCustomAction() {
             const inputField = document.getElementById('player-action-input');
             const actionText = inputField.value.trim().toLowerCase();
@@ -1195,50 +1217,58 @@
 
             appendStory(`> **Du:** "${actionText}"`);
 
-            // Wenn der Spieler gerade ein Tier erlegt hat und entscheidet, was er damit tut:
-            if (playerData.pendingHuntAnimal) {
+            // 1. Wenn wir auf ein erlegtes Tier warten
+            if (playerData.pendingContext === 'harvest_animal') {
                 handleHuntHarvestChoice(actionText);
                 inputField.value = '';
                 return;
             }
 
+            // 2. Wenn ein Wurf aussteht
             if (playerData.pendingCheck) {
                 appendStory(`🎲 **Dungeon Master:** Ich warte auf deine Würfelprobe! Klicke rechts unten auf **🎲 Würfeln**.`);
                 inputField.value = '';
                 return;
             }
 
-            if (actionText.includes("jagen") || actionText.includes("wald") || actionText.includes("suche") || actionText.includes("gehe")) {
+            // 3. Multi-Step Aktionen starten
+            if (actionText.includes("jagen") || actionText.includes("wald") || actionText.includes("suche wild")) {
                 advanceTime(1);
                 playerData.pendingCheck = 'hunting';
-                appendStory(`🌲 **Dungeon Master:** Du schleichst durch das dichte Unterholz des ${locations[playerData.location].name}. Frische Spuren von Wild kreuzen deinen Weg.\n\n👉 **Führe eine Spurensuche-Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 11).`);
+                appendStory(`🌲 **Dungeon Master:** Du betauchst das Unterholz im ${locations[playerData.location].name}. Du musst dich leise bewegen und Spuren deuten.\n\n👉 **Führe eine Spurensuche-Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 11).`);
             } 
-            else if (actionText.includes("dungeon") || actionText.includes("verlies")) {
+            else if (actionText.includes("dungeon") || actionText.includes("höhle") || actionText.includes("verlies")) {
                 advanceTime(2);
-                playerData.pendingCheck = 'dungeon';
-                appendStory(`🗝️ **Dungeon Master:** Vor dir liegt der dunkle Eingang. \n\n👉 **Führe eine Wahrnehmungsprobe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 12).`);
+                playerData.pendingCheck = 'dungeon_entry';
+                appendStory(`🗝️ **Dungeon Master:** Du stehst vor dem finsteren Gewölbe. Ein kalter Wind weht heraus. Wie willst du vorgehen? (Vorsichtig reinschleichen / Mit gezückter Waffe reinstürmen).\n\n👉 **Führe eine Wahrnehmungsprobe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 12).`);
             } 
-            else if (actionText.includes("schmiede") || actionText.includes("handwerk")) {
+            else if (actionText.includes("kräuter") || actionText.includes("pflanzen") || actionText.includes("sammeln")) {
+                advanceTime(1);
+                playerData.pendingCheck = 'herbs';
+                appendStory(`🌿 **Dungeon Master:** Du bückst dich im feuchten Moos, um nach heilenden Wurzeln und magischen Kräutern zu suchen.\n\n👉 **Führe eine Naturkunde-Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 10).`);
+            }
+            else if (actionText.includes("schmiede") || actionText.includes("handwerk") || actionText.includes("waffe")) {
                 openCraftingModal();
-                appendStory(`⚒️ **Dungeon Master:** Du betrittst die Schmiede.`);
+                appendStory(`⚒️ **Dungeon Master:** Meisterschmied Thorgar mustert dich in seiner Esse. Wähle im Menü dein Material und starte den Schmiedeprozess.`);
             } 
-            else if (actionText.includes("händler") || actionText.includes("npc")) {
+            else if (actionText.includes("händler") || actionText.includes("npc") || actionText.includes("markt")) {
                 openNpcModal();
-                appendStory(`🛒 **Dungeon Master:** Du besuchst den Marktplatz, um mit Händlern zu handeln.`);
+                appendStory(`🛒 **Dungeon Master:** Du betrittst den Marktplatz. Händler Vane begutachtet deine Waren.`);
             } 
-            else if (actionText.includes("schlaf") || actionText.includes("rast")) {
+            else if (actionText.includes("schlaf") || actionText.includes("rast") || actionText.includes("lagerfeuer")) {
                 advanceTime(4);
                 playerData.hp = playerData.maxHp;
-                appendStory(`⛺ **Dungeon Master:** Du ruhst dich am Lager aus. HP vollständig regeneriert.`);
+                if (playerData.maxMana > 0) playerData.mana = playerData.maxMana;
+                appendStory(`⛺ **Dungeon Master:** Du entfachst ein sicheres Lagerfeuer. Deine Lebenskraft und Mana erholen sich vollständig.`);
             } 
             else if (actionText.includes("boss")) {
                 playerData.pendingCheck = 'boss';
-                appendStory(`👑 **Dungeon Master:** Der Boss stellt sich dir entgegen!\n\n👉 **Führe einen Angriffs-Wurf aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 14).`);
+                appendStory(`👑 **Dungeon Master:** Der Boss des Aktes stellt sich dir mit gezückter Klinge entgegen!\n\n👉 **Führe einen Angriffs-Wurf aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 14).`);
             } 
             else {
                 advanceTime(1);
                 playerData.pendingCheck = 'generic';
-                appendStory(`📍 **Dungeon Master:** Du versuchst: "${actionText}".\n\n👉 **Führe eine Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 10).`);
+                appendStory(`📍 **Dungeon Master:** Du versuchst: "${actionText}". Das erfordert Konzentration.\n\n👉 **Führe eine Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 10).`);
             }
 
             inputField.value = '';
@@ -1246,12 +1276,12 @@
             saveGame();
         }
 
-        // VERARBEITUNG DER JAGD-ERNTE (Häuten, Zerlegen, Fleisch nehmen etc.)
+        // Multi-Step Jagd-Ernte
         function handleHuntHarvestChoice(text) {
-            let animal = playerData.pendingHuntAnimal;
+            let animal = playerData.pendingContextData;
             let itemsGained = [];
 
-            if (text.includes("häuten") || text.includes("fell") || text.includes("alles") || text.includes("komplett") || text.includes("zerlegen")) {
+            if (text.includes("häuten") || text.includes("fell") || text.includes("komplett") || text.includes("zerlegen")) {
                 if (animal === 'hirsch') {
                     itemsGained.push(huntLootItems.hirsch_fell);
                     itemsGained.push(huntLootItems.hirsch_fleisch);
@@ -1259,41 +1289,40 @@
                 } else if (animal === 'wolf') {
                     itemsGained.push(huntLootItems.wolf_fell);
                     itemsGained.push(huntLootItems.wolf_zahn);
-                } else if (animal === 'wildschwein') {
+                } else {
                     itemsGained.push(huntLootItems.wildschwein_schwarte);
                     itemsGained.push(huntLootItems.wildschwein_fleisch);
                 }
-                appendStory(`🔪 **Dungeon Master:** Du nimmst das Tier fachgerecht aus und verstaust die Teile sicher in deinem Rucksack.`);
+                appendStory(`🔪 **Dungeon Master:** Du zerlegst das Tier fachmännisch in seine Einzelteile.`);
             } else if (text.includes("fleisch") || text.includes("nur fleisch")) {
                 if (animal === 'hirsch') itemsGained.push(huntLootItems.hirsch_fleisch);
                 else if (animal === 'wildschwein') itemsGained.push(huntLootItems.wildschwein_fleisch);
                 else itemsGained.push(huntLootItems.wolf_zahn);
-                appendStory(`🥩 **Dungeon Master:** Du schneidest das beste Fleisch heraus und lässt den Rest im Wald zurück.`);
-            } else if (text.includes("liegen") || text.includes("nichts") || text.includes("weitergehen")) {
-                appendStory(`🚶 **Dungeon Master:** Du entscheidest dich, das Tier unberührt im Wald liegen zu lassen und deines Weges zu gehen.`);
-                playerData.pendingHuntAnimal = null;
-                return;
+                appendStory(`🥩 **Dungeon Master:** Du sicherst nur das wertvolle Fleisch.`);
             } else {
-                appendStory(`❓ **Dungeon Master:** Das versteht der DM nicht ganz. Tippe z.B. *'tier häuten und zerlegen'* oder *'nur fleisch mitnehmen'* oder *'liegen lassen'*.`);
+                appendStory(`🚶 **Dungeon Master:** Du lässt das Tier unberührt zurück.`);
+                playerData.pendingContext = null;
+                playerData.pendingContextData = null;
                 return;
             }
 
-            // Ins Inventar legen sofern Platz ist
             itemsGained.forEach(it => {
                 if (playerData.inventory.length < 20) {
                     playerData.inventory.push({ ...it });
                     appendStory(`📦 Erhalten: **1x ${it.name}** (${it.icon})`);
                 } else {
-                    appendStory(`⚠️ Dein Rucksack ist voll! Du konntest nicht alles mitnehmen.`);
+                    appendStory(`⚠️ Rucksack ist voll! Beute konnte nicht verstaut werden.`);
                 }
             });
 
-            addXp(30);
-            playerData.pendingHuntAnimal = null;
+            addXp(35);
+            playerData.pendingContext = null;
+            playerData.pendingContextData = null;
             updateSidebar();
             saveGame();
         }
 
+        // AUSWERTUNG DER WÜRFELPROBEN FÜR ALLE BEREICHE
         function resolvePendingCheck(rollValue) {
             let checkType = playerData.pendingCheck;
             playerData.pendingCheck = null;
@@ -1303,44 +1332,55 @@
                     playerData.stats.monstersKilled++;
                     let animals = ['hirsch', 'wolf', 'wildschwein'];
                     let caught = animals[Math.floor(Math.random() * animals.length)];
-                    playerData.pendingHuntAnimal = caught;
+                    playerData.pendingContext = 'harvest_animal';
+                    playerData.pendingContextData = caught;
 
-                    let animalNames = { hirsch: "einem prächtigen Hirsch", wolf: "einem wilden Waldwolf", wildschwein: "einem aggressiven Wildschwein" };
-                    appendStory(`✨ **Erfolg (Würfel: ${rollValue})!** Deine Pirsch war von Erfolg gekrönt! Du hast ${animalNames[caught]} erlegt.\n\n🦌 **Der Dungeon Master fragt:** Was möchtest du mit dem Tier tun? *(Tippe z.B. 'häuten und zerlegen', 'nur fleisch mitnehmen' oder 'liegen lassen')*`);
+                    let names = { hirsch: "einen prächtigen Hirsch", wolf: "einen hungrigen Wolf", wildschwein: "ein borstiges Wildschwein" };
+                    appendStory(`✨ **Erfolg (Würfel: ${rollValue})!** Du hast ${names[caught]} erlegt!\n\n🦌 **Schritt 2 (DM fragt):** Was möchtest du tun? *(Tippe z.B. 'tier häuten und zerlegen', 'nur fleisch mitnehmen' oder 'liegen lassen')*`);
                 } else {
                     let dmg = 10;
                     playerData.hp = Math.max(1, playerData.hp - dmg);
-                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Du verlierst die Spur, trittst in eine Dornenhecke und nimmst **${dmg} Schaden**.`);
+                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Du verlierst die Fährte und stolperst über Wurzeln (-${dmg} HP).`);
                 }
             } 
-            else if (checkType === 'dungeon') {
+            else if (checkType === 'dungeon_entry') {
                 if (rollValue >= 12) {
                     playerData.stats.dungeonsCleared++;
-                    playerData.gold += 35;
-                    appendStory(`🎉 **Erfolg (Würfel: ${rollValue})!** Du plünderst den Dungeon und findest 35 Goldmünzen!`);
+                    let goldFound = 40;
+                    playerData.gold += goldFound;
+                    playerData.stats.totalGoldFound += goldFound;
+                    appendStory(`🎉 **Erfolg (Würfel: ${rollValue})!** Du umgehst alle Fallen im Gewölbe geschickt, knackst eine alte Truhe und findest **${goldFound} Gold**!`);
                 } else {
-                    let dmg = 20;
+                    let dmg = 22;
                     playerData.hp = Math.max(1, playerData.hp - dmg);
-                    appendStory(`💥 **Misserfolg (Würfel: ${rollValue})!** Du löst eine Falle aus (-${dmg} HP).`);
+                    appendStory(`💥 **Misserfolg (Würfel: ${rollValue})!** Du übersiehst eine Stolperfalle im Dunkeln und wirst von Armbrustbolzen getroffen (-${dmg} HP).`);
                 }
-            } 
+            }
+            else if (checkType === 'herbs') {
+                if (rollValue >= 10) {
+                    playerData.inventory.push({ name: "Heilkräuter", icon: "🌿", type: "potion", value: 15 });
+                    appendStory(`✨ **Erfolg (Würfel: ${rollValue})!** Du findest seltene Heilkräuter und verstaust sie im Rucksack.`);
+                } else {
+                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Du findest nur unbrauchbares Unkraut.`);
+                }
+            }
             else if (checkType === 'boss') {
                 if (rollValue >= 14) {
                     playerData.stats.bossesKilled++;
-                    appendStory(`🏆 **Sieg (Würfel: ${rollValue})!** Du bezwingst den Boss!`);
+                    appendStory(`🏆 **Triumph (Würfel: ${rollValue})!** Du besiegst den Boss in einem epischen Kampf!`);
                     if (playerData.act < 4) { playerData.act++; appendStory(`🎉 Akt aufgestiegen: ${actsInfo[playerData.act].name}`); }
                 } else {
                     playerData.stats.deaths++;
                     playerData.hp = Math.max(1, playerData.hp - 45);
-                    appendStory(`💀 **Niederlage (Würfel: ${rollValue})!** Der Boss schlägt dich nieder (-45 HP).`);
+                    appendStory(`💀 **Niederlage (Würfel: ${rollValue})!** Der Boss ist zu mächtig (-45 HP).`);
                 }
             } 
             else {
                 if (rollValue >= 10) {
                     addXp(20);
-                    appendStory(`✅ **Erfolg (Würfel: ${rollValue})!** Aktion gelungen (+20 XP).`);
+                    appendStory(`✅ **Erfolg (Würfel: ${rollValue})!** Aktion erfolgreich (+20 XP).`);
                 } else {
-                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Aktion fehlgeschlagen.`);
+                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Keine besonderen Vorkommnisse.`);
                 }
             }
 
