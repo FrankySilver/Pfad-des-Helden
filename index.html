@@ -537,7 +537,7 @@
                     <div class="story-text" id="story-box"></div>
                     
                     <div class="custom-input-box">
-                        <input type="text" id="player-action-input" placeholder="Tippe, was du tun möchtest (z.B. 'jagen', 'dungeon', 'händler', 'schmiede', 'schlafen', 'boss')..." onkeydown="handleCustomInputKey(event)">
+                        <input type="text" id="player-action-input" placeholder="Tippe, was du tun möchtest (z.B. 'gehe jagen', 'häuten', 'fleisch nehmen', 'verkaufen')..." onkeydown="handleCustomInputKey(event)">
                         <button onclick="submitCustomAction()">Handeln</button>
                     </div>
                 </div>
@@ -546,7 +546,7 @@
             <!-- D&D Würfel-Widget rechts unten -->
             <div id="dice-widget" class="dice-widget hidden">
                 <div style="font-size: 0.75rem; color: var(--accent-color); font-weight: bold;">D&D Würfel (d20)</div>
-                <button class="dice-btn" onclick="rollD20()">🎲 Würfeln</button>
+                <button class="dice-btn" onclick="rollD20User()">🎲 Würfeln</button>
                 <div id="dice-result" class="dice-result">Ergebnis: -</div>
             </div>
         </div>
@@ -579,7 +579,7 @@
     <div id="npc-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">👥 NPCs & Spezialisierte Händler</h3>
-            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Sprich mit Bewohnern, nimm Aufträge an oder handle mit spezialisierten Händlern.</p>
+            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Verkaufe hier deine Jagd-Beute (Felle, Fleisch, Knochen) an den Händler oder Fleischer!</p>
             <div id="npc-list-content" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem;"></div>
             <button class="choice-btn" onclick="closeNpcModal()" style="text-align: center; width: 100%;">Schließen</button>
         </div>
@@ -656,15 +656,26 @@
                 rhand: { name: "Dolch", icon: "🗡️" },
                 ring: { name: "Keiner", icon: "💍" }
             },
-            currentScene: 'start'
+            currentScene: 'start',
+            pendingCheck: null,
+            pendingHuntAnimal: null // Hält das erlegte Tier fest, bis der Spieler entscheidet, was er tut
         };
 
-        // Mehrere einzigartige NPCs & Händler
+        // Jagd-Items die man verkaufen kann
+        const huntLootItems = {
+            hirsch_fell: { id: 'hirsch_fell', name: "Hirschfell", icon: "🦌", type: "hunt", value: 15 },
+            hirsch_fleisch: { id: 'hirsch_fleisch', name: "Frisches Wildfleisch", icon: "🥩", type: "hunt", value: 10 },
+            hirsch_geweih: { id: 'hirsch_geweih', name: "Hirschgeweih", icon: "🦴", type: "hunt", value: 25 },
+            wolf_fell: { id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20 },
+            wolf_zahn: { id: 'wolf_zahn', name: "Reißzahn", icon: "🦷", type: "hunt", value: 12 },
+            wildschwein_schwarte: { id: 'wildschwein_schwarte', name: "Schwarzen-Schwarte", icon: "🐗", type: "hunt", value: 18 },
+            wildschwein_fleisch: { id: 'wildschwein_fleisch', name: "Wildschweinfleisch", icon: "🥩", type: "hunt", value: 14 }
+        };
+
         const worldNpcs = [
-            { id: 'npc_vane', name: "Händler Vane", title: "Allwaren & Proviant", icon: "🛒", desc: "Handelt mit Tränken, Werkzeugen und Rüstteilen.", type: 'merchant' },
-            { id: 'npc_thorgar', name: "Meisterschmied Thorgar", title: "Waffenschmiede Eisenhall", icon: "⚒️", desc: "Verkauft Basiswaffen und schmiedet legendäre Artefakte aus Erzen.", type: 'forge' },
-            { id: 'npc_lyra', name: "Alchemistin Lyra", title: "Tränke & Elixiere", icon: "🧪", desc: "Braut Heil- und Manatränke für deine Reisen.", type: 'alchemist' },
-            { id: 'npc_zylar', name: "Mystiker Zylar", title: "Weiser & Questgeber", icon: "🔮", desc: "Gibt tiefere Einblicke in die Schattenkriege der 4 Akte.", type: 'questgiver' }
+            { id: 'npc_vane', name: "Händler Vane", title: "Allwaren & Beute-Ankauf", icon: "🛒", desc: "Kauft deine Jagdbeute (Felle, Fleisch, Knochen) ab und verkauft Proviant.", type: 'merchant' },
+            { id: 'npc_thorgar', name: "Meisterschmied Thorgar", title: "Waffenschmiede Eisenhall", icon: "⚒️", desc: "Verkauft Basiswaffen und schmiedet legendäre Artefakte.", type: 'forge' },
+            { id: 'npc_lyra', name: "Alchemistin Lyra", title: "Tränke & Elixiere", icon: "🧪", desc: "Braut Heil- und Manatränke für deine Reisen.", type: 'alchemist' }
         ];
 
         const allMaterials = [
@@ -693,21 +704,7 @@
             { id: 'katze', name: "Schattenkatze", icon: "🐈", bonus: "+10 Diebeskunst" },
             { id: 'baer', name: "Grizzlybär", icon: "🐻", bonus: "+30 HP" },
             { id: 'drache', name: "Drachenwelpe", icon: "🐉", bonus: "+20 Feuerschaden" },
-            { id: 'golem', name: "Steingolem", icon: "🗿", bonus: "+25 Rüstung" },
-            { id: 'magier', name: "Zauberlehrling", icon: "🧙‍♂️", bonus: "+20 Mana" },
-            { id: 'ritter', name: "Knappe", icon: "🧑‍✈️", bonus: "+15 Verteidigung" },
-            { id: 'geist', name: "Irrlicht", icon: "💡", bonus: "+10 XP-Bonus" },
-            { id: 'hund', name: "Spürhund", icon: "🐕", bonus: "+ Schatzfund" },
-            { id: 'fuchs', name: "Listiger Fuchs", icon: "🦊", bonus: "+ Goldrausch" },
-            { id: 'eule', name: "Weise Eule", icon: "🦉", bonus: "+ Weisheit" },
-            { id: 'panther', name: "Nachtpanther", icon: "🐆", bonus: "+ Tempo" },
-            { id: 'schildkröte', name: "Uralte Schildkröte", icon: "🐢", bonus: "+ Regeneration" },
-            { id: 'rabe', name: "Rabengeist", icon: "🐦‍⬛", bonus: "+ Magierschutz" },
-            { id: 'adler', name: "Königsadler", icon: "🦅", bonus: "+ Krit-Treffer" },
-            { id: 'luchs', name: "Schneeluchs", icon: "🐅", bonus: "+ Ausdauer" },
-            { id: 'hirsch', name: "Waldhirsch", icon: "🦌", bonus: "+ Schnelligkeit" },
-            { id: 'schlange', name: "Mystische Schlange", icon: "🐍", bonus: "+ Giftresistenz" },
-            { id: 'phönix', name: "Feuerphönix", icon: "🔥", bonus: "+ Wiederbelebung" }
+            { id: 'golem', name: "Steingolem", icon: "🗿", bonus: "+25 Rüstung" }
         ];
 
         function initAchievements() {
@@ -725,20 +722,15 @@
             list['ach_10'].name = "Monsterjäger"; list['ach_10'].desc = "Besiege 10 Monster";
             list['ach_25'].name = "Schatzsucher"; list['ach_25'].desc = "Sammle 100 Goldmünzen";
             list['ach_40'].name = "Drachentöter"; list['ach_40'].desc = "Besiege den Endboss";
-            list['ach_46'].name = "💀 Albtraum-Bezwinger"; list['ach_46'].desc = "Beende die Kampagne auf Albtraum";
-            list['ach_47'].name = "⚔️ Unbesiegbar"; list['ach_47'].desc = "Erreiche Stufe 10 ohne einen Tod";
-            list['ach_48'].name = "👑 Gottgleicher Reichtum"; list['ach_48'].desc = "Besitze über 500 Goldmünzen";
-            list['ach_49'].name = "🐾 Tiermeister"; list['ach_49'].desc = "Finde 5 Begleiter";
-            list['ach_50'].name = "⏳ Zeigefinger der Ewigkeit"; list['ach_50'].desc = "Erreiche 10 Stunden Spielzeit";
             return list;
         }
         playerData.achievements = initAchievements();
 
         const actsInfo = {
-            1: { name: "Akt 1: Der Schatten erwacht", desc: "Du befindest dich im ersten Akt. Die Welt ist unruhig, Gerüchte über dunkle Kreaturen machen die Runde. Erforsche die Wildnis, erfülle Quests, besuche NPCs und Händler." },
-            2: { name: "Akt 2: Die vergessenen Minen", desc: "Du bist in die Tiefen des Erdbodens vorgedrungen. Hier lauern Gefahren in der Dunkelheit und mächtige Erze warten." },
-            3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Der Konflikt spitzt sich zu. Schließe Bündnisse und bereite den Krieg vor." },
-            4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Die letzte Stunde hat geschlagen. Stelle dich dem Drachenfürst Malakor!" }
+            1: { name: "Akt 1: Der Schatten erwacht", desc: "Der Dungeon Master beschreibt deine Schritte. Die Welt ist voller Gefahren." },
+            2: { name: "Akt 2: Die vergessenen Minen", desc: "Du bist in die Tiefen des Erdbodens vorgedrungen." },
+            3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Der Konflikt spitzt sich zu." },
+            4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Die letzte Stunde hat geschlagen." }
         };
 
         const races = {
@@ -754,7 +746,7 @@
             soldat: [ { name: "Einfaches Bronzeschwert", icon: "🗡️", type: "weapon" } ],
             magielehrling: [ { name: "Magierstab", icon: "🪄", type: "weapon" } ],
             jaeger: [ { name: "Jagdbogen", icon: "🏹", type: "weapon" } ],
-            schmied: [ { name: "Eisenerz", icon: "⛏️", type: "ore", id: "ore_iron" }, { name: "Eichenholz", icon: "🪵", type: "wood", id: "wood_oak" } ],
+            schmied: [ { name: "Eisenerz", icon: "⛏️", type: "ore", id: "ore_iron" } ],
             dieb: [ { name: "Dietriche", icon: "🗝️", type: "tool" } ],
             gelehrter: [ { name: "Alte Karte", icon: "🗺️", type: "quest" } ],
             haendler: [ { name: "Waage", icon: "⚖️", type: "tool" } ],
@@ -764,8 +756,8 @@
 
         const locations = {
             aschenwald: { name: "Aschenwald", desc: "Nebelverhangener Wald." },
-            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung (Mit Schmiede & Händlern)." },
-            sonnendorn: { name: "Sonnendorn", desc: "Handels-Hafenstadt (Mit Markt & Alchemisten)." },
+            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung." },
+            sonnendorn: { name: "Sonnendorn", desc: "Handels-Hafenstadt." },
             rabenfels: { name: "Rabenfels", desc: "Klippen-Hochburg." }
         };
 
@@ -778,55 +770,23 @@
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            if (!musicInterval && bgmVolume > 0) playMedievalMelodyLoop();
-        }
-
-        function playMedievalMelodyLoop() {
-            const scale = [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00];
-            musicInterval = setInterval(() => {
-                if (bgmVolume <= 0 || !audioCtx) return;
-                for (let i = 0; i < 3; i++) {
-                    setTimeout(() => {
-                        if (bgmVolume <= 0 || !audioCtx) return;
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = i === 0 ? 'triangle' : 'sine';
-                        let note = scale[Math.floor(Math.random() * scale.length)];
-                        osc.frequency.setValueAtTime(note, audioCtx.currentTime);
-                        gain.gain.setValueAtTime(bgmVolume * 0.12, audioCtx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + 1.2);
-                    }, i * 400);
-                }
-            }, 3500);
         }
 
         function playSfx(type = 'click') {
             if (sfxVolume <= 0 || !audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            if (type === 'dice') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
-                gain.gain.setValueAtTime(sfxVolume * 0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
-            } else {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                gain.gain.setValueAtTime(sfxVolume * 0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.08);
-            }
+            osc.type = type === 'dice' ? 'square' : 'sine';
+            osc.frequency.setValueAtTime(type === 'dice' ? 350 : 600, audioCtx.currentTime);
+            gain.gain.setValueAtTime(sfxVolume * 0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + (type === 'dice' ? 0.15 : 0.08));
+            osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        function updateBgmVolume(val) { bgmVolume = val / 100; initAudio(); }
+        function updateBgmVolume(val) { bgmVolume = val / 100; }
         function updateSfxVolume(val) { sfxVolume = val / 100; playSfx('click'); }
 
         function openSettings() {
@@ -865,7 +825,6 @@
             playSfx('click');
             const hours = Math.floor(playerData.playTimeMinutes / 60);
             const mins = playerData.playTimeMinutes % 60;
-
             document.getElementById('stats-content').innerHTML = `
                 <div>Spielzeit: <strong>${hours}h ${mins}m</strong></div>
                 <div>Getötete Monster: <strong>${playerData.stats.monstersKilled}</strong></div>
@@ -873,20 +832,16 @@
                 <div>Erledigte Quests: <strong>${playerData.stats.questsCompleted}</strong></div>
                 <div>Gesamte Beute: <strong>${playerData.stats.totalGoldFound} Gold</strong></div>
                 <div>Helden-Tode: <strong>${playerData.stats.deaths}</strong></div>
-                <div>Dungeons: <strong>${playerData.stats.dungeonsCleared}</strong></div>
-                <div>Zufallsereignisse: <strong>${playerData.stats.eventsTriggered}</strong></div>
             `;
-
             const achList = document.getElementById('achievements-list');
             achList.innerHTML = '';
             for (let key in playerData.achievements) {
                 let ach = playerData.achievements[key];
                 let div = document.createElement('div');
-                div.className = `achievement-item ${ach.unlocked ? 'achievement-unlocked' : ''} ${ach.hard ? 'achievement-hard' : ''}`;
-                div.innerHTML = `<strong>${ach.unlocked ? '🏆' : '🔒'} ${ach.name}</strong> ${ach.hard ? '<span style="color:#e74c3c; font-size:0.75rem;">[SCHWER]</span>' : ''}<br><small>${ach.desc}</small>`;
+                div.className = `achievement-item ${ach.unlocked ? 'achievement-unlocked' : ''}`;
+                div.innerHTML = `<strong>${ach.unlocked ? '🏆' : '🔒'} ${ach.name}</strong><br><small>${ach.desc}</small>`;
                 achList.appendChild(div);
             }
-
             document.getElementById('handbook-modal').classList.remove('hidden');
         }
         function closeHandbook() { playSfx('click'); document.getElementById('handbook-modal').classList.add('hidden'); }
@@ -905,45 +860,50 @@
         }
         function closeQuestModal() { playSfx('click'); document.getElementById('questlog-modal').classList.add('hidden'); }
 
-        // NPC Modal & Interaktionen
+        // NPC & HÄNDLER MODAL (Hier kann man Jagdbeute verkaufen!)
         function openNpcModal() {
             playSfx('click');
             let content = document.getElementById('npc-list-content');
             content.innerHTML = '';
 
+            // Händler Vane / Ankauf von Jagdbeute
+            let sellDiv = document.createElement('div');
+            sellDiv.className = 'npc-item';
+            sellDiv.innerHTML = `<strong>🛒 Händler Vane (Ankauf von Jagdbeute)</strong><br><small>Verkaufe deine gesammelten Felle, Fleisch und Knochen gegen Gold!</small>`;
+            
+            let sellBtn = document.createElement('button');
+            sellBtn.className = 'choice-btn';
+            sellBtn.style.marginTop = '0.4rem';
+            sellBtn.style.padding = '0.3rem 0.8rem';
+            sellBtn.style.fontSize = '0.8rem';
+            sellBtn.innerText = 'Gesamte Jagdbeute verkaufen';
+            sellBtn.onclick = () => {
+                playSfx('click');
+                let huntItems = playerData.inventory.filter(i => i.type === 'hunt');
+                if (huntItems.length === 0) {
+                    alert("Du hast keine Jagdbeute (Felle, Fleisch, etc.) im Rucksack zum Verkaufen!");
+                    return;
+                }
+                let totalEarnings = 0;
+                huntItems.forEach(item => {
+                    totalEarnings += item.value || 10;
+                });
+                // Jagd-Items aus Inventar entfernen
+                playerData.inventory = playerData.inventory.filter(i => i.type !== 'hunt');
+                playerData.gold += totalEarnings;
+                playerData.stats.totalGoldFound += totalEarnings;
+                alert(`Händler Vane: "Exzellente Qualität!" Du hast ${huntItems.length} Beute-Teile für ${totalEarnings} Gold verkauft!`);
+                updateSidebar();
+                openNpcModal();
+            };
+            sellDiv.appendChild(sellBtn);
+            content.appendChild(sellDiv);
+
             worldNpcs.forEach(npc => {
                 let div = document.createElement('div');
                 div.className = 'npc-item';
-                div.style.display = 'flex';
-                div.style.justifyContent = 'space-between';
-                div.style.alignItems = 'center';
+                div.style.marginTop = '0.8rem';
                 div.innerHTML = `<div><strong>${npc.icon} ${npc.name}</strong> (${npc.title})<br><small>${npc.desc}</small></div>`;
-
-                let btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.style.padding = '0.3rem 0.8rem';
-                btn.style.fontSize = '0.8rem';
-                btn.innerText = npc.type === 'forge' ? 'Schmiede' : (npc.type === 'merchant' ? 'Handeln' : 'Sprechen');
-                btn.onclick = () => {
-                    playSfx('click');
-                    if (npc.type === 'forge') {
-                        closeNpcModal();
-                        openCraftingModal();
-                    } else if (npc.type === 'merchant') {
-                        alert(`${npc.name}: "Ich habe stets Tränke und Proviant auf Lager, ${playerData.name}!"`);
-                        if(playerData.gold >= 20) {
-                            if(confirm("Möchtest du für 20 Gold einen Heiltrank kaufen?")) {
-                                playerData.gold -= 20;
-                                playerData.inventory.push({ name: "Heiltrank", icon: "🧪", type: "potion" });
-                                updateSidebar();
-                                alert("Heiltrank gekauft!");
-                            }
-                        }
-                    } else {
-                        alert(`${npc.name}: "Die Schatten wachsen, Held. Sei vorsichtig in der Wildnis von ${locations[playerData.location].name}!"`);
-                    }
-                };
-                div.appendChild(btn);
                 content.appendChild(div);
             });
 
@@ -955,9 +915,8 @@
             playSfx('click');
             let content = document.getElementById('companion-list-content');
             content.innerHTML = `<p style="font-size:0.8rem; color:#aaa;">Aktive Begleiter: ${playerData.activeCompanions.length} / 2</p>`;
-            
             if (playerData.unlockedCompanions.length === 0) {
-                content.innerHTML += `<p style="color:#e74c3c;">Du hast noch keine Begleiter gefunden! Suche in der Wildnis.</p>`;
+                content.innerHTML += `<p style="color:#e74c3c;">Du hast noch keine Begleiter gefunden!</p>`;
             } else {
                 playerData.unlockedCompanions.forEach(c => {
                     let isActive = playerData.activeCompanions.some(ac => ac.id === c.id);
@@ -967,7 +926,6 @@
                     div.style.justifyContent = 'space-between';
                     div.style.alignItems = 'center';
                     div.innerHTML = `<div><strong>${c.icon} ${c.name}</strong><br><small>${c.bonus}</small></div>`;
-                    
                     let btn = document.createElement('button');
                     btn.className = 'choice-btn';
                     btn.style.padding = '0.3rem 0.8rem';
@@ -978,10 +936,7 @@
                         if (isActive) {
                             playerData.activeCompanions = playerData.activeCompanions.filter(ac => ac.id !== c.id);
                         } else {
-                            if (playerData.activeCompanions.length >= 2) {
-                                alert("Maximal 2 Begleiter gleichzeitig erlaubt!");
-                                return;
-                            }
+                            if (playerData.activeCompanions.length >= 2) { alert("Maximal 2 Begleiter!"); return; }
                             playerData.activeCompanions.push(c);
                         }
                         openCompanionManager();
@@ -999,18 +954,14 @@
             playSfx('click');
             let content = document.getElementById('crafting-list-content');
             content.innerHTML = '';
-
             weaponShopAndForge.forEach(item => {
                 let div = document.createElement('div');
                 div.className = 'quest-modal-item';
                 div.style.display = 'flex';
                 div.style.justifyContent = 'space-between';
                 div.style.alignItems = 'center';
-
                 let reqText = item.type === 'buy' ? `Kaufpreis: ${item.cost} Gold` : `Gold: ${item.goldReq} | ` + Object.entries(item.req).map(([k, v]) => `${v}x ${k}`).join(', ');
-
                 div.innerHTML = `<div><strong>${item.icon} ${item.name}</strong><br><small>${reqText}</small></div>`;
-
                 let btn = document.createElement('button');
                 btn.className = 'choice-btn';
                 btn.style.padding = '0.3rem 0.8rem';
@@ -1018,10 +969,8 @@
                 btn.innerText = item.type === 'buy' ? 'Kaufen' : 'Schmieden';
                 btn.onclick = () => handleBuyOrCraft(item);
                 div.appendChild(btn);
-
                 content.appendChild(div);
             });
-
             document.getElementById('crafting-modal').classList.remove('hidden');
         }
         function closeCraftingModal() { playSfx('click'); document.getElementById('crafting-modal').classList.add('hidden'); }
@@ -1032,59 +981,32 @@
                 if (playerData.gold >= item.cost) {
                     playerData.gold -= item.cost;
                     playerData.equipment.rhand = { name: item.name, icon: item.icon };
-                    alert(`Du hast '${item.name}' gekauft und ausgerüstet!`);
-                } else {
-                    alert("Nicht genug Gold!");
+                    alert(`Gekauft und ausgerüstet: ${item.name}!`);
+                } else { alert("Nicht genug Gold!"); }
+            } else {
+                if (playerData.gold < item.goldReq) { alert("Nicht genug Gold!"); return; }
+                let hasMats = true;
+                for (let [matId, qty] of Object.entries(item.req)) {
+                    if (playerData.inventory.filter(i => i.id === matId).length < qty) hasMats = false;
                 }
-            } else if (item.type === 'craft') {
-                if (playerData.gold < item.goldReq) {
-                    alert(`Nicht genug Gold (${item.goldReq} Gold benötigt)!`);
-                    return;
-                }
-                let hasAllMats = true;
-                for (let [matId, neededQty] of Object.entries(item.req)) {
-                    let count = playerData.inventory.filter(i => i.id === matId).length;
-                    if (count < neededQty) {
-                        hasAllMats = false;
-                        break;
-                    }
-                }
-
-                if (!hasAllMats) {
-                    alert("Dir fehlen seltene Materialien im Rucksack!");
-                    return;
-                }
-
+                if (!hasMats) { alert("Dir fehlen seltene Materialien im Rucksack!"); return; }
                 playerData.gold -= item.goldReq;
-                for (let [matId, neededQty] of Object.entries(item.req)) {
-                    for (let q = 0; q < neededQty; q++) {
+                for (let [matId, qty] of Object.entries(item.req)) {
+                    for (let q = 0; q < qty; q++) {
                         let idx = playerData.inventory.findIndex(i => i.id === matId);
                         if (idx !== -1) playerData.inventory.splice(idx, 1);
                     }
                 }
-
                 playerData.equipment.rhand = { name: item.name, icon: item.icon };
-                alert(`🔥 Meisterleistung! Du hast '${item.name}' geschmiedet!`);
+                alert(`🔥 Du hast '${item.name}' geschmiedet!`);
             }
             updateSidebar();
             openCraftingModal();
         }
 
-        function checkAchievements() {
-            if (playerData.stats.monstersKilled >= 1) playerData.achievements.ach_1.unlocked = true;
-            if (playerData.stats.monstersKilled >= 10) playerData.achievements.ach_10.unlocked = true;
-            if (playerData.gold >= 100) playerData.achievements.ach_25.unlocked = true;
-            if (playerData.stats.bossesKilled >= 1) playerData.achievements.ach_40.unlocked = true;
-            if (playerData.act === 4 && playerData.difficulty === 'albtraum') playerData.achievements.ach_46.unlocked = true;
-            if (playerData.level >= 10 && playerData.stats.deaths === 0) playerData.achievements.ach_47.unlocked = true;
-            if (playerData.gold >= 500) playerData.achievements.ach_48.unlocked = true;
-            if (playerData.unlockedCompanions.length >= 5) playerData.achievements.ach_49.unlocked = true;
-            if (playerData.playTimeMinutes >= 600) playerData.achievements.ach_50.unlocked = true;
-        }
-
         function quitToMainMenu() {
             playSfx('click');
-            if (confirm("Möchtest du das Spiel beenden und ins Hauptmenü zurückkehren?")) {
+            if (confirm("Möchtest du das Spiel beenden?")) {
                 if (playTimeInterval) clearInterval(playTimeInterval);
                 document.getElementById('game-view').classList.add('hidden');
                 document.getElementById('sidebar').classList.add('hidden');
@@ -1106,15 +1028,8 @@
             if (saved) {
                 document.getElementById('continue-btn').disabled = false;
                 const data = JSON.parse(saved);
-                const raceName = races[data.race] ? races[data.race].name : "Held";
-                const hours = Math.floor(data.playTimeMinutes / 60);
-                const mins = data.playTimeMinutes % 60;
                 previewEl.style.display = 'block';
-                previewEl.innerHTML = `
-                    <strong>${data.name}</strong> (${raceName})<br>
-                    Akt ${data.act} | Stufe ${data.level}<br>
-                    Spielzeit: ${hours}h ${mins}m
-                `;
+                previewEl.innerHTML = `<strong>${data.name}</strong> (Akt ${data.act} | Stufe ${data.level})`;
             } else {
                 document.getElementById('continue-btn').disabled = true;
                 previewEl.style.display = 'none';
@@ -1123,17 +1038,7 @@
 
         function clickNewGame() {
             playSfx('click');
-            const saved = localStorage.getItem('pfad_des_helden_save');
-            if (saved) {
-                if (!confirm("⚠️ Achtung: Es existiert bereits ein alter Spielstand! Wenn du ein neues Spiel startest, geht dieser unwiderruflich verloren. Fortfahren?")) {
-                    return;
-                }
-            }
-            startNewGameMenu();
-        }
-
-        function startNewGameMenu() {
-            initAudio();
+            if (localStorage.getItem('pfad_des_helden_save') && !confirm("Alten Spielstand überschreiben?")) return;
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('char-creation').classList.remove('hidden');
         }
@@ -1143,28 +1048,12 @@
             playSfx('click');
             const nameInput = document.getElementById('hero-name').value.trim();
             if (nameInput) playerData.name = nameInput;
-            
             playerData.difficulty = document.getElementById('hero-difficulty').value;
             playerData.race = document.getElementById('hero-race').value;
             playerData.className = document.getElementById('hero-class').value;
             playerData.location = document.getElementById('hero-location').value;
             playerData.playTimeMinutes = 0;
-
-            if (playerData.difficulty === 'leicht') playerData.gold += 30;
-
             playerData.inventory = classItems[playerData.className] ? [...classItems[playerData.className]] : [];
-            playerData.quests[1].desc = races[playerData.race].quest;
-
-            if (playerData.race === 'dwarf') { playerData.maxHp = 120; playerData.hp = 120; }
-            if (playerData.className === 'magielehrling') {
-                playerData.maxMana = 80; playerData.mana = 80;
-                document.getElementById('mana-container').style.display = 'block';
-                document.getElementById('mana-bar').parentElement.style.display = 'block';
-            } else {
-                playerData.maxMana = 0; playerData.mana = 0;
-                document.getElementById('mana-container').style.display = 'none';
-                document.getElementById('mana-bar').parentElement.style.display = 'none';
-            }
 
             document.getElementById('char-creation').classList.add('hidden');
             document.getElementById('game-view').classList.remove('hidden');
@@ -1191,35 +1080,22 @@
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
                 document.getElementById('dice-widget').classList.add('hidden');
-                document.getElementById('quit-to-menu-btn').classList.remove('hidden');
-                document.getElementById('handbook-btn').classList.remove('hidden');
-                document.getElementById('questlog-btn').classList.remove('hidden');
-                document.getElementById('npc-btn').classList.remove('hidden');
-                
-                if (playerData.className === 'magielehrling') {
-                    document.getElementById('mana-container').style.display = 'block';
-                    document.getElementById('mana-bar').parentElement.style.display = 'block';
-                } else {
-                    document.getElementById('mana-container').style.display = 'none';
-                    document.getElementById('mana-bar').parentElement.style.display = 'none';
-                }
-
+                document.getElementById('quit-to-menu-btn').classList.add('hidden');
+                document.getElementById('handbook-btn').classList.add('hidden');
+                document.getElementById('questlog-btn').classList.add('hidden');
+                document.getElementById('npc-btn').classList.add('hidden');
                 startPlayTimeCounter();
                 updateSidebar();
-                appendStory(`📜 Dein Abenteuer wurde fortgesetzt in ${locations[playerData.location].name}. Was gedenkst du zu tun?`);
+                appendStory(`📜 Abenteuer fortgesetzt in ${locations[playerData.location].name}. Was tust du als Nächstes?`);
             }
         }
 
         function startPlayTimeCounter() {
             if (playTimeInterval) clearInterval(playTimeInterval);
-            playTimeInterval = setInterval(() => {
-                playerData.playTimeMinutes++;
-                saveGame();
-            }, 60000);
+            playTimeInterval = setInterval(() => { playerData.playTimeMinutes++; saveGame(); }, 60000);
         }
 
         function saveGame() {
-            checkAchievements();
             localStorage.setItem('pfad_des_helden_save', JSON.stringify(playerData));
             checkSaveGame();
         }
@@ -1236,44 +1112,35 @@
                 playerData.level++;
                 playerData.xp -= playerData.maxXp;
                 playerData.maxXp = Math.floor(playerData.maxXp * 1.3);
-                playerData.skillPoints++;
                 playerData.maxHp += 20;
                 playerData.hp = playerData.maxHp;
-                appendStory(`🎉 Stufenaufstieg! Du bist jetzt Stufe ${playerData.level}! Deine Lebenskraft wurde gestärkt.`);
+                appendStory(`🎉 **Stufenaufstieg!** Du bist nun Stufe ${playerData.level}!`);
             }
             updateSidebar();
         }
 
-        function rollD25() {
-            return Math.floor(Math.random() * 20) + 1;
-        }
-
-        function rollD20() {
+        let lastUserRoll = null;
+        function rollD20User() {
             playSfx('dice');
-            let roll = rollD25();
-            document.getElementById('dice-result').innerText = `Ergebnis: ${roll}`;
-            appendStory(`🎲 Du hast einen d20 gewürfelt und eine **${roll}** erzielt!`);
-            return roll;
+            lastUserRoll = Math.floor(Math.random() * 20) + 1;
+            document.getElementById('dice-result').innerText = `Ergebnis: ${lastUserRoll}`;
+            appendStory(`🎲 *Du wirfst einen d20 und erzielst eine **${lastUserRoll}**!*`);
+
+            if (playerData.pendingCheck) {
+                resolvePendingCheck(lastUserRoll);
+            }
         }
 
         function updateSidebar() {
             const locObj = locations[playerData.location];
             const raceObj = races[playerData.race];
-
             let h = playerData.hour;
             let timeStr = `${h < 10 ? '0'+h : h}:00 Uhr`;
-            let icon = h >= 6 && h < 18 ? "☀️" : (h >= 18 && h < 21 ? "🌇" : "🌙");
-            let timeName = h >= 6 && h < 18 ? "Tag" : (h >= 18 && h < 21 ? "Abend" : "Nacht (Gefährlich)");
-
-            document.getElementById('time-icon').innerText = icon;
-            document.getElementById('time-display').innerText = `${timeStr} (${timeName})`;
+            document.getElementById('time-icon').innerText = h >= 6 && h < 18 ? "☀️" : "🌙";
+            document.getElementById('time-display').innerText = timeStr;
             document.getElementById('act-display').innerText = actsInfo[playerData.act].name;
-
             document.getElementById('hero-avatar').innerText = raceObj.icon;
-            document.getElementById('char-info').innerHTML = `
-                <strong>${playerData.name}</strong> (Stufe ${playerData.level})<br>
-                ${locObj.name} | Akt ${playerData.act}
-            `;
+            document.getElementById('char-info').innerHTML = `<strong>${playerData.name}</strong> (Stufe ${playerData.level})<br>${locObj.name}`;
 
             const eqGrid = document.getElementById('equipment-grid');
             eqGrid.innerHTML = `
@@ -1286,29 +1153,13 @@
             `;
 
             const compBox = document.getElementById('active-companions-box');
-            if (playerData.activeCompanions.length > 0) {
-                compBox.innerHTML = playerData.activeCompanions.map(c => `${c.icon} ${c.name}`).join('<br>');
-            } else {
-                compBox.innerHTML = `Keine`;
-            }
+            compBox.innerHTML = playerData.activeCompanions.length > 0 ? playerData.activeCompanions.map(c => `${c.icon} ${c.name}`).join('<br>') : `Keine`;
 
-            const hpPercent = Math.max(0, (playerData.hp / playerData.maxHp) * 100);
-            document.getElementById('hp-bar').style.width = hpPercent + '%';
+            document.getElementById('hp-bar').style.width = Math.max(0, (playerData.hp / playerData.maxHp) * 100) + '%';
             document.getElementById('hp-text').innerText = `${playerData.hp} / ${playerData.maxHp}`;
-
-            if (playerData.maxMana > 0) {
-                const manaPercent = Math.max(0, (playerData.mana / playerData.maxMana) * 100);
-                document.getElementById('mana-bar').style.width = manaPercent + '%';
-                document.getElementById('mana-text').innerText = `${playerData.mana} / ${playerData.maxMana}`;
-            }
-
-            const xpPercent = (playerData.xp / playerData.maxXp) * 100;
-            document.getElementById('xp-bar').style.width = xpPercent + '%';
+            document.getElementById('xp-bar').style.width = (playerData.xp / playerData.maxXp) * 100 + '%';
             document.getElementById('xp-text').innerText = `${playerData.xp} / ${playerData.maxXp}`;
-
             document.getElementById('gold-count').innerText = playerData.gold;
-            document.getElementById('silver-count').innerText = playerData.silver;
-            document.getElementById('bronze-count').innerText = playerData.bronze;
 
             const grid = document.getElementById('backpack-grid');
             grid.innerHTML = '';
@@ -1325,7 +1176,7 @@
 
         function initStoryWelcome() {
             let storyBox = document.getElementById('story-box');
-            storyBox.innerText = `🛡️ Willkommen auf dem 'Pfad des Helden', ${playerData.name}!\n\n${actsInfo[playerData.act].desc}\n\nDu befindest dich im ${locations[playerData.location].name}. Klicke oben auf das Gruppen-Symbol (👥), um NPCs und Händler zu treffen, oder tippe deine Aktionen in das Textfeld unten ein (z.B. 'jagen', 'dungeon', 'schmiede', 'schlafen').`;
+            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen, ${playerData.name}!\n\nDu stehst im ${locations[playerData.location].name}. Der Wind rauscht. Wenn du jagst, musst du erlegte Tiere selbst ausnehmen und die Rohstoffe im Rucksack verstauen, um sie beim Händler zu verkaufen.\n\n*Tippe z.B. 'gehe jagen', 'dungeon', 'händler' oder 'schmiede', um zu beginnen.*`;
         }
 
         function appendStory(text) {
@@ -1340,47 +1191,54 @@
             const inputField = document.getElementById('player-action-input');
             const actionText = inputField.value.trim().toLowerCase();
             if (!actionText) return;
-
             playSfx('click');
 
-            if (actionText.includes("jagen") || actionText.includes("wildnis") || actionText.includes("wald") || actionText.includes("suche")) {
-                advanceTime(2);
-                performHuntingCheck();
-            } 
-            else if (actionText.includes("dungeon") || actionText.includes("verlies") || actionText.includes("höhle")) {
-                advanceTime(3);
-                performDungeonCheck();
-            } 
-            else if (actionText.includes("schmiede") || actionText.includes("handwerk") || actionText.includes("waffen")) {
-                openCraftingModal();
-                appendStory(`🔨 Du betrittst die Schmiede im Handwerksviertel.`);
-            } 
-            else if (actionText.includes("händler") || actionText.includes("npc") || actionText.includes("shop")) {
-                openNpcModal();
-                appendStory(`👥 Du suchst den Marktplatz auf, um mit den Bewohnern und Händlern zu sprechen.`);
+            appendStory(`> **Du:** "${actionText}"`);
+
+            // Wenn der Spieler gerade ein Tier erlegt hat und entscheidet, was er damit tut:
+            if (playerData.pendingHuntAnimal) {
+                handleHuntHarvestChoice(actionText);
+                inputField.value = '';
+                return;
             }
-            else if (actionText.includes("schlaf") || actionText.includes("rast") || actionText.includes("lagerfeuer")) {
+
+            if (playerData.pendingCheck) {
+                appendStory(`🎲 **Dungeon Master:** Ich warte auf deine Würfelprobe! Klicke rechts unten auf **🎲 Würfeln**.`);
+                inputField.value = '';
+                return;
+            }
+
+            if (actionText.includes("jagen") || actionText.includes("wald") || actionText.includes("suche") || actionText.includes("gehe")) {
+                advanceTime(1);
+                playerData.pendingCheck = 'hunting';
+                appendStory(`🌲 **Dungeon Master:** Du schleichst durch das dichte Unterholz des ${locations[playerData.location].name}. Frische Spuren von Wild kreuzen deinen Weg.\n\n👉 **Führe eine Spurensuche-Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 11).`);
+            } 
+            else if (actionText.includes("dungeon") || actionText.includes("verlies")) {
+                advanceTime(2);
+                playerData.pendingCheck = 'dungeon';
+                appendStory(`🗝️ **Dungeon Master:** Vor dir liegt der dunkle Eingang. \n\n👉 **Führe eine Wahrnehmungsprobe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 12).`);
+            } 
+            else if (actionText.includes("schmiede") || actionText.includes("handwerk")) {
+                openCraftingModal();
+                appendStory(`⚒️ **Dungeon Master:** Du betrittst die Schmiede.`);
+            } 
+            else if (actionText.includes("händler") || actionText.includes("npc")) {
+                openNpcModal();
+                appendStory(`🛒 **Dungeon Master:** Du besuchst den Marktplatz, um mit Händlern zu handeln.`);
+            } 
+            else if (actionText.includes("schlaf") || actionText.includes("rast")) {
                 advanceTime(4);
                 playerData.hp = playerData.maxHp;
-                if (playerData.maxMana > 0) playerData.mana = playerData.maxMana;
-                appendStory(`⛺ Du ruhst dich am Lagerfeuer aus. Deine Lebenskraft und Mana sind voll aufgeladen!`);
+                appendStory(`⛺ **Dungeon Master:** Du ruhst dich am Lager aus. HP vollständig regeneriert.`);
             } 
-            else if (actionText.includes("boss") || actionText.includes("endgegner")) {
-                startBossFight();
-            } 
-            else if (actionText.includes("quest") || actionText.includes("brett")) {
-                openQuestBoard();
+            else if (actionText.includes("boss")) {
+                playerData.pendingCheck = 'boss';
+                appendStory(`👑 **Dungeon Master:** Der Boss stellt sich dir entgegen!\n\n👉 **Führe einen Angriffs-Wurf aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 14).`);
             } 
             else {
                 advanceTime(1);
-                let roll = rollD25();
-                playSfx('dice');
-                if (roll >= 10) {
-                    appendStory(`📍 Aktion: "${actionText}". Würfelwurf d20: **${roll}** (Erfolg!). Du kommst voran.`);
-                    addXp(15);
-                } else {
-                    appendStory(`📍 Aktion: "${actionText}". Würfelwurf d20: **${roll}** (Misserfolg). Die Umstände waren ungünstig.`);
-                }
+                playerData.pendingCheck = 'generic';
+                appendStory(`📍 **Dungeon Master:** Du versuchst: "${actionText}".\n\n👉 **Führe eine Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 10).`);
             }
 
             inputField.value = '';
@@ -1388,102 +1246,106 @@
             saveGame();
         }
 
-        function performHuntingCheck() {
-            let roll = rollD25();
-            playSfx('dice');
-            appendStory(`🏹 Du gehst auf Jagd in der Wildnis. Würfelwurf d20: **${roll}**...`);
+        // VERARBEITUNG DER JAGD-ERNTE (Häuten, Zerlegen, Fleisch nehmen etc.)
+        function handleHuntHarvestChoice(text) {
+            let animal = playerData.pendingHuntAnimal;
+            let itemsGained = [];
 
-            let subRoll = Math.random();
-
-            if (roll >= 14) {
-                if (subRoll < 0.4) {
-                    playerData.stats.monstersKilled++;
-                    let xpGain = 60;
-                    appendStory(`✨ **Großer Jagderfolg!** Du erlegst ein wildes Alphatier und erbeutest wertvolle Trophäen (+${xpGain} XP).`);
-                    addXp(xpGain);
-                } else if (subRoll < 0.7) {
-                    let foundMat = allMaterials[Math.floor(Math.random() * allMaterials.length)];
-                    playerData.inventory.push({ name: foundMat.name, icon: foundMat.icon, type: foundMat.type, id: foundMat.id });
-                    appendStory(`✨ **Glücksfund!** Im Unterholz entdeckst du wertvolles Material: **1x ${foundMat.name}**!`);
-                } else {
-                    playerData.stats.eventsTriggered++;
-                    appendStory(`✨ **Ereignis:** Du triffst auf wandernde Händler, die dir eine Geschichte erzählen.`);
+            if (text.includes("häuten") || text.includes("fell") || text.includes("alles") || text.includes("komplett") || text.includes("zerlegen")) {
+                if (animal === 'hirsch') {
+                    itemsGained.push(huntLootItems.hirsch_fell);
+                    itemsGained.push(huntLootItems.hirsch_fleisch);
+                    itemsGained.push(huntLootItems.hirsch_geweih);
+                } else if (animal === 'wolf') {
+                    itemsGained.push(huntLootItems.wolf_fell);
+                    itemsGained.push(huntLootItems.wolf_zahn);
+                } else if (animal === 'wildschwein') {
+                    itemsGained.push(huntLootItems.wildschwein_schwarte);
+                    itemsGained.push(huntLootItems.wildschwein_fleisch);
                 }
-            } else if (roll >= 8) {
-                if (subRoll < 0.6) {
-                    playerData.stats.monstersKilled++;
-                    let xpGain = 35;
-                    appendStory(`⚔️ Du bestehst ein kurzes Scharmützel gegen Waldkreaturen (+${xpGain} XP).`);
-                    addXp(xpGain);
-                } else {
-                    playerData.gold += 10;
-                    playerData.stats.totalGoldFound += 10;
-                    appendStory(`💰 Du findest im Moos 10 verlorene Goldmünzen.`);
-                }
+                appendStory(`🔪 **Dungeon Master:** Du nimmst das Tier fachgerecht aus und verstaust die Teile sicher in deinem Rucksack.`);
+            } else if (text.includes("fleisch") || text.includes("nur fleisch")) {
+                if (animal === 'hirsch') itemsGained.push(huntLootItems.hirsch_fleisch);
+                else if (animal === 'wildschwein') itemsGained.push(huntLootItems.wildschwein_fleisch);
+                else itemsGained.push(huntLootItems.wolf_zahn);
+                appendStory(`🥩 **Dungeon Master:** Du schneidest das beste Fleisch heraus und lässt den Rest im Wald zurück.`);
+            } else if (text.includes("liegen") || text.includes("nichts") || text.includes("weitergehen")) {
+                appendStory(`🚶 **Dungeon Master:** Du entscheidest dich, das Tier unberührt im Wald liegen zu lassen und deines Weges zu gehen.`);
+                playerData.pendingHuntAnimal = null;
+                return;
             } else {
-                if (subRoll < 0.5) {
-                    appendStory(`❌ **Keine Spur.** Die Wildnis bleibt stumm, du kehrst leer aus.`);
+                appendStory(`❓ **Dungeon Master:** Das versteht der DM nicht ganz. Tippe z.B. *'tier häuten und zerlegen'* oder *'nur fleisch mitnehmen'* oder *'liegen lassen'*.`);
+                return;
+            }
+
+            // Ins Inventar legen sofern Platz ist
+            itemsGained.forEach(it => {
+                if (playerData.inventory.length < 20) {
+                    playerData.inventory.push({ ...it });
+                    appendStory(`📦 Erhalten: **1x ${it.name}** (${it.icon})`);
                 } else {
-                    let dmg = 15;
+                    appendStory(`⚠️ Dein Rucksack ist voll! Du konntest nicht alles mitnehmen.`);
+                }
+            });
+
+            addXp(30);
+            playerData.pendingHuntAnimal = null;
+            updateSidebar();
+            saveGame();
+        }
+
+        function resolvePendingCheck(rollValue) {
+            let checkType = playerData.pendingCheck;
+            playerData.pendingCheck = null;
+
+            if (checkType === 'hunting') {
+                if (rollValue >= 11) {
+                    playerData.stats.monstersKilled++;
+                    let animals = ['hirsch', 'wolf', 'wildschwein'];
+                    let caught = animals[Math.floor(Math.random() * animals.length)];
+                    playerData.pendingHuntAnimal = caught;
+
+                    let animalNames = { hirsch: "einem prächtigen Hirsch", wolf: "einem wilden Waldwolf", wildschwein: "einem aggressiven Wildschwein" };
+                    appendStory(`✨ **Erfolg (Würfel: ${rollValue})!** Deine Pirsch war von Erfolg gekrönt! Du hast ${animalNames[caught]} erlegt.\n\n🦌 **Der Dungeon Master fragt:** Was möchtest du mit dem Tier tun? *(Tippe z.B. 'häuten und zerlegen', 'nur fleisch mitnehmen' oder 'liegen lassen')*`);
+                } else {
+                    let dmg = 10;
                     playerData.hp = Math.max(1, playerData.hp - dmg);
-                    appendStory(`⚠️ **Hinterhalt!** Goblins greifen dich an! Du entkommst, erleidest aber **${dmg} Schaden**.`);
+                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Du verlierst die Spur, trittst in eine Dornenhecke und nimmst **${dmg} Schaden**.`);
                 }
-            }
-        }
-
-        function performDungeonCheck() {
-            let roll = rollD25();
-            playSfx('dice');
-            appendStory(`🗝️ Erkundung des Dungeons. Würfelwurf d20: **${roll}**...`);
-
-            if (roll >= 10) {
-                playerData.stats.dungeonsCleared++;
-                let foundMat = allMaterials[Math.floor(Math.random() * allMaterials.length)];
-                playerData.inventory.push({ name: foundMat.name, icon: foundMat.icon, type: foundMat.type, id: foundMat.id });
-                playerData.gold += 30;
-                playerData.stats.totalGoldFound += 30;
-                appendStory(`🎉 **Dungeon geschafft!** Du plünderst eine Truhe mit 30 Gold und 1x ${foundMat.name}!`);
-            } else {
-                let trapDmg = 20;
-                playerData.hp = Math.max(1, playerData.hp - trapDmg);
-                appendStory(`💥 **Falle!** Du übersiehst eine Stolperfalle (-${trapDmg} HP) und musst flüchten.`);
-            }
-        }
-
-        function startBossFight() {
-            let bossNames = { 1: "Schatten-General Varis", 2: "Der Uralte Steingolem", 3: "Der Verräter-Hauptmann", 4: "Drachenfürst Malakor" };
-            let currentBoss = bossNames[playerData.act];
-
-            appendStory(`👑 BOSS-KAMPF in Akt ${playerData.act}: ${currentBoss}!`);
-            
-            let roll = rollD20();
-            if (roll + Math.floor(playerData.level / 2) >= 11) {
-                playerData.stats.bossesKilled++;
-                appendStory(`🏆 **Sieg!** Du hast ${currentBoss} bezwingen können!`);
-                if (playerData.act < 4) {
-                    playerData.act++;
-                    appendStory(`🎉 Du erreichst ${actsInfo[playerData.act].name}!`);
+            } 
+            else if (checkType === 'dungeon') {
+                if (rollValue >= 12) {
+                    playerData.stats.dungeonsCleared++;
+                    playerData.gold += 35;
+                    appendStory(`🎉 **Erfolg (Würfel: ${rollValue})!** Du plünderst den Dungeon und findest 35 Goldmünzen!`);
                 } else {
-                    appendStory(`🌟 **KAMPAGNE GESCHAFFT!** Du hast das Spiel erfolgreich beendet!`);
+                    let dmg = 20;
+                    playerData.hp = Math.max(1, playerData.hp - dmg);
+                    appendStory(`💥 **Misserfolg (Würfel: ${rollValue})!** Du löst eine Falle aus (-${dmg} HP).`);
                 }
-            } else {
-                playerData.stats.deaths++;
-                playerData.hp = Math.max(1, playerData.hp - 40);
-                appendStory(`💀 **Niederlage!** Der Boss war zu stark (-40 HP).`);
+            } 
+            else if (checkType === 'boss') {
+                if (rollValue >= 14) {
+                    playerData.stats.bossesKilled++;
+                    appendStory(`🏆 **Sieg (Würfel: ${rollValue})!** Du bezwingst den Boss!`);
+                    if (playerData.act < 4) { playerData.act++; appendStory(`🎉 Akt aufgestiegen: ${actsInfo[playerData.act].name}`); }
+                } else {
+                    playerData.stats.deaths++;
+                    playerData.hp = Math.max(1, playerData.hp - 45);
+                    appendStory(`💀 **Niederlage (Würfel: ${rollValue})!** Der Boss schlägt dich nieder (-45 HP).`);
+                }
+            } 
+            else {
+                if (rollValue >= 10) {
+                    addXp(20);
+                    appendStory(`✅ **Erfolg (Würfel: ${rollValue})!** Aktion gelungen (+20 XP).`);
+                } else {
+                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Aktion fehlgeschlagen.`);
+                }
             }
-        }
 
-        function openQuestBoard() {
-            let roll = rollD25();
-            if (roll >= 8) {
-                playerData.stats.questsCompleted++;
-                playerData.gold += 40;
-                playerData.stats.totalGoldFound += 40;
-                playerData.quests.push({ title: "Kopfgeld erledigt", desc: "Umland gesäubert.", completed: true });
-                appendStory(`📜 Nebenauftrag erfolgreich abgeschlossen (+40 Gold)!`);
-            } else {
-                appendStory(`📜 Alle Aufträge am Schwarzen Brett sind derzeit vergriffen.`);
-            }
+            updateSidebar();
+            saveGame();
         }
     </script>
 </body>
