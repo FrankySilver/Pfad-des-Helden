@@ -14,6 +14,9 @@
             --accent-hover: #f39c12;
             --border-color: #2a2a35;
             --highlight: #4ecca3;
+            --mana-color: #3498db;
+            --hp-color: #e74c3c;
+            --xp-color: #9b59b6;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -32,11 +35,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
         }
         h1 {
             color: var(--accent-color);
             margin: 0;
             font-size: 1.6rem;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         .donate-btn {
             background-color: #0070ba;
@@ -50,15 +59,32 @@
             transition: background 0.3s;
             font-size: 0.9rem;
         }
-        .donate-btn:hover {
-            background-color: #005ea6;
+        .donate-btn:hover { background-color: #005ea6; }
+
+        .settings-gear-btn {
+            background: #22222e;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .settings-gear-btn:hover {
+            transform: rotate(90deg);
+            background: var(--accent-color);
+            color: #000;
         }
 
-        /* Hauptlayout mit Sidebar */
         .main-container {
             display: flex;
             flex: 1;
-            max-width: 1300px;
+            max-width: 1600px;
             width: 100%;
             margin: 1.5rem auto;
             gap: 1.5rem;
@@ -66,9 +92,8 @@
             box-sizing: border-box;
         }
 
-        /* Sidebar Links */
         sidebar {
-            width: 340px;
+            width: 400px;
             background-color: var(--sidebar-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -77,7 +102,7 @@
             flex-direction: column;
             gap: 1.2rem;
             box-sizing: border-box;
-            max-height: 85vh;
+            max-height: 92vh;
             overflow-y: auto;
         }
 
@@ -85,9 +110,7 @@
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.8rem;
         }
-        .sidebar-section:last-child {
-            border-bottom: none;
-        }
+        .sidebar-section:last-child { border-bottom: none; }
         .sidebar-title {
             font-size: 0.9rem;
             text-transform: uppercase;
@@ -97,7 +120,87 @@
             letter-spacing: 1px;
         }
 
-        /* Ausrüstungsgitter */
+        .time-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1e1e28;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+        }
+        .time-icon { font-size: 1.4rem; }
+
+        .profile-header {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .hero-avatar {
+            width: 55px;
+            height: 55px;
+            background: #22222e;
+            border: 2px solid var(--accent-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+        }
+        .skill-item {
+            background: #1e1e28;
+            border: 1px solid var(--border-color);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-bar-container {
+            margin-top: 0.3rem;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 12px;
+            position: relative;
+            border: 1px solid #444;
+        }
+        .status-fill { height: 100%; transition: width 0.3s; }
+        .hp-fill { background-color: var(--hp-color); }
+        .mana-fill { background-color: var(--mana-color); }
+        .xp-fill { background-color: var(--xp-color); }
+        .status-text {
+            position: absolute;
+            width: 100%;
+            top: 0; left: 0;
+            font-size: 0.65rem;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+            line-height: 12px;
+            text-shadow: 1px 1px 1px #000;
+        }
+
+        .quest-box {
+            background: #1e1e28;
+            border-left: 3px solid var(--accent-color);
+            padding: 0.4rem;
+            font-size: 0.8rem;
+            border-radius: 3px;
+            margin-bottom: 0.3rem;
+        }
+
         .equipment-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -111,111 +214,157 @@
             border-radius: 4px;
             text-align: center;
         }
-        .equipment-slot span {
-            display: block;
-            font-size: 0.75rem;
-            color: #888;
-        }
+        .equipment-slot span { display: block; font-size: 0.7rem; color: #888; }
 
-        /* Geldbeutel & Inventar */
         .wallet {
             display: flex;
             justify-content: space-around;
             background: #1e1e28;
             padding: 0.5rem;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 0.9rem;
             font-weight: bold;
+            border: 1px solid #3a3a4a;
         }
-        .inventory-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 120px;
-            overflow-y: auto;
-            font-size: 0.85rem;
+        .coin { display: flex; align-items: center; gap: 4px; }
+
+        .backpack-container {
+            background: #181822;
+            border: 2px dashed #444;
+            border-radius: 6px;
+            padding: 0.8rem;
         }
-        .inventory-list li {
-            background: #1e1e28;
-            margin-bottom: 0.3rem;
-            padding: 0.3rem 0.5rem;
-            border-radius: 3px;
-            border-left: 3px solid var(--highlight);
+        .backpack-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .inventory-slot {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #22222e;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.1s, border-color 0.2s;
+        }
+        .inventory-slot:hover { border-color: var(--accent-color); transform: scale(1.05); }
+        .inventory-slot:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%; left: 50%;
+            transform: translateX(-50%);
+            background: #000; color: #fff;
+            padding: 3px 6px; font-size: 0.7rem;
+            white-space: nowrap; border-radius: 3px;
+            border: 1px solid var(--accent-color);
+            z-index: 10; pointer-events: none;
         }
 
-        /* Content / Spielbereich rechts */
-        .content-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+        .content-area { flex: 1; display: flex; flex-direction: column; position: relative; }
         .game-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 2rem;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            flex: 1; display: flex; flex-direction: column;
             justify-content: space-between;
         }
         .story-text {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             line-height: 1.6;
-            margin-bottom: 2rem;
-            min-height: 150px;
+            margin-bottom: 1.5rem;
+            min-height: 140px;
+            white-space: pre-line;
         }
         .choices {
             display: flex;
             flex-direction: column;
             gap: 0.8rem;
+            margin-bottom: 1rem;
         }
         .choice-btn {
             background-color: #21212c;
             color: var(--text-color);
             border: 1px solid var(--accent-color);
-            padding: 0.9rem 1.2rem;
+            padding: 0.8rem 1.2rem;
             border-radius: 5px;
             text-align: left;
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.2s;
         }
-        .choice-btn:hover {
-            background-color: var(--accent-color);
-            color: #000;
+        .choice-btn:hover { background-color: var(--accent-color); color: #000; }
+
+        .custom-input-box {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+        .custom-input-box input {
+            flex: 1; padding: 0.8rem;
+            background: #111116; border: 1px solid var(--border-color);
+            color: white; border-radius: 4px; font-size: 1rem;
+        }
+        .custom-input-box button {
+            background-color: var(--highlight); color: #000;
+            border: none; padding: 0 1.2rem; font-weight: bold;
+            border-radius: 4px; cursor: pointer;
         }
 
-        /* Formulare für Charaktererstellung */
-        .form-group {
-            margin-bottom: 1rem;
+        .dice-widget {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: #1b1b26;
+            border: 2px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            z-index: 100;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.3rem;
-            color: var(--accent-color);
+        .dice-btn {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
             font-size: 0.9rem;
+            margin-top: 4px;
+            transition: transform 0.1s;
         }
+        .dice-btn:active { transform: scale(0.95); }
+        .dice-result {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.3rem; color: var(--accent-color); font-size: 0.9rem; }
         .form-group select, .form-group input {
-            width: 100%;
-            padding: 0.7rem;
-            background: #111116;
-            border: 1px solid var(--border-color);
-            color: white;
-            border-radius: 4px;
-            font-size: 1rem;
+            width: 100%; padding: 0.7rem;
+            background: #111116; border: 1px solid var(--border-color);
+            color: white; border-radius: 4px; font-size: 1rem;
         }
 
         footer {
-            text-align: center;
-            padding: 1rem;
+            text-align: center; padding: 1rem;
             background-color: var(--card-bg);
             border-top: 1px solid var(--border-color);
-            font-size: 0.85rem;
-            color: #888;
+            font-size: 0.85rem; color: #888;
         }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -223,73 +372,129 @@
 
     <header>
         <h1>🛡️ Pfad des Helden</h1>
-        <form action="https://www.paypal.com/donate" method="post" target="_top">
-            <input type="hidden" name="business" value="Beastroyal0@gmail.com">
-            <input type="hidden" name="no_recurring" value="0">
-            <input type="hidden" name="item_name" value="Spende für Pfad des Helden">
-            <input type="hidden" name="currency_code" value="EUR">
-            <button type="submit" class="donate-btn">☕ Spendenkasse</button>
-        </form>
+        <div class="header-right">
+            <button class="settings-gear-btn" onclick="openSettings()" title="Einstellungen">⚙️</button>
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="Beastroyal0@gmail.com">
+                <input type="hidden" name="no_recurring" value="0">
+                <input type="hidden" name="item_name" value="Spende für Pfad des Helden">
+                <input type="hidden" name="currency_code" value="EUR">
+                <button type="submit" class="donate-btn">☕ Spendenkasse</button>
+            </form>
+        </div>
     </header>
 
     <div class="main-container">
-        <!-- Sidebar Links (Inventar & Stats) -->
+        <!-- Sidebar -->
         <sidebar id="sidebar" class="hidden">
             <div class="sidebar-section">
-                <div class="sidebar-title">Helden-Profil</div>
-                <div id="char-info" style="font-size: 0.9rem; line-height: 1.4;">
-                    <!-- Dynamisch -->
+                <div class="time-box">
+                    <div id="time-icon" class="time-icon">☀️</div>
+                    <div>
+                        <div id="time-display" style="font-weight: bold; color: var(--accent-color);">10:00 Uhr (Tag)</div>
+                        <div id="act-display" style="font-size: 0.75rem; color: #aaa;">Akt 1: Der Schatten erwacht</div>
+                    </div>
                 </div>
+
+                <div class="profile-header">
+                    <div id="hero-avatar" class="hero-avatar">🛡️</div>
+                    <div id="char-info" style="font-size: 0.8rem; line-height: 1.3;"></div>
+                </div>
+                
+                <div style="margin-top: 0.4rem; font-size: 0.75rem;">Gesundheit (HP):</div>
+                <div class="status-bar-container">
+                    <div id="hp-bar" class="status-fill hp-fill" style="width: 100%;"></div>
+                    <div id="hp-text" class="status-text">100 / 100</div>
+                </div>
+
+                <div id="mana-container" style="margin-top: 0.3rem; font-size: 0.75rem;">Mana (MP):</div>
+                <div class="status-bar-container">
+                    <div id="mana-bar" class="status-fill mana-fill" style="width: 100%;"></div>
+                    <div id="mana-text" class="status-text">50 / 50</div>
+                </div>
+
+                <div style="margin-top: 0.3rem; font-size: 0.75rem;">Erfahrung (XP):</div>
+                <div class="status-bar-container">
+                    <div id="xp-bar" class="status-fill xp-fill" style="width: 0%;"></div>
+                    <div id="xp-text" class="status-text">0 / 100</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Fertigkeiten & Zauber ⚡</div>
+                <div id="skills-tree-box" style="font-size: 0.8rem; background: #1e1e28; padding: 0.5rem; border-radius: 4px; line-height: 1.4;">
+                    Skillpunkte: <strong id="skill-points" style="color: var(--accent-color);">0</strong><br>
+                    <div id="unlocked-skills" style="margin-top: 4px; color: #aaa;">Keine Spezial-Skills freigeschaltet</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Treuer Gefährte 🐾</div>
+                <div id="companion-box" style="font-size: 0.85rem; color: #aaa; background: #1e1e28; padding: 0.5rem; border-radius: 4px;">
+                    Keiner
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Fraktion & Ruf 👑</div>
+                <div id="faction-box" style="font-size: 0.85rem; background: #1e1e28; padding: 0.5rem; border-radius: 4px; line-height: 1.4;">
+                    Neutral
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Aktive Quests 📜</div>
+                <div id="quest-log"></div>
             </div>
 
             <div class="sidebar-section">
                 <div class="sidebar-title">Geldbeutel 🪙</div>
                 <div class="wallet">
-                    <div>🥇 <span id="gold-count">10</span></div>
-                    <div>🥈 <span id="silver-count">5</span></div>
-                    <div>🥉 <span id="bronze-count">20</span></div>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <div class="sidebar-title">Ausrüstung (Rüstung & Waffen)</div>
-                <div class="equipment-grid">
-                    <div class="equipment-slot"><span>Helm</span><strong id="eq-helm">Keiner</strong></div>
-                    <div class="equipment-slot"><span>Hals</span><strong id="eq-neck">Keine</strong></div>
-                    <div class="equipment-slot"><span>Oberkörper</span><strong id="eq-chest">Stoffhemd</strong></div>
-                    <div class="equipment-slot"><span>Ring</span><strong id="eq-ring">Keiner</strong></div>
-                    <div class="equipment-slot"><span>Beinlinge</span><strong id="eq-legs">Stoffhose</strong></div>
-                    <div class="equipment-slot"><span>Schuhe</span><strong id="eq-boots">Stoffschuhe</strong></div>
-                    <div class="equipment-slot"><span>Rechte Hand</span><strong id="eq-rhand">Dolch</strong></div>
-                    <div class="equipment-slot"><span>Linke Hand</span><strong id="eq-lhand">Leer</strong></div>
-                    <div class="equipment-slot" style="grid-column: span 2;"><span>Pfeilslot</span><strong id="eq-arrows">Keine Pfeile</strong></div>
+                    <div class="coin">🟡 <span id="gold-count">15</span></div>
+                    <div class="coin">⚪ <span id="silver-count">5</span></div>
+                    <div class="coin">🟤 <span id="bronze-count">20</span></div>
                 </div>
             </div>
 
             <div class="sidebar-section" style="flex: 1;">
-                <div class="sidebar-title">Inventar</div>
-                <ul id="inventory-box" class="inventory-list">
-                    <li>Gesundheitstrank</li>
-                </ul>
+                <div class="sidebar-title">Rucksack (Inventar)</div>
+                <div class="backpack-container">
+                    <div class="backpack-grid" id="backpack-grid"></div>
+                </div>
             </div>
         </sidebar>
 
-        <!-- Hauptinhalt rechts -->
+        <!-- Hauptinhalt -->
         <div class="content-area">
             <div class="game-card">
-                <!-- Hauptmenü Ansicht -->
+                <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Ein episches, kostenloses Text-Abenteuer</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Eine epische 10-Stunden-Kampagne über 4 Akte</p>
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 250px; margin: 0 auto;">
                         <button class="choice-btn" onclick="startNewGameMenu()" style="text-align: center;">⚔️ Neues Spiel</button>
                         <button class="choice-btn" id="continue-btn" onclick="continueGame()" style="text-align: center;" disabled>📜 Fortfahren</button>
+                        <button class="choice-btn" onclick="openSettings()" style="text-align: center;">⚙️ Einstellungen</button>
                     </div>
                 </div>
 
-                <!-- Charaktererstellung Ansicht -->
+                <!-- Einstellungs-Menü mit getrennten Reglern -->
+                <div id="settings-menu" class="hidden" style="max-width: 400px; margin: auto; text-align: left;">
+                    <h3 style="color: var(--accent-color); text-align: center;">🔊 Audio-Einstellungen</h3>
+                    <div class="form-group">
+                        <label>Hintergrundmusik (BGM):</label>
+                        <input type="range" id="bgm-slider" min="0" max="100" value="30" oninput="updateBgmVolume(this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Soundeffekte (SFX):</label>
+                        <input type="range" id="sfx-slider" min="0" max="100" value="80" oninput="updateSfxVolume(this.value)">
+                    </div>
+                    <button class="choice-btn" onclick="closeSettings()" style="text-align: center; width: 100%; margin-top: 1rem;">Zurück</button>
+                </div>
+
+                <!-- Charaktererstellung -->
                 <div id="char-creation" class="hidden">
-                    <h3 style="color: var(--accent-color); margin-top: 0;">Heldenerschaffung</h3>
+                    <h3 style="color: var(--accent-color); margin-top: 0;">Heldenerschaffung (Akt 1)</h3>
                     <div class="form-group">
                         <label>Name deines Helden:</label>
                         <input type="text" id="hero-name" placeholder="z.B. Roland der Tapfere">
@@ -297,46 +502,63 @@
                     <div class="form-group">
                         <label>Wähle deine Rasse:</label>
                         <select id="hero-race">
-                            <option value="human">Mensch (Allrounder, flexibel, versteht Menschen & Händler)</option>
-                            <option value="dwarf">Zwerg (+20 HP, stark im Bergbau, versteht Zwergisch & Runen)</option>
-                            <option value="elf">Elf (+10% Magie, flink, versteht Elfisch & Alte Sprache)</option>
-                            <option value="orc">Ork (+30 Start-Angriff, robust, versteht Orken & Ork-Dialekte)</option>
-                            <option value="halbling">Halbling (Glücklich, findet mehr Gold, versteht Halblings)</option>
+                            <option value="human">Mensch (Allrounder)</option>
+                            <option value="dwarf">Zwerg (+20 HP)</option>
+                            <option value="elf">Elf (+Geschicklichkeit)</option>
+                            <option value="orc">Ork (+Stärke)</option>
+                            <option value="halbling">Halbling (+Charisma)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Wähle deinen Beruf:</label>
                         <select id="hero-class">
-                            <option value="bergarbeiter">Bergarbeiter (Startet mit Spitzhacke & Erz)</option>
-                            <option value="soldat">Soldat (Startet mit Kurzschwert & Schild)</option>
-                            <option value="magielehrling">Magielehrling (Startet mit Zauberstab & Foliant)</option>
-                            <option value="jaeger">Jäger (Startet mit Bogen & Pfeilen)</option>
-                            <option value="schmied">Schmied (Startet mit Schmiedehammer)</option>
-                            <option value="dieb">Dieb (Startet mit Dietrichen & Schattenkappe)</option>
-                            <option value="gelehrter">Gelehrter (Startet mit Alter Karte & Büchern)</option>
-                            <option value="haendler">Haendler (Startet mit mehr Startgeld)</option>
-                            <option value="alchemist">Alchemist (Startet mit Heiltränken)</option>
-                            <option value="streuner">Streuner (Startet ausgewogen und kampfbereit)</option>
+                            <option value="bergarbeiter">Bergarbeiter</option>
+                            <option value="soldat">Soldat</option>
+                            <option value="magielehrling">Magielehrling (Mit Mana & Zaubern)</option>
+                            <option value="jaeger">Jäger</option>
+                            <option value="schmied">Schmied</option>
+                            <option value="dieb">Dieb</option>
+                            <option value="gelehrter">Gelehrter</option>
+                            <option value="haendler">Händler</option>
+                            <option value="alchemist">Alchemist</option>
+                            <option value="streuner">Streuner</option>
                         </select>
                     </div>
-                    <button class="choice-btn" onclick="createHero()" style="text-align: center; margin-top: 1rem; background-color: var(--accent-color); color: #000; font-weight: bold;">Abenteuer beginnen</button>
+                    <div class="form-group">
+                        <label>Wähle deinen Startort (Akt 1):</label>
+                        <select id="hero-location">
+                            <option value="aschenwald">Aschenwald (Der nebelige Grenzforst)</option>
+                            <option value="eisenhall">Eisenhall (Die Zwergen-Bergfestung)</option>
+                            <option value="sonnendorn">Sonnendorn (Die Handels-Hafenstadt)</option>
+                            <option value="rabenfels">Rabenfels (Die stürmische Klippenburg)</option>
+                        </select>
+                    </div>
+                    <button class="choice-btn" onclick="createHero()" style="text-align: center; margin-top: 1rem; background-color: var(--accent-color); color: #000; font-weight: bold;">Kampagne starten</button>
                 </div>
 
-                <!-- Spiel- Ansicht -->
-                <div id="game-view" class="hidden">
-                    <div class="story-text" id="story-box">
-                        <!-- Spieltext -->
-                    </div>
-                    <div class="choices" id="choices-box">
-                        <!-- Buttons -->
+                <!-- Spielansicht -->
+                <div id="game-view" class="hidden" style="display: flex; flex-direction: column; flex: 1;">
+                    <div class="story-text" id="story-box"></div>
+                    <div class="choices" id="choices-box"></div>
+                    
+                    <div class="custom-input-box">
+                        <input type="text" id="player-action-input" placeholder="Tippe eine Aktion (z.B. 'Jagen', 'Bosskampf', 'Rasten')..." onkeydown="handleCustomInputKey(event)">
+                        <button onclick="submitCustomAction()">Ausführen</button>
                     </div>
                 </div>
+            </div>
+
+            <!-- D&D Würfel-Widget rechts unten -->
+            <div id="dice-widget" class="dice-widget hidden">
+                <div style="font-size: 0.75rem; color: var(--accent-color); font-weight: bold;">D&D Würfel (d20)</div>
+                <button class="dice-btn" onclick="rollD20()">🎲 Würfeln</button>
+                <div id="dice-result" class="dice-result">Ergebnis: -</div>
             </div>
         </div>
     </div>
 
     <footer>
-        <p>Pfad des Helden – 100% Kostenlos. Unterstütze den Entwickler über die Spendenkasse!</p>
+        <p>Pfad des Helden – 100% Kostenlos. 10-Stunden Kampagne. Unterstütze das Spiel über die Spendenkasse!</p>
     </footer>
 
     <script>
@@ -344,121 +566,214 @@
             name: "Heldenloser",
             race: "human",
             className: "soldat",
+            location: "aschenwald",
+            act: 1,
+            hour: 10,
+            level: 1,
+            xp: 0,
+            maxXp: 100,
+            skillPoints: 0,
+            unlockedSkills: [],
             hp: 100,
             maxHp: 100,
-            gold: 10,
+            mana: 0,
+            maxMana: 0,
+            gold: 15,
             silver: 5,
             bronze: 20,
-            inventory: ["Gesundheitstrank"],
+            companion: null,
+            faction: { name: "Keine (Neutral)", rank: "Mitgliedlos", rep: 0 },
+            attributes: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+            inventory: [],
+            quests: [],
             equipment: {
-                helm: "Keiner",
-                neck: "Keine",
-                chest: "Stoffhemd",
-                ring: "Keiner",
-                legs: "Stoffhose",
-                boots: "Stoffschuhe",
-                rhand: "Dolch",
-                lhand: "Leer",
-                arrows: "Keine Pfeile"
+                helm: "Keiner", neck: "Keine", chest: "Stoffhemd", ring: "Keiner",
+                legs: "Stoffhose", boots: "Stoffschuhe", rhand: "Dolch", lhand: "Leer", arrows: "Keine Pfeile"
             },
             currentScene: 'start'
         };
 
+        const actsInfo = {
+            1: { name: "Akt 1: Der Schatten erwacht", desc: "Untersuche die Unruhen im Startgebiet und besiege den ersten Schatten-General." },
+            2: { name: "Akt 2: Die vergessenen Minen", desc: "Reise in die Tiefen des Erdbodens, um das magische Artefakt zu bergen." },
+            3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Schließe dich einer Fraktion an und bereite den Angriff auf den Hauptfeind vor." },
+            4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Stelle dich dem Drachenfürst Malakor im ultimativen Endkampf!" }
+        };
+
         const races = {
-            human: { name: "Mensch", bonus: "+Allrounder", languages: "Gemeinsprache, Händlerdialekt" },
-            dwarf: { name: "Zwerg", bonus: "+20 HP", languages: "Zwergisch, Runensprache" },
-            elf: { name: "Elf", bonus: "+Intuition", languages: "Elfisch, Alte Sprache" },
-            orc: { name: "Ork", bonus: "+Kraft", languages: "Orkisch, Kriegsdialekt" },
-            halbling: { name: "Halbling", bonus: "+Goldfund", languages: "Halblingssprache" }
+            human: { name: "Mensch", icon: "🧑", quest: "Finde den verlorenen Handelsbrief in Akt 1." },
+            dwarf: { name: "Zwerg", icon: "🧔", quest: "Entdecke das uralte Erz-Vorkommen in den Minen." },
+            elf: { name: "Elf", icon: "🧝", quest: "Heile den verzauberten Baum im heiligen Hain." },
+            orc: { name: "Ork", icon: "👹", quest: "Fordere den Stammesrivalen zum Duell." },
+            halbling: { name: "Halbling", icon: "🧒", quest: "Sammle die verschollenen Rezepte." }
         };
 
-        const classes = {
-            bergarbeiter: { name: "Bergarbeiter", weapon: "Spitzhacke" },
-            soldat: { name: "Soldat", weapon: "Kurzschwert" },
-            magielehrling: { name: "Magielehrling", weapon: "Zauberstab" },
-            jaeger: { name: "Jäger", weapon: "Jagdbogen", arrows: "15 Holzpfeile" },
-            schmied: { name: "Schmied", weapon: "Schmiedehammer" },
-            dieb: { name: "Dieb", weapon: "Rostiger Dolch" },
-            gelehrter: { name: "Gelehrter", weapon: "Alter Foliant" },
-            haendler: { name: "Händler", weapon: "Wanderstab" },
-            alchemist: { name: "Alchemist", weapon: "Dolch" },
-            streuner: { name: "Streuner", weapon: "Kurzschwert" }
+        const classItems = {
+            bergarbeiter: [ { name: "Spitzhacke", icon: "⛏️" } ],
+            soldat: [ { name: "Kurzschwert", icon: "🗡️" } ],
+            magielehrling: [ { name: "Zauberstab", icon: "🪄" } ],
+            jaeger: [ { name: "Jagdbogen", icon: "🏹" } ],
+            schmied: [ { name: "Hammer", icon: "🔨" } ],
+            dieb: [ { name: "Dietriche", icon: "🗝️" } ],
+            gelehrter: [ { name: "Alte Karte", icon: "🗺️" } ],
+            haendler: [ { name: "Waage", icon: "⚖️" } ],
+            alchemist: [ { name: "Mörser", icon: "🥣" } ],
+            streuner: [ { name: "Wurfmesser", icon: "🔪" } ]
         };
 
-        // Szenen des Spiels
+        const locations = {
+            aschenwald: { name: "Aschenwald", desc: "Nebelverhangener Wald." },
+            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung." },
+            sonnendorn: { name: "Sonnendorn", desc: "Hafenstadt." },
+            rabenfels: { name: "Rabenfels", desc: "Klippen-Hochburg." }
+        };
+
         const scenes = {
             start: {
-                text: "Du stehst im Schankraum der Taverne 'Zum tanzenden Greif'. Es riecht nach Met und Rauch. An der Wand hängt dein Rucksack, und du blickst auf deine Ausrüstung.",
+                text: "Deine 10-stündige Kampagne hat begonnen. Wähle deine nächste Aktion in der Spielwelt:",
                 choices: [
-                    { text: "Den Wirt nach Gerüchten über den Dungeon fragen", next: 'dungeon_rumor' },
-                    { text: "In die dunklen Gassen der Stadt hinausgehen", next: 'city_streets' },
-                    { text: "Zum Händler auf dem Marktplatz gehen", next: 'market' }
-                ]
-            },
-            dungeon_rumor: {
-                text: "Der Wirt wischt einen Krug ab. 'He, Abenteurer! In den alten Ruinen im Nebelwald soll noch Schätze von unschätzbarem Wert geben. Bist du mutig genug?'",
-                choices: [
-                    { text: "Aufbrechen zum Nebelwald-Dungeon", next: 'dungeon' },
-                    { text: "Zurück in den Schankraum", next: 'start' }
-                ]
-            },
-            dungeon: {
-                text: "Du betrittst den feuchten Dungeon. Ein leises Knurren hallt durch die Gänge. Vor dir liegt eine alte Holzkiste!",
-                action: () => { playerData.gold += 15; playerData.inventory.push("Rostiger Dolch"); updateSidebar(); saveGame(); },
-                choices: [
-                    { text: "Kiste öffnen und Schätze einsacken (+15 Gold)", next: 'start' }
-                ]
-            },
-            city_streets: {
-                text: "Die Gassen sind dunkel und zwielichtig. Ein Taschendieb versucht dich anzuspringen, aber deine Rüstung schützt dich!",
-                action: () => { playerData.silver += 3; updateSidebar(); saveGame(); },
-                choices: [
-                    { text: "Den Dieb vertreiben und zurück zur Taverne", next: 'start' }
-                ]
-            },
-            market: {
-                text: "Der Marktplatz brummt vor Leben. Händler bieten Waren an. Du findest ein paar verlorene Kupfermünzen auf dem Boden.",
-                action: () => { playerData.bronze += 10; updateSidebar(); saveGame(); },
-                choices: [
-                    { text: "Zurück zur Taverne", next: 'start' }
+                    { text: "🌲 In die Wildnis gehen & Monster jagen (Vergangene Zeit: +2 Std)", actionType: 'combat' },
+                    { text: "🗝️ Verlies (Dungeon) betreten", actionType: 'enter_dungeon' },
+                    { text: "⛺ Am Lagerfeuer ausruhen & Zeit vorspulen (+4 Std, heilt HP)", actionType: 'rest' },
+                    { text: "👑 Den Boss von Akt " + playerData.act + " herausfordern", actionType: 'boss' },
+                    { text: "📜 Zum Schwarzen Brett (Quests)", actionType: 'board' }
                 ]
             }
         };
 
-        // Speicherstand beim Start prüfen
-        window.onload = function() {
-            const saved = localStorage.getItem('pfad_des_helden_save');
-            if (saved) {
-                document.getElementById('continue-btn').disabled = false;
+        // Web Audio API für echte mittelalterliche Musik & getrennte SFX
+        let audioCtx = null;
+        let musicInterval = null;
+        let bgmVolume = 0.3;
+        let sfxVolume = 0.8;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!musicInterval && bgmVolume > 0) playMedievalMelodyLoop();
+        }
+
+        // Mehrstimmige mittelalterliche Lauten-/Flötenmelodie
+        function playMedievalMelodyLoop() {
+            const scale = [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00]; // A-Moll mittelalterlich
+            musicInterval = setInterval(() => {
+                if (bgmVolume <= 0 || !audioCtx) return;
+                
+                // Spiele 2-3 Noten nacheinander für eine echte Melodie
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        if (bgmVolume <= 0 || !audioCtx) return;
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        
+                        osc.type = i === 0 ? 'triangle' : 'sine'; // Klangfarbe wie Harfe/Flöte
+                        let note = scale[Math.floor(Math.random() * scale.length)];
+                        osc.frequency.setValueAtTime(note, audioCtx.currentTime);
+
+                        gain.gain.setValueAtTime(bgmVolume * 0.12, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 1.2);
+                    }, i * 400);
+                }
+            }, 3500);
+        }
+
+        // Soundeffekt (SFX) bei Klicks oder Würfeln
+        function playSfx(type = 'click') {
+            if (sfxVolume <= 0 || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            if (type === 'dice') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(sfxVolume * 0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } else {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(sfxVolume * 0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
             }
+        }
+
+        function updateBgmVolume(val) {
+            bgmVolume = val / 100;
+            initAudio();
+        }
+
+        function updateSfxVolume(val) {
+            sfxVolume = val / 100;
+            playSfx('click');
+        }
+
+        function openSettings() {
+            playSfx('click');
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('char-creation').classList.add('hidden');
+            document.getElementById('game-view').classList.add('hidden');
+            document.getElementById('settings-menu').classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            playSfx('click');
+            document.getElementById('settings-menu').classList.add('hidden');
+            if (playerData.currentScene) document.getElementById('game-view').classList.remove('hidden');
+            else document.getElementById('main-menu').classList.remove('hidden');
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem('pfad_des_helden_save')) document.getElementById('continue-btn').disabled = false;
         };
 
         function startNewGameMenu() {
+            initAudio();
+            playSfx('click');
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('char-creation').classList.remove('hidden');
         }
 
         function createHero() {
+            initAudio();
+            playSfx('click');
             const nameInput = document.getElementById('hero-name').value.trim();
-            if (nameInput) {
-                playerData.name = nameInput;
-            }
+            if (nameInput) playerData.name = nameInput;
+            
             playerData.race = document.getElementById('hero-race').value;
             playerData.className = document.getElementById('hero-class').value;
+            playerData.location = document.getElementById('hero-location').value;
 
-            // Rassen & Berufsboni anwenden
+            playerData.inventory = classItems[playerData.className] ? [...classItems[playerData.className]] : [];
+            playerData.quests = [ races[playerData.race].quest ];
+
             if (playerData.race === 'dwarf') { playerData.maxHp = 120; playerData.hp = 120; }
-            if (playerData.className === 'haendler') { playerData.gold += 20; }
-            if (classes[playerData.className]) {
-                playerData.equipment.rhand = classes[playerData.className].weapon;
-                if (classes[playerData.className].arrows) {
-                    playerData.equipment.arrows = classes[playerData.className].arrows;
-                }
+            if (playerData.className === 'magielehrling') {
+                playerData.maxMana = 80; playerData.mana = 80;
+                document.getElementById('mana-container').style.display = 'block';
+                document.getElementById('mana-bar').parentElement.style.display = 'block';
+            } else {
+                playerData.maxMana = 0; playerData.mana = 0;
+                document.getElementById('mana-container').style.display = 'none';
+                document.getElementById('mana-bar').parentElement.style.display = 'none';
             }
 
             document.getElementById('char-creation').classList.add('hidden');
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('sidebar').classList.remove('hidden');
+            document.getElementById('dice-widget').classList.remove('hidden');
 
             updateSidebar();
             updateGame('start');
@@ -466,12 +781,24 @@
         }
 
         function continueGame() {
+            initAudio();
+            playSfx('click');
             const saved = localStorage.getItem('pfad_des_helden_save');
             if (saved) {
                 playerData = JSON.parse(saved);
                 document.getElementById('main-menu').classList.add('hidden');
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
+                document.getElementById('dice-widget').classList.remove('hidden');
+                
+                if (playerData.className === 'magielehrling') {
+                    document.getElementById('mana-container').style.display = 'block';
+                    document.getElementById('mana-bar').parentElement.style.display = 'block';
+                } else {
+                    document.getElementById('mana-container').style.display = 'none';
+                    document.getElementById('mana-bar').parentElement.style.display = 'none';
+                }
+
                 updateSidebar();
                 updateGame(playerData.currentScene);
             }
@@ -482,61 +809,231 @@
             document.getElementById('continue-btn').disabled = false;
         }
 
+        function advanceTime(hours) {
+            playerData.hour += hours;
+            if (playerData.hour >= 24) playerData.hour -= 24;
+            updateSidebar();
+        }
+
+        function addXp(amount) {
+            playerData.xp += amount;
+            if (playerData.xp >= playerData.maxXp) {
+                playerData.level++;
+                playerData.xp -= playerData.maxXp;
+                playerData.maxXp = Math.floor(playerData.maxXp * 1.3);
+                playerData.skillPoints++;
+                playerData.maxHp += 20;
+                playerData.hp = playerData.maxHp;
+                alert(`🎉 Stufenaufstieg! Du bist jetzt Stufe ${playerData.level} und erhältst 1 Fertigkeitspunkt!`);
+            }
+            updateSidebar();
+        }
+
+        function rollD20() {
+            playSfx('dice');
+            let roll = Math.floor(Math.random() * 20) + 1;
+            document.getElementById('dice-result').innerText = `Ergebnis: ${roll}`;
+            return roll;
+        }
+
         function updateSidebar() {
+            const locObj = locations[playerData.location];
             const raceObj = races[playerData.race];
+
+            let h = playerData.hour;
+            let timeStr = `${h < 10 ? '0'+h : h}:00 Uhr`;
+            let icon = "☀️";
+            let timeName = "Tag";
+
+            if (h >= 6 && h < 18) { icon = "☀️"; timeName = "Tag (Gute Sicht)"; }
+            else if (h >= 18 && h < 21) { icon = "🌇"; timeName = "Abenddämmerung"; }
+            else { icon = "🌙"; timeName = "Nacht (Gefährlich)"; }
+
+            document.getElementById('time-icon').innerText = icon;
+            document.getElementById('time-display').innerText = `${timeStr} (${timeName})`;
+            document.getElementById('act-display').innerText = actsInfo[playerData.act].name;
+
+            document.getElementById('hero-avatar').innerText = raceObj.icon;
             document.getElementById('char-info').innerHTML = `
-                <strong>${playerData.name}</strong><br>
-                Rasse: ${raceObj.name}<br>
-                Beruf: <span style="text-transform: capitalize;">${playerData.className}</span><br>
-                HP: ${playerData.hp} / ${playerData.maxHp} ❤️<br>
-                <small style="color: #888;">Sprachen: ${raceObj.languages}</small>
+                <strong>${playerData.name}</strong> (Stufe ${playerData.level})<br>
+                ${locObj.name} | Akt ${playerData.act}
             `;
+
+            document.getElementById('skill-points').innerText = playerData.skillPoints;
+            const skillBox = document.getElementById('unlocked-skills');
+            if (playerData.unlockedSkills.length > 0) {
+                skillBox.innerHTML = playerData.unlockedSkills.map(s => `✨ ${s}`).join('<br>');
+            } else {
+                skillBox.innerHTML = `Keine Spezial-Skills aktiv`;
+            }
+
+            document.getElementById('companion-box').innerHTML = playerData.companion ? `<strong>${playerData.companion.icon} ${playerData.companion.name}</strong>` : `Keiner`;
+            document.getElementById('faction-box').innerHTML = `Fraktion: <strong>${playerData.faction.name}</strong><br>Ruf: 🌟 ${playerData.faction.rep}`;
+
+            const hpPercent = Math.max(0, (playerData.hp / playerData.maxHp) * 100);
+            document.getElementById('hp-bar').style.width = hpPercent + '%';
+            document.getElementById('hp-text').innerText = `${playerData.hp} / ${playerData.maxHp}`;
+
+            if (playerData.maxMana > 0) {
+                const manaPercent = Math.max(0, (playerData.mana / playerData.maxMana) * 100);
+                document.getElementById('mana-bar').style.width = manaPercent + '%';
+                document.getElementById('mana-text').innerText = `${playerData.mana} / ${playerData.maxMana}`;
+            }
+
+            const xpPercent = (playerData.xp / playerData.maxXp) * 100;
+            document.getElementById('xp-bar').style.width = xpPercent + '%';
+            document.getElementById('xp-text').innerText = `${playerData.xp} / ${playerData.maxXp}`;
+
+            const questBox = document.getElementById('quest-log');
+            questBox.innerHTML = '';
+            playerData.quests.forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'quest-box';
+                div.innerText = "🎯 " + q;
+                questBox.appendChild(div);
+            });
 
             document.getElementById('gold-count').innerText = playerData.gold;
             document.getElementById('silver-count').innerText = playerData.silver;
             document.getElementById('bronze-count').innerText = playerData.bronze;
 
-            document.getElementById('eq-helm').innerText = playerData.equipment.helm;
-            document.getElementById('eq-neck').innerText = playerData.equipment.neck;
-            document.getElementById('eq-chest').innerText = playerData.equipment.chest;
-            document.getElementById('eq-ring').innerText = playerData.equipment.ring;
-            document.getElementById('eq-legs').innerText = playerData.equipment.legs;
-            document.getElementById('eq-boots').innerText = playerData.equipment.boots;
-            document.getElementById('eq-rhand').innerText = playerData.equipment.rhand;
-            document.getElementById('eq-lhand').innerText = playerData.equipment.lhand;
-            document.getElementById('eq-arrows').innerText = playerData.equipment.arrows;
-
-            const invBox = document.getElementById('inventory-box');
-            invBox.innerHTML = '';
-            playerData.inventory.forEach(item => {
-                const li = document.createElement('li');
-                li.innerText = item;
-                invBox.appendChild(li);
-            });
+            const grid = document.getElementById('backpack-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 16; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'inventory-slot';
+                if (playerData.inventory[i]) {
+                    slot.innerText = playerData.inventory[i].icon;
+                    slot.setAttribute('data-tooltip', playerData.inventory[i].name);
+                }
+                grid.appendChild(slot);
+            }
         }
 
         function updateGame(sceneKey) {
-            const scene = scenes[sceneKey];
-            if (!scene) return;
-
-            playerData.currentScene = sceneKey;
-            if (scene.action) {
-                scene.action();
-            }
-
-            document.getElementById('story-box').innerText = scene.text;
+            playSfx('click');
+            const locObj = locations[playerData.location];
+            let baseText = `📍 ${locObj.name} | ${actsInfo[playerData.act].name}\n\n${actsInfo[playerData.act].desc}\n\nWas möchtest du tun?`;
+            document.getElementById('story-box').innerText = baseText;
 
             const choicesBox = document.getElementById('choices-box');
             choicesBox.innerHTML = '';
 
+            const scene = scenes[sceneKey] || scenes['start'];
             scene.choices.forEach(choice => {
                 const btn = document.createElement('button');
                 btn.className = 'choice-btn';
                 btn.innerText = choice.text;
-                btn.onclick = () => updateGame(choice.next);
+                btn.onclick = () => handleMenuAction(choice.actionType);
                 choicesBox.appendChild(btn);
             });
 
+            saveGame();
+        }
+
+        function handleMenuAction(type) {
+            playSfx('click');
+            if (type === 'combat') {
+                advanceTime(2);
+                startCombat();
+            } else if (type === 'enter_dungeon') {
+                advanceTime(3);
+                startDungeon();
+            } else if (type === 'rest') {
+                advanceTime(4);
+                playerData.hp = playerData.maxHp;
+                if (playerData.maxMana > 0) playerData.mana = playerData.maxMana;
+                alert("Du hast dich am Lagerfeuer ausgeruht. HP & Mana sind voll!");
+                updateSidebar();
+            } else if (type === 'boss') {
+                startBossFight();
+            } else if (type === 'board') {
+                openQuestBoard();
+            }
+        }
+
+        function startCombat() {
+            document.getElementById('story-box').innerText = `⚔️ Du hast in der Wildnis gekämpft und gesiegt! (+40 XP).`;
+            addXp(40);
+            saveGame();
+        }
+
+        function startDungeon() {
+            document.getElementById('story-box').innerText = `🗝️ Du hast das Verlies durchsucht und Beute gemacht (+25 Gold)!`;
+            playerData.gold += 25;
+            updateSidebar();
+            saveGame();
+        }
+
+        function startBossFight() {
+            let bossNames = { 1: "Schatten-General Varis", 2: "Der Uralte Steingolem", 3: "Der Verräter-Hauptmann", 4: "Drachenfürst Malakor" };
+            let currentBoss = bossNames[playerData.act];
+
+            document.getElementById('story-box').innerText = `👑 BOSS-KAMPF in Akt ${playerData.act}!\n\nDu stellst dich dem mächtigen ${currentBoss}!`;
+            const choicesBox = document.getElementById('choices-box');
+            choicesBox.innerHTML = '';
+
+            const btnFight = document.createElement('button');
+            btnFight.className = 'choice-btn';
+            btnFight.innerText = "⚔️ Angriff starten!";
+            btnFight.onclick = () => {
+                playSfx('click');
+                alert(`Du hast ${currentBoss} besiegt!`);
+                if (playerData.act < 4) {
+                    playerData.act++;
+                    alert(`🎉 Herzlichen Glückwunsch! Du erreichst ${actsInfo[playerData.act].name}!`);
+                } else {
+                    alert(`🏆 KAMPAGNE GESCHAFFT! Du hast die 10-Stunden-Hauptstory erfolgreich beendet!`);
+                }
+                updateGame('start');
+            };
+            choicesBox.appendChild(btnFight);
+        }
+
+        function openQuestBoard() {
+            playSfx('click');
+            document.getElementById('story-box').innerText = `📜 SCHWARZES BRETT\n\nVerfügbare Skillpunkte einlösen? (Aktuell: ${playerData.skillPoints} Pkt)`;
+            const choicesBox = document.getElementById('choices-box');
+            choicesBox.innerHTML = '';
+
+            if (playerData.skillPoints > 0) {
+                const btnSkill = document.createElement('button');
+                btnSkill.className = 'choice-btn';
+                btnSkill.innerText = "⚡ Skill erlernen: 'Mächtiger Hieb' (-1 Punkt)";
+                btnSkill.onclick = () => {
+                    playSfx('click');
+                    playerData.skillPoints--;
+                    playerData.unlockedSkills.push("Mächtiger Hieb");
+                    alert("Skill 'Mächtiger Hieb' erlernt!");
+                    updateSidebar();
+                    updateGame('start');
+                };
+                choicesBox.appendChild(btnSkill);
+            }
+
+            const btnBack = document.createElement('button');
+            btnBack.className = 'choice-btn';
+            btnBack.innerText = "Zurück";
+            btnBack.onclick = () => updateGame('start');
+            choicesBox.appendChild(btnBack);
+        }
+
+        function handleCustomInputKey(event) { if (event.key === 'Enter') submitCustomAction(); }
+        function submitCustomAction() {
+            const inputField = document.getElementById('player-action-input');
+            const actionText = inputField.value.trim().toLowerCase();
+            if (!actionText) return;
+
+            if (actionText.includes("rast") || actionText.includes("schlafen")) {
+                handleMenuAction('rest');
+            } else if (actionText.includes("boss")) {
+                startBossFight();
+            } else {
+                advanceTime(1);
+                document.getElementById('story-box').innerText = `📍 Aktion: "${actionText}" (+1 Std vergangen). Die Welt lebt weiter.`;
+            }
+            inputField.value = '';
+            updateSidebar();
             saveGame();
         }
     </script>
