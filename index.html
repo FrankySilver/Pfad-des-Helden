@@ -252,17 +252,18 @@
         }
         .story-text {
             font-size: 1.05rem;
-            line-height: 1.6;
+            line-height: 1.7;
             margin-bottom: 1.5rem;
-            min-height: 140px;
+            min-height: 250px;
+            max-height: 420px;
+            overflow-y: auto;
             white-space: pre-line;
+            background: #111116;
+            padding: 1.2rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
-        .choices {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-        }
+
         .choice-btn {
             background-color: #21212c;
             color: var(--text-color);
@@ -273,6 +274,7 @@
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.2s;
+            width: 100%;
         }
         .choice-btn:hover { background-color: var(--accent-color); color: #000; }
 
@@ -284,14 +286,14 @@
             padding-top: 1rem;
         }
         .custom-input-box input {
-            flex: 1; padding: 0.8rem;
-            background: #111116; border: 1px solid var(--border-color);
+            flex: 1; padding: 0.9rem;
+            background: #111116; border: 1px solid var(--accent-color);
             color: white; border-radius: 4px; font-size: 1rem;
         }
         .custom-input-box button {
             background-color: var(--highlight); color: #000;
-            border: none; padding: 0 1.2rem; font-weight: bold;
-            border-radius: 4px; cursor: pointer;
+            border: none; padding: 0 1.5rem; font-weight: bold;
+            border-radius: 4px; cursor: pointer; font-size: 1rem;
         }
 
         .dice-widget {
@@ -332,12 +334,12 @@
         }
         .modal-content {
             background: var(--card-bg); border: 2px solid var(--accent-color);
-            border-radius: 8px; padding: 2rem; width: 650px; max-height: 85vh;
+            border-radius: 8px; padding: 2rem; width: 700px; max-height: 85vh;
             overflow-y: auto; box-shadow: 0 5px 25px rgba(0,0,0,0.8);
         }
-        .achievement-item, .quest-modal-item {
-            background: #1e1e28; padding: 0.5rem; border-radius: 4px;
-            margin-bottom: 0.4rem; font-size: 0.85rem; border-left: 3px solid #555;
+        .achievement-item, .quest-modal-item, .npc-item {
+            background: #1e1e28; padding: 0.6rem; border-radius: 4px;
+            margin-bottom: 0.5rem; font-size: 0.85rem; border-left: 3px solid #555;
         }
         .achievement-unlocked { border-left-color: var(--highlight); background: #1a2624; }
         .achievement-hard { border-left-color: #e74c3c; }
@@ -364,6 +366,7 @@
     <header>
         <h1>🛡️ Pfad des Helden</h1>
         <div class="header-right">
+            <button class="icon-btn hidden" id="npc-btn" onclick="openNpcModal()" title="Charaktere & Händler treffen">👥</button>
             <button class="icon-btn hidden" id="questlog-btn" onclick="openQuestModal()" title="Quest-Logbuch">📜</button>
             <button class="icon-btn hidden" id="handbook-btn" onclick="openHandbook()" title="Helden-Handbuch & Ruhmeshalle">📖</button>
             <button class="icon-btn hidden" id="quit-to-menu-btn" onclick="quitToMainMenu()" title="Ins Hauptmenü zurückkehren">🚪</button>
@@ -473,6 +476,7 @@
                         <input type="range" id="sfx-slider" min="0" max="100" value="80" oninput="updateSfxVolume(this.value)">
                     </div>
                     <button class="choice-btn" onclick="closeSettings()" style="text-align: center; width: 100%; margin-top: 1rem;">Zurück</button>
+                    <button class="choice-btn" onclick="returnToMainMenuFromSettings()" style="text-align: center; width: 100%; margin-top: 0.6rem; background-color: #331111; border-color: #e74c3c;">🏠 Zum Hauptmenü</button>
                 </div>
 
                 <!-- Charaktererstellung -->
@@ -528,14 +532,13 @@
                     <button class="choice-btn" onclick="createHero()" style="text-align: center; margin-top: 1rem; background-color: var(--accent-color); color: #000; font-weight: bold;">Kampagne starten</button>
                 </div>
 
-                <!-- Spielansicht -->
+                <!-- Text-RPG Spielansicht -->
                 <div id="game-view" class="hidden" style="display: flex; flex-direction: column; flex: 1;">
                     <div class="story-text" id="story-box"></div>
-                    <div class="choices" id="choices-box"></div>
                     
                     <div class="custom-input-box">
-                        <input type="text" id="player-action-input" placeholder="Tippe eine Aktion (z.B. 'Jagen', 'Bosskampf', 'Rasten')..." onkeydown="handleCustomInputKey(event)">
-                        <button onclick="submitCustomAction()">Ausführen</button>
+                        <input type="text" id="player-action-input" placeholder="Tippe, was du tun möchtest (z.B. 'jagen', 'dungeon', 'händler', 'schmiede', 'schlafen', 'boss')..." onkeydown="handleCustomInputKey(event)">
+                        <button onclick="submitCustomAction()">Handeln</button>
                     </div>
                 </div>
             </div>
@@ -549,7 +552,7 @@
         </div>
     </div>
 
-    <!-- Handbuch & Ruhmeshalle Modal -->
+    <!-- Modals -->
     <div id="handbook-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">📖 Helden-Handbuch & Ruhmeshalle</h3>
@@ -565,7 +568,6 @@
         </div>
     </div>
 
-    <!-- Quest-Log Modal -->
     <div id="questlog-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">📜 Quest-Logbuch</h3>
@@ -574,7 +576,15 @@
         </div>
     </div>
 
-    <!-- Begleiter-Verwaltungs-Modal -->
+    <div id="npc-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">👥 NPCs & Spezialisierte Händler</h3>
+            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Sprich mit Bewohnern, nimm Aufträge an oder handle mit spezialisierten Händlern.</p>
+            <div id="npc-list-content" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem;"></div>
+            <button class="choice-btn" onclick="closeNpcModal()" style="text-align: center; width: 100%;">Schließen</button>
+        </div>
+    </div>
+
     <div id="companion-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🐾 Gefährten-Stall (Max. 2 Aktiv)</h3>
@@ -583,7 +593,6 @@
         </div>
     </div>
 
-    <!-- Handwerksviertel / Waffen-Schmiede Modal -->
     <div id="crafting-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🔨 Handwerksviertel & Waffenschmiede</h3>
@@ -635,8 +644,9 @@
             faction: { name: "Keine (Neutral)", rank: "Mitgliedlos", rep: 0 },
             inventory: [],
             quests: [
-                { title: "Die Prüfung des Beginns", desc: "Überlebe in der Wildnis und untersuche das Startgebiet.", completed: false },
-                { title: "Rassenauftrag", desc: "Erfülle das Schicksal deiner Rasse.", completed: false }
+                { id: 'q1', title: "Die Prüfung des Beginns", desc: "Überlebe in der Wildnis, sammle Ressourcen und beweise dich.", completed: false },
+                { id: 'q2', title: "Rassenauftrag", desc: "Erfülle das Schicksal deiner gewählten Rasse.", completed: false },
+                { id: 'q3', title: "Der verschollene Händler", desc: "Finde Hinweise auf den vermissten Karawanenführer im Aschenwald.", completed: false }
             ],
             equipment: {
                 helm: { name: "Keiner", icon: "🛡️" },
@@ -649,7 +659,14 @@
             currentScene: 'start'
         };
 
-        // Rohstoffe & Waffen-Katalog
+        // Mehrere einzigartige NPCs & Händler
+        const worldNpcs = [
+            { id: 'npc_vane', name: "Händler Vane", title: "Allwaren & Proviant", icon: "🛒", desc: "Handelt mit Tränken, Werkzeugen und Rüstteilen.", type: 'merchant' },
+            { id: 'npc_thorgar', name: "Meisterschmied Thorgar", title: "Waffenschmiede Eisenhall", icon: "⚒️", desc: "Verkauft Basiswaffen und schmiedet legendäre Artefakte aus Erzen.", type: 'forge' },
+            { id: 'npc_lyra', name: "Alchemistin Lyra", title: "Tränke & Elixiere", icon: "🧪", desc: "Braut Heil- und Manatränke für deine Reisen.", type: 'alchemist' },
+            { id: 'npc_zylar', name: "Mystiker Zylar", title: "Weiser & Questgeber", icon: "🔮", desc: "Gibt tiefere Einblicke in die Schattenkriege der 4 Akte.", type: 'questgiver' }
+        ];
+
         const allMaterials = [
             { id: 'wood_oak', name: "Eichenholz", icon: "🪵", type: "wood" },
             { id: 'wood_ash', name: "Escheholz", icon: "🪵", type: "wood" },
@@ -660,15 +677,11 @@
             { id: 'ore_adamant', name: "Adamanterz", icon: "💎", type: "ore" }
         ];
 
-        // Kaufen & Herstellbare Waffen
         const weaponShopAndForge = [
-            // Kaufbare Standardwaffen
             { id: 'w_bronzesword', name: "Einfaches Bronzeschwert", icon: "🗡️", cost: 25, type: 'buy', slot: 'rhand' },
             { id: 'w_ironaxe', name: "Eisenaxt", icon: "🪓", cost: 45, type: 'buy', slot: 'rhand' },
             { id: 'w_huntersbow', name: "Jagdbogen", icon: "🏹", cost: 50, type: 'buy', slot: 'rhand' },
             { id: 'w_staff', name: "Magierstab", icon: "🪄", cost: 60, type: 'buy', slot: 'rhand' },
-
-            // Legendäre Waffen (Nur über seltene Materialien herstellbar)
             { id: 'w_mithrilblade', name: "Mithril-Klinge der Ewigkeit", icon: "⚔️", req: { ore_mithril: 2, wood_oak: 1 }, goldReq: 100, type: 'craft', slot: 'rhand' },
             { id: 'w_adamantaxe', name: "Adamant-Kriegsaxt", icon: "🪓", req: { ore_adamant: 2, wood_mahogany: 1 }, goldReq: 200, type: 'craft', slot: 'rhand' },
             { id: 'w_elvenbow', name: "Elfen-Meisterbogen", icon: "🏹", req: { wood_ash: 3, ore_iron: 2 }, goldReq: 150, type: 'craft', slot: 'rhand' }
@@ -721,42 +734,11 @@
         }
         playerData.achievements = initAchievements();
 
-        const randomEncounters = [
-            { title: "Mysteriöser Schrein", text: "Du findest einen alten Schrein (+10 HP).", effect: () => { playerData.maxHp += 10; playerData.hp += 10; } },
-            { title: "Verirrter Händler", text: "Ein Händler schenkt dir 15 Gold.", effect: () => { playerData.gold += 15; playerData.stats.totalGoldFound += 15; } },
-            { title: "Wegelagerer-Hinterhalt", text: "Banditen greifen dich an!", effect: () => { playerData.stats.monstersKilled++; addXp(40); } },
-            { title: "Versteckter Schatz", text: "Truhe mit 30 Goldmünzen gefunden!", effect: () => { playerData.gold += 30; playerData.stats.totalGoldFound += 30; } },
-            { title: "Holzfäller-Fund", text: "Du entdeckst seltenes Eichenholz.", effect: () => { playerData.inventory.push({ name: "Eichenholz", icon: "🪵", type: "wood", id: "wood_oak" }); } },
-            { title: "Erzader im Felsen", text: "Du schürfst wertvolles Mithrilerz!", effect: () => { playerData.inventory.push({ name: "Mithrilerz", icon: "✨", type: "ore", id: "ore_mithril" }); } },
-            { title: "Wandernder Barde", text: "Ein Barde singt ein Lied (+30 XP).", effect: () => { addXp(30); } },
-            { title: "Uralte Ruine", text: "Geheimes Wissen entdeckt (+50 XP).", effect: () => { addXp(50); } },
-            { title: "Verlassenes Lager", text: "10 Silbermünzen gefunden.", effect: () => { playerData.silver += 10; } },
-            { title: "Wilder Begleiter", text: "Ein neues Tier streift durchs Unterholz!", effect: () => {
-                let unowned = allCompanions.filter(c => !playerData.unlockedCompanions.some(uc => uc.id === c.id));
-                if (unowned.length > 0) {
-                    let newComp = unowned[Math.floor(Math.random() * unowned.length)];
-                    playerData.unlockedCompanions.push(newComp);
-                    playerData.stats.companionsFound++;
-                    alert(`🐾 Begleiter '${newComp.name} (${newComp.icon})' entdeckt!`);
-                }
-            }},
-            { title: "Starker Sturm", text: "Du musst Schutz suchen (+3 Std vergangen).", effect: () => { advanceTime(3); } },
-            { title: "Glückspilz", text: "Alte Münze gefunden (+10 Gold).", effect: () => { playerData.gold += 10; playerData.stats.totalGoldFound += 10; } },
-            { title: "Magischer Nebel", text: "Du wirst desorientiert (+2 Std vergangen).", effect: () => { advanceTime(2); } },
-            { title: "Einsamer Wolf", text: "Wolf besiegt (+25 XP).", effect: () => { playerData.stats.monstersKilled++; addXp(25); } },
-            { title: "Adamant-Fund", text: "Du entdeckst seltenes Adamant-Erz!", effect: () => { playerData.inventory.push({ name: "Adamanterz", icon: "💎", type: "ore", id: "ore_adamant" }); } },
-            { title: "Weiser Eremit", text: "Tipps fürs Überleben erhalten (+40 XP).", effect: () => { addXp(40); } },
-            { title: "Mahagoni-Fund", text: "Du findest festes Mahagoniholz.", effect: () => { playerData.inventory.push({ name: "Mahagoniholz", icon: "🪵", type: "wood", id: "wood_mahogany" }); } },
-            { title: "Geheimnisvoller Händler", text: "Wunden geheilt.", effect: () => { playerData.hp = playerData.maxHp; } },
-            { title: "Raben-Omen", text: "Ankündigung von Ruhm (+60 XP).", effect: () => { addXp(60); } },
-            { title: "Eisen-Fund", text: "Du findest robustes Eisenerz.", effect: () => { playerData.inventory.push({ name: "Eisenerz", icon: "⛏️", type: "ore", id: "ore_iron" }); } }
-        ];
-
         const actsInfo = {
-            1: { name: "Akt 1: Der Schatten erwacht", desc: "Untersuche die Unruhen im Startgebiet." },
-            2: { name: "Akt 2: Die vergessenen Minen", desc: "Reise in die Tiefen des Erdbodens." },
-            3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Bereite den Angriff auf den Hauptfeind vor." },
-            4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Stelle dich dem Drachenfürst Malakor!" }
+            1: { name: "Akt 1: Der Schatten erwacht", desc: "Du befindest dich im ersten Akt. Die Welt ist unruhig, Gerüchte über dunkle Kreaturen machen die Runde. Erforsche die Wildnis, erfülle Quests, besuche NPCs und Händler." },
+            2: { name: "Akt 2: Die vergessenen Minen", desc: "Du bist in die Tiefen des Erdbodens vorgedrungen. Hier lauern Gefahren in der Dunkelheit und mächtige Erze warten." },
+            3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Der Konflikt spitzt sich zu. Schließe Bündnisse und bereite den Krieg vor." },
+            4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Die letzte Stunde hat geschlagen. Stelle dich dem Drachenfürst Malakor!" }
         };
 
         const races = {
@@ -782,23 +764,9 @@
 
         const locations = {
             aschenwald: { name: "Aschenwald", desc: "Nebelverhangener Wald." },
-            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung (Mit Waffenschmiede)." },
-            sonnendorn: { name: "Sonnendorn", desc: "Handels-Hafenstadt (Mit Waffenmarkt)." },
+            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung (Mit Schmiede & Händlern)." },
+            sonnendorn: { name: "Sonnendorn", desc: "Handels-Hafenstadt (Mit Markt & Alchemisten)." },
             rabenfels: { name: "Rabenfels", desc: "Klippen-Hochburg." }
-        };
-
-        const scenes = {
-            start: {
-                text: "Deine Kampagne hat begonnen. Wähle deine nächste Aktion:",
-                choices: [
-                    { text: "🌲 In die Wildnis gehen & jagen (15% Event-Chance, +2 Std)", actionType: 'combat' },
-                    { text: "🗝️ Verlies (Dungeon) betreten (+3 Std)", actionType: 'enter_dungeon' },
-                    { text: "🔨 Waffenschmiede & Handwerksviertel besuchen", actionType: 'crafting' },
-                    { text: "⛺ Am Lagerfeuer ausruhen (+4 Std, heilt HP)", actionType: 'rest' },
-                    { text: "👑 Den Boss von Akt " + playerData.act + " herausfordern", actionType: 'boss' },
-                    { text: "📜 Zum Schwarzen Brett (Quests)", actionType: 'board' }
-                ]
-            }
         };
 
         let audioCtx = null;
@@ -879,6 +847,20 @@
             }
         }
 
+        function returnToMainMenuFromSettings() {
+            playSfx('click');
+            document.getElementById('settings-menu').classList.add('hidden');
+            document.getElementById('game-view').classList.add('hidden');
+            document.getElementById('sidebar').classList.add('hidden');
+            document.getElementById('dice-widget').classList.add('hidden');
+            document.getElementById('quit-to-menu-btn').classList.add('hidden');
+            document.getElementById('handbook-btn').classList.add('hidden');
+            document.getElementById('questlog-btn').classList.add('hidden');
+            document.getElementById('npc-btn').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+            checkSaveGame();
+        }
+
         function openHandbook() {
             playSfx('click');
             const hours = Math.floor(playerData.playTimeMinutes / 60);
@@ -923,13 +905,59 @@
         }
         function closeQuestModal() { playSfx('click'); document.getElementById('questlog-modal').classList.add('hidden'); }
 
+        // NPC Modal & Interaktionen
+        function openNpcModal() {
+            playSfx('click');
+            let content = document.getElementById('npc-list-content');
+            content.innerHTML = '';
+
+            worldNpcs.forEach(npc => {
+                let div = document.createElement('div');
+                div.className = 'npc-item';
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                div.innerHTML = `<div><strong>${npc.icon} ${npc.name}</strong> (${npc.title})<br><small>${npc.desc}</small></div>`;
+
+                let btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.style.padding = '0.3rem 0.8rem';
+                btn.style.fontSize = '0.8rem';
+                btn.innerText = npc.type === 'forge' ? 'Schmiede' : (npc.type === 'merchant' ? 'Handeln' : 'Sprechen');
+                btn.onclick = () => {
+                    playSfx('click');
+                    if (npc.type === 'forge') {
+                        closeNpcModal();
+                        openCraftingModal();
+                    } else if (npc.type === 'merchant') {
+                        alert(`${npc.name}: "Ich habe stets Tränke und Proviant auf Lager, ${playerData.name}!"`);
+                        if(playerData.gold >= 20) {
+                            if(confirm("Möchtest du für 20 Gold einen Heiltrank kaufen?")) {
+                                playerData.gold -= 20;
+                                playerData.inventory.push({ name: "Heiltrank", icon: "🧪", type: "potion" });
+                                updateSidebar();
+                                alert("Heiltrank gekauft!");
+                            }
+                        }
+                    } else {
+                        alert(`${npc.name}: "Die Schatten wachsen, Held. Sei vorsichtig in der Wildnis von ${locations[playerData.location].name}!"`);
+                    }
+                };
+                div.appendChild(btn);
+                content.appendChild(div);
+            });
+
+            document.getElementById('npc-modal').classList.remove('hidden');
+        }
+        function closeNpcModal() { playSfx('click'); document.getElementById('npc-modal').classList.add('hidden'); }
+
         function openCompanionManager() {
             playSfx('click');
             let content = document.getElementById('companion-list-content');
             content.innerHTML = `<p style="font-size:0.8rem; color:#aaa;">Aktive Begleiter: ${playerData.activeCompanions.length} / 2</p>`;
             
             if (playerData.unlockedCompanions.length === 0) {
-                content.innerHTML += `<p style="color:#e74c3c;">Du hast noch keine Begleiter gefunden!</p>`;
+                content.innerHTML += `<p style="color:#e74c3c;">Du hast noch keine Begleiter gefunden! Suche in der Wildnis.</p>`;
             } else {
                 playerData.unlockedCompanions.forEach(c => {
                     let isActive = playerData.activeCompanions.some(ac => ac.id === c.id);
@@ -967,7 +995,6 @@
         }
         function closeCompanionManager() { playSfx('click'); document.getElementById('companion-modal').classList.add('hidden'); }
 
-        // Waffen-Schmiede & Kauf-System
         function openCraftingModal() {
             playSfx('click');
             let content = document.getElementById('crafting-list-content');
@@ -1005,7 +1032,7 @@
                 if (playerData.gold >= item.cost) {
                     playerData.gold -= item.cost;
                     playerData.equipment.rhand = { name: item.name, icon: item.icon };
-                    alert(`Du hast '${item.name}' erfolgreich gekauft und ausgerüstet!`);
+                    alert(`Du hast '${item.name}' gekauft und ausgerüstet!`);
                 } else {
                     alert("Nicht genug Gold!");
                 }
@@ -1014,7 +1041,6 @@
                     alert(`Nicht genug Gold (${item.goldReq} Gold benötigt)!`);
                     return;
                 }
-                // Prüfen ob Materialien im Inventar sind
                 let hasAllMats = true;
                 for (let [matId, neededQty] of Object.entries(item.req)) {
                     let count = playerData.inventory.filter(i => i.id === matId).length;
@@ -1025,11 +1051,10 @@
                 }
 
                 if (!hasAllMats) {
-                    alert("Dir fehlen die erforderlichen seltenen Materialien (Erze/Hölzer) im Rucksack!");
+                    alert("Dir fehlen seltene Materialien im Rucksack!");
                     return;
                 }
 
-                // Materialien abziehen
                 playerData.gold -= item.goldReq;
                 for (let [matId, neededQty] of Object.entries(item.req)) {
                     for (let q = 0; q < neededQty; q++) {
@@ -1039,7 +1064,7 @@
                 }
 
                 playerData.equipment.rhand = { name: item.name, icon: item.icon };
-                alert(`🔥 Meisterleistung! Du hast die legendäre Waffe '${item.name}' geschmiedet und ausgerüstet!`);
+                alert(`🔥 Meisterleistung! Du hast '${item.name}' geschmiedet!`);
             }
             updateSidebar();
             openCraftingModal();
@@ -1067,6 +1092,7 @@
                 document.getElementById('quit-to-menu-btn').classList.add('hidden');
                 document.getElementById('handbook-btn').classList.add('hidden');
                 document.getElementById('questlog-btn').classList.add('hidden');
+                document.getElementById('npc-btn').classList.add('hidden');
                 document.getElementById('main-menu').classList.remove('hidden');
                 checkSaveGame();
             }
@@ -1147,10 +1173,11 @@
             document.getElementById('quit-to-menu-btn').classList.remove('hidden');
             document.getElementById('handbook-btn').classList.remove('hidden');
             document.getElementById('questlog-btn').classList.remove('hidden');
+            document.getElementById('npc-btn').classList.remove('hidden');
 
             startPlayTimeCounter();
             updateSidebar();
-            updateGame('start');
+            initStoryWelcome();
             saveGame();
         }
 
@@ -1163,10 +1190,11 @@
                 document.getElementById('main-menu').classList.add('hidden');
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
-                document.getElementById('dice-widget').classList.remove('hidden');
+                document.getElementById('dice-widget').classList.add('hidden');
                 document.getElementById('quit-to-menu-btn').classList.remove('hidden');
                 document.getElementById('handbook-btn').classList.remove('hidden');
                 document.getElementById('questlog-btn').classList.remove('hidden');
+                document.getElementById('npc-btn').classList.remove('hidden');
                 
                 if (playerData.className === 'magielehrling') {
                     document.getElementById('mana-container').style.display = 'block';
@@ -1178,7 +1206,7 @@
 
                 startPlayTimeCounter();
                 updateSidebar();
-                updateGame(playerData.currentScene);
+                appendStory(`📜 Dein Abenteuer wurde fortgesetzt in ${locations[playerData.location].name}. Was gedenkst du zu tun?`);
             }
         }
 
@@ -1211,15 +1239,20 @@
                 playerData.skillPoints++;
                 playerData.maxHp += 20;
                 playerData.hp = playerData.maxHp;
-                alert(`🎉 Stufenaufstieg! Du bist jetzt Stufe ${playerData.level}!`);
+                appendStory(`🎉 Stufenaufstieg! Du bist jetzt Stufe ${playerData.level}! Deine Lebenskraft wurde gestärkt.`);
             }
             updateSidebar();
         }
 
+        function rollD25() {
+            return Math.floor(Math.random() * 20) + 1;
+        }
+
         function rollD20() {
             playSfx('dice');
-            let roll = Math.floor(Math.random() * 20) + 1;
+            let roll = rollD25();
             document.getElementById('dice-result').innerText = `Ergebnis: ${roll}`;
+            appendStory(`🎲 Du hast einen d20 gewürfelt und eine **${roll}** erzielt!`);
             return roll;
         }
 
@@ -1290,154 +1323,167 @@
             }
         }
 
-        function updateGame(sceneKey) {
-            playSfx('click');
-            const locObj = locations[playerData.location];
-            let baseText = `📍 ${locObj.name} | ${actsInfo[playerData.act].name}\n\n${actsInfo[playerData.act].desc}\n\nWas möchtest du tun?`;
-            document.getElementById('story-box').innerText = baseText;
-
-            const choicesBox = document.getElementById('choices-box');
-            choicesBox.innerHTML = '';
-
-            const scene = scenes[sceneKey] || scenes['start'];
-            scene.choices.forEach(choice => {
-                const btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.innerText = choice.text;
-                btn.onclick = () => handleMenuAction(choice.actionType);
-                choicesBox.appendChild(btn);
-            });
-
-            saveGame();
+        function initStoryWelcome() {
+            let storyBox = document.getElementById('story-box');
+            storyBox.innerText = `🛡️ Willkommen auf dem 'Pfad des Helden', ${playerData.name}!\n\n${actsInfo[playerData.act].desc}\n\nDu befindest dich im ${locations[playerData.location].name}. Klicke oben auf das Gruppen-Symbol (👥), um NPCs und Händler zu treffen, oder tippe deine Aktionen in das Textfeld unten ein (z.B. 'jagen', 'dungeon', 'schmiede', 'schlafen').`;
         }
 
-        function handleMenuAction(type) {
+        function appendStory(text) {
+            let storyBox = document.getElementById('story-box');
+            storyBox.innerText += "\n\n" + text;
+            storyBox.scrollTop = storyBox.scrollHeight;
+        }
+
+        function handleCustomInputKey(event) { if (event.key === 'Enter') submitCustomAction(); }
+
+        function submitCustomAction() {
+            const inputField = document.getElementById('player-action-input');
+            const actionText = inputField.value.trim().toLowerCase();
+            if (!actionText) return;
+
             playSfx('click');
-            if (type === 'combat') {
+
+            if (actionText.includes("jagen") || actionText.includes("wildnis") || actionText.includes("wald") || actionText.includes("suche")) {
                 advanceTime(2);
-                checkRandomEncounterOrCombat();
-            } else if (type === 'enter_dungeon') {
+                performHuntingCheck();
+            } 
+            else if (actionText.includes("dungeon") || actionText.includes("verlies") || actionText.includes("höhle")) {
                 advanceTime(3);
-                startDungeon();
-            } else if (type === 'crafting') {
+                performDungeonCheck();
+            } 
+            else if (actionText.includes("schmiede") || actionText.includes("handwerk") || actionText.includes("waffen")) {
                 openCraftingModal();
-            } else if (type === 'rest') {
+                appendStory(`🔨 Du betrittst die Schmiede im Handwerksviertel.`);
+            } 
+            else if (actionText.includes("händler") || actionText.includes("npc") || actionText.includes("shop")) {
+                openNpcModal();
+                appendStory(`👥 Du suchst den Marktplatz auf, um mit den Bewohnern und Händlern zu sprechen.`);
+            }
+            else if (actionText.includes("schlaf") || actionText.includes("rast") || actionText.includes("lagerfeuer")) {
                 advanceTime(4);
                 playerData.hp = playerData.maxHp;
                 if (playerData.maxMana > 0) playerData.mana = playerData.maxMana;
-                alert("Du hast dich ausgeruht. HP & Mana sind voll!");
-                updateSidebar();
-            } else if (type === 'boss') {
+                appendStory(`⛺ Du ruhst dich am Lagerfeuer aus. Deine Lebenskraft und Mana sind voll aufgeladen!`);
+            } 
+            else if (actionText.includes("boss") || actionText.includes("endgegner")) {
                 startBossFight();
-            } else if (type === 'board') {
+            } 
+            else if (actionText.includes("quest") || actionText.includes("brett")) {
                 openQuestBoard();
+            } 
+            else {
+                advanceTime(1);
+                let roll = rollD25();
+                playSfx('dice');
+                if (roll >= 10) {
+                    appendStory(`📍 Aktion: "${actionText}". Würfelwurf d20: **${roll}** (Erfolg!). Du kommst voran.`);
+                    addXp(15);
+                } else {
+                    appendStory(`📍 Aktion: "${actionText}". Würfelwurf d20: **${roll}** (Misserfolg). Die Umstände waren ungünstig.`);
+                }
             }
+
+            inputField.value = '';
+            updateSidebar();
+            saveGame();
         }
 
-        function checkRandomEncounterOrCombat() {
-            let roll = Math.random();
-            if (roll < 0.15) {
-                playerData.stats.eventsTriggered++;
-                let event = randomEncounters[Math.floor(Math.random() * randomEncounters.length)];
-                event.effect();
-                document.getElementById('story-box').innerText = `✨ ZUFÄLLIGES EREIGNIS (15% Chance): ${event.title}\n\n${event.text}`;
+        function performHuntingCheck() {
+            let roll = rollD25();
+            playSfx('dice');
+            appendStory(`🏹 Du gehst auf Jagd in der Wildnis. Würfelwurf d20: **${roll}**...`);
+
+            let subRoll = Math.random();
+
+            if (roll >= 14) {
+                if (subRoll < 0.4) {
+                    playerData.stats.monstersKilled++;
+                    let xpGain = 60;
+                    appendStory(`✨ **Großer Jagderfolg!** Du erlegst ein wildes Alphatier und erbeutest wertvolle Trophäen (+${xpGain} XP).`);
+                    addXp(xpGain);
+                } else if (subRoll < 0.7) {
+                    let foundMat = allMaterials[Math.floor(Math.random() * allMaterials.length)];
+                    playerData.inventory.push({ name: foundMat.name, icon: foundMat.icon, type: foundMat.type, id: foundMat.id });
+                    appendStory(`✨ **Glücksfund!** Im Unterholz entdeckst du wertvolles Material: **1x ${foundMat.name}**!`);
+                } else {
+                    playerData.stats.eventsTriggered++;
+                    appendStory(`✨ **Ereignis:** Du triffst auf wandernde Händler, die dir eine Geschichte erzählen.`);
+                }
+            } else if (roll >= 8) {
+                if (subRoll < 0.6) {
+                    playerData.stats.monstersKilled++;
+                    let xpGain = 35;
+                    appendStory(`⚔️ Du bestehst ein kurzes Scharmützel gegen Waldkreaturen (+${xpGain} XP).`);
+                    addXp(xpGain);
+                } else {
+                    playerData.gold += 10;
+                    playerData.stats.totalGoldFound += 10;
+                    appendStory(`💰 Du findest im Moos 10 verlorene Goldmünzen.`);
+                }
             } else {
-                playerData.stats.monstersKilled++;
-                let isNight = playerData.hour >= 21 || playerData.hour < 6;
-                let xpGain = isNight ? 80 : 40;
-                document.getElementById('story-box').innerText = `⚔️ Du hast in der Wildnis gekämpft und gesiegt! (+${xpGain} XP${isNight ? ' [Nacht-Bonus]' : ''}).`;
-                addXp(xpGain);
+                if (subRoll < 0.5) {
+                    appendStory(`❌ **Keine Spur.** Die Wildnis bleibt stumm, du kehrst leer aus.`);
+                } else {
+                    let dmg = 15;
+                    playerData.hp = Math.max(1, playerData.hp - dmg);
+                    appendStory(`⚠️ **Hinterhalt!** Goblins greifen dich an! Du entkommst, erleidest aber **${dmg} Schaden**.`);
+                }
             }
-            updateSidebar();
-            saveGame();
         }
 
-        function startDungeon() {
-            playerData.stats.dungeonsCleared++;
-            // Dungeons geben auch Chance auf Holz/Erz
-            let foundMat = allMaterials[Math.floor(Math.random() * allMaterials.length)];
-            playerData.inventory.push({ name: foundMat.name, icon: foundMat.icon, type: foundMat.type, id: foundMat.id });
-            
-            document.getElementById('story-box').innerText = `🗝️ Du hast das Verlies durchsucht und Beute gemacht (+25 Gold, 1x ${foundMat.name})!`;
-            playerData.gold += 25;
-            playerData.stats.totalGoldFound += 25;
-            updateSidebar();
-            saveGame();
+        function performDungeonCheck() {
+            let roll = rollD25();
+            playSfx('dice');
+            appendStory(`🗝️ Erkundung des Dungeons. Würfelwurf d20: **${roll}**...`);
+
+            if (roll >= 10) {
+                playerData.stats.dungeonsCleared++;
+                let foundMat = allMaterials[Math.floor(Math.random() * allMaterials.length)];
+                playerData.inventory.push({ name: foundMat.name, icon: foundMat.icon, type: foundMat.type, id: foundMat.id });
+                playerData.gold += 30;
+                playerData.stats.totalGoldFound += 30;
+                appendStory(`🎉 **Dungeon geschafft!** Du plünderst eine Truhe mit 30 Gold und 1x ${foundMat.name}!`);
+            } else {
+                let trapDmg = 20;
+                playerData.hp = Math.max(1, playerData.hp - trapDmg);
+                appendStory(`💥 **Falle!** Du übersiehst eine Stolperfalle (-${trapDmg} HP) und musst flüchten.`);
+            }
         }
 
         function startBossFight() {
             let bossNames = { 1: "Schatten-General Varis", 2: "Der Uralte Steingolem", 3: "Der Verräter-Hauptmann", 4: "Drachenfürst Malakor" };
             let currentBoss = bossNames[playerData.act];
 
-            document.getElementById('story-box').innerText = `👑 BOSS-KAMPF in Akt ${playerData.act}!\n\nDu stellst dich dem mächtigen ${currentBoss}!`;
-            const choicesBox = document.getElementById('choices-box');
-            choicesBox.innerHTML = '';
-
-            const btnFight = document.createElement('button');
-            btnFight.className = 'choice-btn';
-            btnFight.innerText = "⚔️ Angriff starten!";
-            btnFight.onclick = () => {
-                playSfx('click');
+            appendStory(`👑 BOSS-KAMPF in Akt ${playerData.act}: ${currentBoss}!`);
+            
+            let roll = rollD20();
+            if (roll + Math.floor(playerData.level / 2) >= 11) {
                 playerData.stats.bossesKilled++;
-                alert(`Du hast ${currentBoss} besiegt!`);
+                appendStory(`🏆 **Sieg!** Du hast ${currentBoss} bezwingen können!`);
                 if (playerData.act < 4) {
                     playerData.act++;
-                    alert(`🎉 Herzlichen Glückwunsch! Du erreichst ${actsInfo[playerData.act].name}!`);
+                    appendStory(`🎉 Du erreichst ${actsInfo[playerData.act].name}!`);
                 } else {
-                    alert(`🏆 KAMPAGNE GESCHAFFT! Du hast die 10-Stunden-Hauptstory erfolgreich beendet!`);
+                    appendStory(`🌟 **KAMPAGNE GESCHAFFT!** Du hast das Spiel erfolgreich beendet!`);
                 }
-                updateGame('start');
-            };
-            choicesBox.appendChild(btnFight);
+            } else {
+                playerData.stats.deaths++;
+                playerData.hp = Math.max(1, playerData.hp - 40);
+                appendStory(`💀 **Niederlage!** Der Boss war zu stark (-40 HP).`);
+            }
         }
 
         function openQuestBoard() {
-            playSfx('click');
-            document.getElementById('story-box').innerText = `📜 SCHWARZES BRETT\n\nNimm Nebenquests an, um Gold und Ruhm zu erlangen!`;
-            const choicesBox = document.getElementById('choices-box');
-            choicesBox.innerHTML = '';
-
-            const btnQ = document.createElement('button');
-            btnQ.className = 'choice-btn';
-            btnQ.innerText = "Annehmen: Nebenquest erledigen (+1 Quest, +35 Gold)";
-            btnQ.onclick = () => {
-                playSfx('click');
+            let roll = rollD25();
+            if (roll >= 8) {
                 playerData.stats.questsCompleted++;
-                playerData.gold += 35;
-                playerData.stats.totalGoldFound += 35;
-                playerData.quests.push({ title: "Nebenquest erledigt", desc: "Banditen im Umland vertrieben.", completed: true });
-                alert("Nebenquest erfolgreich abgeschlossen!");
-                updateSidebar();
-                updateGame('start');
-            };
-            choicesBox.appendChild(btnQ);
-
-            const btnBack = document.createElement('button');
-            btnBack.className = 'choice-btn';
-            btnBack.innerText = "Zurück";
-            btnBack.onclick = () => updateGame('start');
-            choicesBox.appendChild(btnBack);
-        }
-
-        function handleCustomInputKey(event) { if (event.key === 'Enter') submitCustomAction(); }
-        function submitCustomAction() {
-            const inputField = document.getElementById('player-action-input');
-            const actionText = inputField.value.trim().toLowerCase();
-            if (!actionText) return;
-
-            if (actionText.includes("rast") || actionText.includes("schlafen")) {
-                handleMenuAction('rest');
-            } else if (actionText.includes("boss")) {
-                startBossFight();
-            } else if (actionText.includes("schmiede") || actionText.includes("waffen")) {
-                openCraftingModal();
+                playerData.gold += 40;
+                playerData.stats.totalGoldFound += 40;
+                playerData.quests.push({ title: "Kopfgeld erledigt", desc: "Umland gesäubert.", completed: true });
+                appendStory(`📜 Nebenauftrag erfolgreich abgeschlossen (+40 Gold)!`);
             } else {
-                advanceTime(1);
-                document.getElementById('story-box').innerText = `📍 Aktion: "${actionText}" (+1 Std vergangen). Die Welt lebt weiter.`;
+                appendStory(`📜 Alle Aufträge am Schwarzen Brett sind derzeit vergriffen.`);
             }
-            inputField.value = '';
-            updateSidebar();
-            saveGame();
         }
     </script>
 </body>
