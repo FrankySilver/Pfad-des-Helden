@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Kostenloses Tavernen-Abenteuer</title>
+    <title>Pfad des Helden - Episches Text-RPG</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
+            --bg-color: #0b0b0e;
+            --card-bg: #16161e;
+            --sidebar-bg: #111116;
             --text-color: #e0e0e0;
             --accent-color: #d4af37;
             --accent-hover: #f39c12;
-            --border-color: #333;
+            --border-color: #2a2a35;
+            --highlight: #4ecca3;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,7 +28,7 @@
         header {
             background-color: var(--card-bg);
             border-bottom: 2px solid var(--accent-color);
-            padding: 1rem 2rem;
+            padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -34,29 +36,118 @@
         h1 {
             color: var(--accent-color);
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
         }
         .donate-btn {
             background-color: #0070ba;
             color: white;
             border: none;
-            padding: 0.6rem 1.2rem;
+            padding: 0.5rem 1rem;
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
             transition: background 0.3s;
+            font-size: 0.9rem;
         }
         .donate-btn:hover {
             background-color: #005ea6;
         }
-        main {
+
+        /* Hauptlayout mit Sidebar */
+        .main-container {
+            display: flex;
             flex: 1;
-            max-width: 800px;
+            max-width: 1300px;
             width: 100%;
-            margin: 2rem auto;
+            margin: 1.5rem auto;
+            gap: 1.5rem;
             padding: 0 1rem;
             box-sizing: border-box;
+        }
+
+        /* Sidebar Links */
+        sidebar {
+            width: 340px;
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            box-sizing: border-box;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.8rem;
+        }
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+        .sidebar-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Ausrüstungsgitter */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+        .equipment-slot {
+            background: #1e1e28;
+            border: 1px solid var(--border-color);
+            padding: 0.4rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .equipment-slot span {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        /* Geldbeutel & Inventar */
+        .wallet {
+            display: flex;
+            justify-content: space-around;
+            background: #1e1e28;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .inventory-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        .inventory-list li {
+            background: #1e1e28;
+            margin-bottom: 0.3rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 3px;
+            border-left: 3px solid var(--highlight);
+        }
+
+        /* Content / Spielbereich rechts */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .game-card {
             background-color: var(--card-bg);
@@ -64,20 +155,24 @@
             border-radius: 8px;
             padding: 2rem;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .story-text {
             font-size: 1.1rem;
             line-height: 1.6;
             margin-bottom: 2rem;
-            min-height: 120px;
+            min-height: 150px;
         }
         .choices {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.8rem;
         }
         .choice-btn {
-            background-color: #2a2a2a;
+            background-color: #21212c;
             color: var(--text-color);
             border: 1px solid var(--accent-color);
             padding: 0.9rem 1.2rem;
@@ -91,127 +186,344 @@
             background-color: var(--accent-color);
             color: #000;
         }
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: bold;
+
+        /* Formulare für Charaktererstellung */
+        .form-group {
+            margin-bottom: 1rem;
         }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 0.7rem;
+            background: #111116;
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
         footer {
             text-align: center;
-            padding: 1.5rem;
+            padding: 1rem;
             background-color: var(--card-bg);
             border-top: 1px solid var(--border-color);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #888;
         }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>🛡️ Pfad des Helden</h1>
-        <!-- PayPal Spendenlink mit deiner E-Mail -->
         <form action="https://www.paypal.com/donate" method="post" target="_top">
             <input type="hidden" name="business" value="Beastroyal0@gmail.com">
             <input type="hidden" name="no_recurring" value="0">
-            <input type="hidden" name="item_name" value="Unterstützung für Pfad des Helden (Kostenloses Spiel)">
+            <input type="hidden" name="item_name" value="Spende für Pfad des Helden">
             <input type="hidden" name="currency_code" value="EUR">
-            <button type="submit" class="donate-btn">☕ Spendenkasse (Trinkgeld)</button>
+            <button type="submit" class="donate-btn">☕ Spendenkasse</button>
         </form>
     </header>
 
-    <main>
-        <div class="game-card">
-            <div class="stats">
-                <span id="player-gold">Gold: 10 🪙</span>
-                <span id="player-hp">Gesundheit: 100 ❤️</span>
-                <span id="player-fame">Ruhm: 0 ⭐</span>
+    <div class="main-container">
+        <!-- Sidebar Links (Inventar & Stats) -->
+        <sidebar id="sidebar" class="hidden">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Helden-Profil</div>
+                <div id="char-info" style="font-size: 0.9rem; line-height: 1.4;">
+                    <!-- Dynamisch -->
+                </div>
             </div>
-            <div class="story-text" id="story-box">
-                Willkommen, Reisender, beim „Pfad des Helden“. Der Wind heult draußen, während du die schwach beleuchtete Schwelle der alten Taverne betrittst. Der Wirt wischt gerade einen hölzernen Tisch ab. Was möchtest du tun?
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Geldbeutel 🪙</div>
+                <div class="wallet">
+                    <div>🥇 <span id="gold-count">10</span></div>
+                    <div>🥈 <span id="silver-count">5</span></div>
+                    <div>🥉 <span id="bronze-count">20</span></div>
+                </div>
             </div>
-            <div class="choices" id="choices-box">
-                <!-- Dynamische Buttons werden hier geladen -->
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Ausrüstung (Rüstung & Waffen)</div>
+                <div class="equipment-grid">
+                    <div class="equipment-slot"><span>Helm</span><strong id="eq-helm">Keiner</strong></div>
+                    <div class="equipment-slot"><span>Hals</span><strong id="eq-neck">Keine</strong></div>
+                    <div class="equipment-slot"><span>Oberkörper</span><strong id="eq-chest">Stoffhemd</strong></div>
+                    <div class="equipment-slot"><span>Ring</span><strong id="eq-ring">Keiner</strong></div>
+                    <div class="equipment-slot"><span>Beinlinge</span><strong id="eq-legs">Stoffhose</strong></div>
+                    <div class="equipment-slot"><span>Schuhe</span><strong id="eq-boots">Stoffschuhe</strong></div>
+                    <div class="equipment-slot"><span>Rechte Hand</span><strong id="eq-rhand">Dolch</strong></div>
+                    <div class="equipment-slot"><span>Linke Hand</span><strong id="eq-lhand">Leer</strong></div>
+                    <div class="equipment-slot" style="grid-column: span 2;"><span>Pfeilslot</span><strong id="eq-arrows">Keine Pfeile</strong></div>
+                </div>
+            </div>
+
+            <div class="sidebar-section" style="flex: 1;">
+                <div class="sidebar-title">Inventar</div>
+                <ul id="inventory-box" class="inventory-list">
+                    <li>Gesundheitstrank</li>
+                </ul>
+            </div>
+        </sidebar>
+
+        <!-- Hauptinhalt rechts -->
+        <div class="content-area">
+            <div class="game-card">
+                <!-- Hauptmenü Ansicht -->
+                <div id="main-menu" style="text-align: center; margin: auto;">
+                    <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Ein episches, kostenloses Text-Abenteuer</p>
+                    <div style="display: flex; flex-direction: column; gap: 1rem; width: 250px; margin: 0 auto;">
+                        <button class="choice-btn" onclick="startNewGameMenu()" style="text-align: center;">⚔️ Neues Spiel</button>
+                        <button class="choice-btn" id="continue-btn" onclick="continueGame()" style="text-align: center;" disabled>📜 Fortfahren</button>
+                    </div>
+                </div>
+
+                <!-- Charaktererstellung Ansicht -->
+                <div id="char-creation" class="hidden">
+                    <h3 style="color: var(--accent-color); margin-top: 0;">Heldenerschaffung</h3>
+                    <div class="form-group">
+                        <label>Name deines Helden:</label>
+                        <input type="text" id="hero-name" placeholder="z.B. Roland der Tapfere">
+                    </div>
+                    <div class="form-group">
+                        <label>Wähle deine Rasse:</label>
+                        <select id="hero-race">
+                            <option value="human">Mensch (Allrounder, flexibel, versteht Menschen & Händler)</option>
+                            <option value="dwarf">Zwerg (+20 HP, stark im Bergbau, versteht Zwergisch & Runen)</option>
+                            <option value="elf">Elf (+10% Magie, flink, versteht Elfisch & Alte Sprache)</option>
+                            <option value="orc">Ork (+30 Start-Angriff, robust, versteht Orken & Ork-Dialekte)</option>
+                            <option value="halbling">Halbling (Glücklich, findet mehr Gold, versteht Halblings)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Wähle deinen Beruf:</label>
+                        <select id="hero-class">
+                            <option value="bergarbeiter">Bergarbeiter (Startet mit Spitzhacke & Erz)</option>
+                            <option value="soldat">Soldat (Startet mit Kurzschwert & Schild)</option>
+                            <option value="magielehrling">Magielehrling (Startet mit Zauberstab & Foliant)</option>
+                            <option value="jaeger">Jäger (Startet mit Bogen & Pfeilen)</option>
+                            <option value="schmied">Schmied (Startet mit Schmiedehammer)</option>
+                            <option value="dieb">Dieb (Startet mit Dietrichen & Schattenkappe)</option>
+                            <option value="gelehrter">Gelehrter (Startet mit Alter Karte & Büchern)</option>
+                            <option value="haendler">Haendler (Startet mit mehr Startgeld)</option>
+                            <option value="alchemist">Alchemist (Startet mit Heiltränken)</option>
+                            <option value="streuner">Streuner (Startet ausgewogen und kampfbereit)</option>
+                        </select>
+                    </div>
+                    <button class="choice-btn" onclick="createHero()" style="text-align: center; margin-top: 1rem; background-color: var(--accent-color); color: #000; font-weight: bold;">Abenteuer beginnen</button>
+                </div>
+
+                <!-- Spiel- Ansicht -->
+                <div id="game-view" class="hidden">
+                    <div class="story-text" id="story-box">
+                        <!-- Spieltext -->
+                    </div>
+                    <div class="choices" id="choices-box">
+                        <!-- Buttons -->
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <footer>
-        <p>Pfad des Helden – 100% Kostenlos für alle Spieler. Freiwillige Spenden halten die Taverne am Leben!</p>
+        <p>Pfad des Helden – 100% Kostenlos. Unterstütze den Entwickler über die Spendenkasse!</p>
     </footer>
 
     <script>
-        const gameData = {
-            gold: 10,
+        let playerData = {
+            name: "Heldenloser",
+            race: "human",
+            className: "soldat",
             hp: 100,
-            fame: 0,
+            maxHp: 100,
+            gold: 10,
+            silver: 5,
+            bronze: 20,
+            inventory: ["Gesundheitstrank"],
+            equipment: {
+                helm: "Keiner",
+                neck: "Keine",
+                chest: "Stoffhemd",
+                ring: "Keiner",
+                legs: "Stoffhose",
+                boots: "Stoffschuhe",
+                rhand: "Dolch",
+                lhand: "Leer",
+                arrows: "Keine Pfeile"
+            },
             currentScene: 'start'
         };
 
+        const races = {
+            human: { name: "Mensch", bonus: "+Allrounder", languages: "Gemeinsprache, Händlerdialekt" },
+            dwarf: { name: "Zwerg", bonus: "+20 HP", languages: "Zwergisch, Runensprache" },
+            elf: { name: "Elf", bonus: "+Intuition", languages: "Elfisch, Alte Sprache" },
+            orc: { name: "Ork", bonus: "+Kraft", languages: "Orkisch, Kriegsdialekt" },
+            halbling: { name: "Halbling", bonus: "+Goldfund", languages: "Halblingssprache" }
+        };
+
+        const classes = {
+            bergarbeiter: { name: "Bergarbeiter", weapon: "Spitzhacke" },
+            soldat: { name: "Soldat", weapon: "Kurzschwert" },
+            magielehrling: { name: "Magielehrling", weapon: "Zauberstab" },
+            jaeger: { name: "Jäger", weapon: "Jagdbogen", arrows: "15 Holzpfeile" },
+            schmied: { name: "Schmied", weapon: "Schmiedehammer" },
+            dieb: { name: "Dieb", weapon: "Rostiger Dolch" },
+            gelehrter: { name: "Gelehrter", weapon: "Alter Foliant" },
+            haendler: { name: "Händler", weapon: "Wanderstab" },
+            alchemist: { name: "Alchemist", weapon: "Dolch" },
+            streuner: { name: "Streuner", weapon: "Kurzschwert" }
+        };
+
+        // Szenen des Spiels
         const scenes = {
             start: {
-                text: "Du stehst im Schankraum der Taverne. Es riecht nach Met, gebratenem Fleisch und Abenteuer. Am Kamin wärmen sich ein paar zwielichtige Gestalten. An der Bar sitzt ein alter Barde.",
+                text: "Du stehst im Schankraum der Taverne 'Zum tanzenden Greif'. Es riecht nach Met und Rauch. An der Wand hängt dein Rucksack, und du blickst auf deine Ausrüstung.",
                 choices: [
-                    { text: "Gehe zur Bar und bestelle ein starkes Ale (Kostet 2 Gold)", next: 'bar' },
-                    { text: "Setze dich zu den Abenteurern am Kamin und frage nach Gerüchten", next: 'fireplace' },
-                    { text: "Verlasse die Taverne und ziehe in die dunkle Wildnis hinaus", next: 'wilderness' }
+                    { text: "Den Wirt nach Gerüchten über den Dungeon fragen", next: 'dungeon_rumor' },
+                    { text: "In die dunklen Gassen der Stadt hinausgehen", next: 'city_streets' },
+                    { text: "Zum Händler auf dem Marktplatz gehen", next: 'market' }
                 ]
             },
-            bar: {
-                text: "Der Wirt grinst und reicht dir einen kräftigen Krug. 'Prost, Held!' Ein Händler flüstert dir zu, dass im alten Wald eine alte Truhe versteckt sein soll.",
-                action: () => { gameData.gold -= 2; gameData.fame += 1; },
+            dungeon_rumor: {
+                text: "Der Wirt wischt einen Krug ab. 'He, Abenteurer! In den alten Ruinen im Nebelwald soll noch Schätze von unschätzbarem Wert geben. Bist du mutig genug?'",
                 choices: [
-                    { text: "Zurück in den Schankraum", next: 'start' },
-                    { text: "Dem Hinweis des Händlers in den Wald folgen", next: 'forest' }
-                ]
-            },
-            fireplace: {
-                text: "Die Abenteuer lachen laut. Einer von ihnen schiebt dir eine alte Karte zu. 'Wenn du mutig genug bist, suche den verlassenen Dungeon.'",
-                action: () => { gameData.fame += 2; },
-                choices: [
-                    { text: "Zurück in den Schankraum", next: 'start' },
-                    { text: "Aufbrechen zum verlassenen Dungeon", next: 'dungeon' }
-                ]
-            },
-            wilderness: {
-                text: "Draußen lauern Gefahren, aber auch Ruhm! Du stolperst über eine vergessene Kräutertasche im Unterholz.",
-                action: () => { gameData.gold += 5; },
-                choices: [
-                    { text: "Zurück in die sichere Taverne", next: 'start' }
-                ]
-            },
-            forest: {
-                text: "Du durchsuchst den Wald anhand des Hinweises und findest tatsächlich eine verschollene Goldmünzen-Ladung!",
-                action: () => { gameData.gold += 15; gameData.fame += 3; },
-                choices: [
-                    { text: "Zurück zur Taverne", next: 'start' }
+                    { text: "Aufbrechen zum Nebelwald-Dungeon", next: 'dungeon' },
+                    { text: "Zurück in den Schankraum", next: 'start' }
                 ]
             },
             dungeon: {
-                text: "Der Dungeon ist kalt und finster, aber du findest einen wertvollen Edelstein an einer Statue!",
-                action: () => { gameData.gold += 25; gameData.fame += 5; },
+                text: "Du betrittst den feuchten Dungeon. Ein leises Knurren hallt durch die Gänge. Vor dir liegt eine alte Holzkiste!",
+                action: () => { playerData.gold += 15; playerData.inventory.push("Rostiger Dolch"); updateSidebar(); saveGame(); },
+                choices: [
+                    { text: "Kiste öffnen und Schätze einsacken (+15 Gold)", next: 'start' }
+                ]
+            },
+            city_streets: {
+                text: "Die Gassen sind dunkel und zwielichtig. Ein Taschendieb versucht dich anzuspringen, aber deine Rüstung schützt dich!",
+                action: () => { playerData.silver += 3; updateSidebar(); saveGame(); },
+                choices: [
+                    { text: "Den Dieb vertreiben und zurück zur Taverne", next: 'start' }
+                ]
+            },
+            market: {
+                text: "Der Marktplatz brummt vor Leben. Händler bieten Waren an. Du findest ein paar verlorene Kupfermünzen auf dem Boden.",
+                action: () => { playerData.bronze += 10; updateSidebar(); saveGame(); },
                 choices: [
                     { text: "Zurück zur Taverne", next: 'start' }
                 ]
             }
         };
+
+        // Speicherstand beim Start prüfen
+        window.onload = function() {
+            const saved = localStorage.getItem('pfad_des_helden_save');
+            if (saved) {
+                document.getElementById('continue-btn').disabled = false;
+            }
+        };
+
+        function startNewGameMenu() {
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('char-creation').classList.remove('hidden');
+        }
+
+        function createHero() {
+            const nameInput = document.getElementById('hero-name').value.trim();
+            if (nameInput) {
+                playerData.name = nameInput;
+            }
+            playerData.race = document.getElementById('hero-race').value;
+            playerData.className = document.getElementById('hero-class').value;
+
+            // Rassen & Berufsboni anwenden
+            if (playerData.race === 'dwarf') { playerData.maxHp = 120; playerData.hp = 120; }
+            if (playerData.className === 'haendler') { playerData.gold += 20; }
+            if (classes[playerData.className]) {
+                playerData.equipment.rhand = classes[playerData.className].weapon;
+                if (classes[playerData.className].arrows) {
+                    playerData.equipment.arrows = classes[playerData.className].arrows;
+                }
+            }
+
+            document.getElementById('char-creation').classList.add('hidden');
+            document.getElementById('game-view').classList.remove('hidden');
+            document.getElementById('sidebar').classList.remove('hidden');
+
+            updateSidebar();
+            updateGame('start');
+            saveGame();
+        }
+
+        function continueGame() {
+            const saved = localStorage.getItem('pfad_des_helden_save');
+            if (saved) {
+                playerData = JSON.parse(saved);
+                document.getElementById('main-menu').classList.add('hidden');
+                document.getElementById('game-view').classList.remove('hidden');
+                document.getElementById('sidebar').classList.remove('hidden');
+                updateSidebar();
+                updateGame(playerData.currentScene);
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('pfad_des_helden_save', JSON.stringify(playerData));
+            document.getElementById('continue-btn').disabled = false;
+        }
+
+        function updateSidebar() {
+            const raceObj = races[playerData.race];
+            document.getElementById('char-info').innerHTML = `
+                <strong>${playerData.name}</strong><br>
+                Rasse: ${raceObj.name}<br>
+                Beruf: <span style="text-transform: capitalize;">${playerData.className}</span><br>
+                HP: ${playerData.hp} / ${playerData.maxHp} ❤️<br>
+                <small style="color: #888;">Sprachen: ${raceObj.languages}</small>
+            `;
+
+            document.getElementById('gold-count').innerText = playerData.gold;
+            document.getElementById('silver-count').innerText = playerData.silver;
+            document.getElementById('bronze-count').innerText = playerData.bronze;
+
+            document.getElementById('eq-helm').innerText = playerData.equipment.helm;
+            document.getElementById('eq-neck').innerText = playerData.equipment.neck;
+            document.getElementById('eq-chest').innerText = playerData.equipment.chest;
+            document.getElementById('eq-ring').innerText = playerData.equipment.ring;
+            document.getElementById('eq-legs').innerText = playerData.equipment.legs;
+            document.getElementById('eq-boots').innerText = playerData.equipment.boots;
+            document.getElementById('eq-rhand').innerText = playerData.equipment.rhand;
+            document.getElementById('eq-lhand').innerText = playerData.equipment.lhand;
+            document.getElementById('eq-arrows').innerText = playerData.equipment.arrows;
+
+            const invBox = document.getElementById('inventory-box');
+            invBox.innerHTML = '';
+            playerData.inventory.forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item;
+                invBox.appendChild(li);
+            });
+        }
 
         function updateGame(sceneKey) {
             const scene = scenes[sceneKey];
             if (!scene) return;
 
-            gameData.currentScene = sceneKey;
+            playerData.currentScene = sceneKey;
             if (scene.action) {
                 scene.action();
             }
 
-            // UI aktualisieren
-            document.getElementById('player-gold').innerText = `Gold: ${gameData.gold} 🪙`;
-            document.getElementById('player-hp').innerText = `Gesundheit: ${gameData.hp} ❤️`;
-            document.getElementById('player-fame').innerText = `Ruhm: ${gameData.fame} ⭐`;
             document.getElementById('story-box').innerText = scene.text;
 
             const choicesBox = document.getElementById('choices-box');
@@ -224,10 +536,9 @@
                 btn.onclick = () => updateGame(choice.next);
                 choicesBox.appendChild(btn);
             });
-        }
 
-        // Spiel starten
-        updateGame('start');
+            saveGame();
+        }
     </script>
 </body>
 </html>
