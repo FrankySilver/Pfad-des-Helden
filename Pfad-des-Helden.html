@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pfad des Helden - Kostenloses Tavernen-Abenteuer</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #d4af37;
+            --accent-hover: #f39c12;
+            --border-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--accent-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .donate-btn {
+            background-color: #0070ba;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .donate-btn:hover {
+            background-color: #005ea6;
+        }
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+        .game-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .story-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            min-height: 120px;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .choice-btn {
+            background-color: #2a2a2a;
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            padding: 0.9rem 1.2rem;
+            border-radius: 5px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .choice-btn:hover {
+            background-color: var(--accent-color);
+            color: #000;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🛡️ Pfad des Helden</h1>
+        <!-- PayPal Spendenlink mit deiner E-Mail -->
+        <form action="https://www.paypal.com/donate" method="post" target="_top">
+            <input type="hidden" name="business" value="Beastroyal0@gmail.com">
+            <input type="hidden" name="no_recurring" value="0">
+            <input type="hidden" name="item_name" value="Unterstützung für Pfad des Helden (Kostenloses Spiel)">
+            <input type="hidden" name="currency_code" value="EUR">
+            <button type="submit" class="donate-btn">☕ Spendenkasse (Trinkgeld)</button>
+        </form>
+    </header>
+
+    <main>
+        <div class="game-card">
+            <div class="stats">
+                <span id="player-gold">Gold: 10 🪙</span>
+                <span id="player-hp">Gesundheit: 100 ❤️</span>
+                <span id="player-fame">Ruhm: 0 ⭐</span>
+            </div>
+            <div class="story-text" id="story-box">
+                Willkommen, Reisender, beim „Pfad des Helden“. Der Wind heult draußen, während du die schwach beleuchtete Schwelle der alten Taverne betrittst. Der Wirt wischt gerade einen hölzernen Tisch ab. Was möchtest du tun?
+            </div>
+            <div class="choices" id="choices-box">
+                <!-- Dynamische Buttons werden hier geladen -->
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Pfad des Helden – 100% Kostenlos für alle Spieler. Freiwillige Spenden halten die Taverne am Leben!</p>
+    </footer>
+
+    <script>
+        const gameData = {
+            gold: 10,
+            hp: 100,
+            fame: 0,
+            currentScene: 'start'
+        };
+
+        const scenes = {
+            start: {
+                text: "Du stehst im Schankraum der Taverne. Es riecht nach Met, gebratenem Fleisch und Abenteuer. Am Kamin wärmen sich ein paar zwielichtige Gestalten. An der Bar sitzt ein alter Barde.",
+                choices: [
+                    { text: "Gehe zur Bar und bestelle ein starkes Ale (Kostet 2 Gold)", next: 'bar' },
+                    { text: "Setze dich zu den Abenteurern am Kamin und frage nach Gerüchten", next: 'fireplace' },
+                    { text: "Verlasse die Taverne und ziehe in die dunkle Wildnis hinaus", next: 'wilderness' }
+                ]
+            },
+            bar: {
+                text: "Der Wirt grinst und reicht dir einen kräftigen Krug. 'Prost, Held!' Ein Händler flüstert dir zu, dass im alten Wald eine alte Truhe versteckt sein soll.",
+                action: () => { gameData.gold -= 2; gameData.fame += 1; },
+                choices: [
+                    { text: "Zurück in den Schankraum", next: 'start' },
+                    { text: "Dem Hinweis des Händlers in den Wald folgen", next: 'forest' }
+                ]
+            },
+            fireplace: {
+                text: "Die Abenteuer lachen laut. Einer von ihnen schiebt dir eine alte Karte zu. 'Wenn du mutig genug bist, suche den verlassenen Dungeon.'",
+                action: () => { gameData.fame += 2; },
+                choices: [
+                    { text: "Zurück in den Schankraum", next: 'start' },
+                    { text: "Aufbrechen zum verlassenen Dungeon", next: 'dungeon' }
+                ]
+            },
+            wilderness: {
+                text: "Draußen lauern Gefahren, aber auch Ruhm! Du stolperst über eine vergessene Kräutertasche im Unterholz.",
+                action: () => { gameData.gold += 5; },
+                choices: [
+                    { text: "Zurück in die sichere Taverne", next: 'start' }
+                ]
+            },
+            forest: {
+                text: "Du durchsuchst den Wald anhand des Hinweises und findest tatsächlich eine verschollene Goldmünzen-Ladung!",
+                action: () => { gameData.gold += 15; gameData.fame += 3; },
+                choices: [
+                    { text: "Zurück zur Taverne", next: 'start' }
+                ]
+            },
+            dungeon: {
+                text: "Der Dungeon ist kalt und finster, aber du findest einen wertvollen Edelstein an einer Statue!",
+                action: () => { gameData.gold += 25; gameData.fame += 5; },
+                choices: [
+                    { text: "Zurück zur Taverne", next: 'start' }
+                ]
+            }
+        };
+
+        function updateGame(sceneKey) {
+            const scene = scenes[sceneKey];
+            if (!scene) return;
+
+            gameData.currentScene = sceneKey;
+            if (scene.action) {
+                scene.action();
+            }
+
+            // UI aktualisieren
+            document.getElementById('player-gold').innerText = `Gold: ${gameData.gold} 🪙`;
+            document.getElementById('player-hp').innerText = `Gesundheit: ${gameData.hp} ❤️`;
+            document.getElementById('player-fame').innerText = `Ruhm: ${gameData.fame} ⭐`;
+            document.getElementById('story-box').innerText = scene.text;
+
+            const choicesBox = document.getElementById('choices-box');
+            choicesBox.innerHTML = '';
+
+            scene.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.innerText = choice.text;
+                btn.onclick = () => updateGame(choice.next);
+                choicesBox.appendChild(btn);
+            });
+        }
+
+        // Spiel starten
+        updateGame('start');
+    </script>
+</body>
+</html>
