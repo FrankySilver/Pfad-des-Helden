@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Episches Text-RPG (DM-Edition)</title>
+    <title>Pfad des Helden - Episches Text-RPG (KI-DM Edition)</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -366,7 +366,6 @@
     <header>
         <h1>🛡️ Pfad des Helden</h1>
         <div class="header-right">
-            <button class="icon-btn" onclick="openGeminiDmAdvisor()" title="Gemini DM-Ratgeber & Spielhilfe">🧙‍♂️</button>
             <button class="icon-btn hidden" id="npc-btn" onclick="openNpcModal()" title="Charaktere & Händler treffen">👥</button>
             <button class="icon-btn hidden" id="questlog-btn" onclick="openQuestModal()" title="Quest-Logbuch">📜</button>
             <button class="icon-btn hidden" id="handbook-btn" onclick="openHandbook()" title="Helden-Handbuch & Ruhmeshalle">📖</button>
@@ -451,7 +450,7 @@
                 <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Eine epische 10-Stunden-Kampagne über 4 Akte (DM-Edition)</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Eine epische 10-Stunden-Kampagne über 4 Akte (KI-DM Edition)</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -475,6 +474,11 @@
                     <div class="form-group">
                         <label>Soundeffekte (SFX):</label>
                         <input type="range" id="sfx-slider" min="0" max="100" value="80" oninput="updateSfxVolume(this.value)">
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label style="color: var(--highlight);">Google Gemini API-Key (Optional für KI-DM):</label>
+                        <input type="password" id="gemini-key-input" placeholder="Dein Gemini API-Key (wird lokal gespeichert)" onchange="saveApiKey(this.value)">
+                        <small style="color: #aaa; font-size: 0.7rem; display: block; margin-top: 3px;">Falls leer, nutzt das Spiel einen hochentwickelten eingebauten DM-Simulator.</small>
                     </div>
                     <button class="choice-btn" onclick="closeSettings()" style="text-align: center; width: 100%; margin-top: 1rem;">Zurück</button>
                     <button class="choice-btn" onclick="returnToMainMenuFromSettings()" style="text-align: center; width: 100%; margin-top: 0.6rem; background-color: #331111; border-color: #e74c3c;">🏠 Zum Hauptmenü</button>
@@ -538,8 +542,8 @@
                     <div class="story-text" id="story-box"></div>
                     
                     <div class="custom-input-box">
-                        <input type="text" id="player-action-input" placeholder="Tippe, was du tun möchtest (z.B. 'gehe in den wald', 'untersuche höhle', 'schmiede waffe')..." onkeydown="handleCustomInputKey(event)">
-                        <button onclick="submitCustomAction()">Handeln</button>
+                        <input type="text" id="player-action-input" placeholder="Tippe deine Aktion oder Frage an den DM (z.B. 'woher bekomme ich ausrüstung?', 'gehe jagen')..." onkeydown="handleCustomInputKey(event)">
+                        <button onclick="submitCustomAction()" id="action-btn">Handeln</button>
                     </div>
                 </div>
             </div>
@@ -554,20 +558,6 @@
     </div>
 
     <!-- Modals -->
-    <div id="gemini-dm-modal" class="modal hidden">
-        <div class="modal-content">
-            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🧙‍♂️ Gemini DM-Ratgeber & Spielhilfe</h3>
-            <p style="font-size:0.85rem; color:#aaa; text-align:center;">Dein persönlicher Dungeon Master erklärt dir Spielmechaniken, gibt Hinweise zu deinen Quests und berät dich bei deinen nächsten Schritten.</p>
-            <div id="gemini-dm-content" style="background: #111116; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.9rem; line-height: 1.6; max-height: 250px; overflow-y: auto; margin-bottom: 1rem;"></div>
-            <div class="form-group">
-                <label>Frage deinen DM:</label>
-                <input type="text" id="dm-question-input" placeholder="z.B. 'Wie komme ich an Mithril?' oder 'Was soll ich als nächstes tun?'">
-            </div>
-            <button class="choice-btn" onclick="askGeminiDm()" style="text-align: center; width: 100%; margin-bottom: 0.6rem; background: var(--highlight); color: #000; font-weight: bold;">DM um Rat fragen</button>
-            <button class="choice-btn" onclick="closeGeminiDmAdvisor()" style="text-align: center; width: 100%;">Schließen</button>
-        </div>
-    </div>
-
     <div id="handbook-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">📖 Helden-Handbuch & Ruhmeshalle</h3>
@@ -672,8 +662,9 @@
                 ring: { name: "Keiner", icon: "💍" }
             },
             currentScene: 'start',
-            pendingCheck: null, // Hält fest, welcher Typ von Probe gerade ansteht
-            pendingContext: null // Hält zusätzliche Daten für Multi-Step-Aktionen
+            pendingCheck: null,
+            pendingContext: null,
+            geminiApiKey: localStorage.getItem('pfad_gemini_key') || ''
         };
 
         const huntLootItems = {
@@ -690,16 +681,6 @@
             { id: 'npc_vane', name: "Händler Vane", title: "Allwaren & Beute-Ankauf", icon: "🛒", desc: "Kauft deine Jagdbeute ab.", type: 'merchant' },
             { id: 'npc_thorgar', name: "Meisterschmied Thorgar", title: "Waffenschmiede Eisenhall", icon: "⚒️", desc: "Schmiedet legendäre Waffen in Mehr-Schritt-Prozessen.", type: 'forge' },
             { id: 'npc_zylar', name: "Mystiker Zylar", title: "Weiser & Questgeber", icon: "🔮", desc: "Gibt Hinweise zu den Schattenkriegen.", type: 'questgiver' }
-        ];
-
-        const allMaterials = [
-            { id: 'wood_oak', name: "Eichenholz", icon: "🪵", type: "wood" },
-            { id: 'wood_ash', name: "Escheholz", icon: "🪵", type: "wood" },
-            { id: 'wood_mahogany', name: "Mahagoniholz", icon: "🪵", type: "wood" },
-            { id: 'ore_copper', name: "Kupfererz", icon: "🪨", type: "ore" },
-            { id: 'ore_iron', name: "Eisenerz", icon: "⛏️", type: "ore" },
-            { id: 'ore_mithril', name: "Mithrilerz", icon: "✨", type: "ore" },
-            { id: 'ore_adamant', name: "Adamanterz", icon: "💎", type: "ore" }
         ];
 
         const weaponShopAndForge = [
@@ -724,7 +705,7 @@
         playerData.achievements = initAchievements();
 
         const actsInfo = {
-            1: { name: "Akt 1: Der Schatten erwacht", desc: "Der Dungeon Master leitet deine Schritte durch den Aschenwald." },
+            1: { name: "Akt 1: Der Schatten erwacht", desc: "Der Dungeon Master leitet deine Schritte durch die Wildnis." },
             2: { name: "Akt 2: Die vergessenen Minen", desc: "Tiefe Schächte und Erzvorkommen." },
             3: { name: "Akt 3: Sturm auf die Zitadelle", desc: "Bündnisse und Vorbereitung auf den Krieg." },
             4: { name: "Akt 4: Das Finale im Schattenreich", desc: "Der Kampf gegen Drachenfürst Malakor." }
@@ -784,9 +765,15 @@
 
         function updateBgmVolume(val) { bgmVolume = val / 100; }
         function updateSfxVolume(val) { sfxVolume = val / 100; playSfx('click'); }
+        function saveApiKey(key) {
+            playerData.geminiApiKey = key.trim();
+            localStorage.setItem('pfad_gemini_key', playerData.geminiApiKey);
+            alert("API-Key gespeichert!");
+        }
 
         function openSettings() {
             playSfx('click');
+            document.getElementById('gemini-key-input').value = playerData.geminiApiKey;
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('char-creation').classList.add('hidden');
             document.getElementById('game-view').classList.add('hidden');
@@ -815,41 +802,6 @@
             document.getElementById('npc-btn').classList.add('hidden');
             document.getElementById('main-menu').classList.remove('hidden');
             checkSaveGame();
-        }
-
-        // GEMINI DM-RATGEBER LOGIK
-        function openGeminiDmAdvisor() {
-            playSfx('click');
-            updateDmAdvisorText("Grüße, Held! Ich bin dein Gemini Dungeon Master. Frag mich alles über deine nächsten Quests, wie du an seltene Erze kommst oder welche Taktik du in Dungeons anwenden solltest.");
-            document.getElementById('gemini-dm-modal').classList.remove('hidden');
-        }
-        function closeGeminiDmAdvisor() { playSfx('click'); document.getElementById('gemini-dm-modal').classList.add('hidden'); }
-
-        function updateDmAdvisorText(msg) {
-            document.getElementById('gemini-dm-content').innerHTML = `🧙‍♂️ <strong>Gemini DM:</strong> ${msg}`;
-        }
-
-        function askGeminiDm() {
-            playSfx('click');
-            const qInput = document.getElementById('dm-question-input');
-            const q = qInput.value.trim().toLowerCase();
-            if (!q) return;
-
-            let response = "Das ist eine interessante Frage für deine Reise in " + locations[playerData.location].name + ". ";
-            if (q.includes("mithril") || q.includes("erz") || q.includes("material")) {
-                response += "Mithril und andere Erze findest du tief in Dungeons oder bei der Jagd in Akt 2. Nutze den Befehl 'dungeon'!";
-            } else if (q.includes("quest") || q.includes("ziel") || q.includes("nächste")) {
-                response += "Schau in dein Quest-Logbuch (📜 oben rechts). Erfülle deinen Rassenauftrag oder erkunde den Aschenwald.";
-            } else if (q.includes("geld") || q.includes("gold") || q.includes("reich")) {
-                response += "Gehe auf die Jagd, erlege Tiere, nimm Felle und Fleisch mit und verkaufe sie beim Händler Vane (👥 oben rechts).";
-            } else if (q.includes("kampf") || q.includes("boss") || q.includes("hp")) {
-                response += `Du hast aktuell ${playerData.hp}/${playerData.maxHp} HP. Achte darauf, dich am Lagerfeuer ('schlafen') zu erholen, bevor du den Boss herausforderst!`;
-            } else {
-                response += `Als dein DM rate ich dir: Nutze den d20-Würfel rechts unten weise und erkunde die Wildnis mit Befehlen wie 'gehe in den wald' oder 'dungeon'.`;
-            }
-
-            updateDmAdvisorText(response);
-            qInput.value = '';
         }
 
         function openHandbook() {
@@ -1197,7 +1149,7 @@
 
         function initStoryWelcome() {
             let storyBox = document.getElementById('story-box');
-            storyBox.innerText = `🎲 **Dungeon Master (Gemini):** Willkommen, ${playerData.name}!\n\nDu stehst im ${locations[playerData.location].name}. Jede Aktion verlangt nun nach sorgfältigen Schritten und d20-Proben. Du kannst den 🧙‍♂️ DM-Ratgeber oben anklicken, wenn du Fragen hast.\n\n*Tippe z.B. 'gehe jagen', 'dungeon erkunden', 'schmiede waffe' oder 'suche kräuter', um zu starten.*`;
+            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen, ${playerData.name}!\n\nDu stehst in ${locations[playerData.location].name}. Der Wind pfeift durch die Ruinen. Jede Aktion erfordert kluge Entscheidungen und d20-Proben.\n\n*Tippe z.B. 'gehe in den wald', 'woher bekomme ich ausrüstung?', 'dungeon erkunden' oder 'schmiede waffe'...*`;
         }
 
         function appendStory(text) {
@@ -1208,8 +1160,8 @@
 
         function handleCustomInputKey(event) { if (event.key === 'Enter') submitCustomAction(); }
 
-        // ECHTES MULTI-STEP DUNGEON MASTER SYSTEM FÜR ALLES
-        function submitCustomAction() {
+        // INTELLIGENTER KI-DM ODER FALLBACK-SYSTEM
+        async function submitCustomAction() {
             const inputField = document.getElementById('player-action-input');
             const actionText = inputField.value.trim().toLowerCase();
             if (!actionText) return;
@@ -1217,58 +1169,60 @@
 
             appendStory(`> **Du:** "${actionText}"`);
 
-            // 1. Wenn wir auf ein erlegtes Tier warten
             if (playerData.pendingContext === 'harvest_animal') {
                 handleHuntHarvestChoice(actionText);
                 inputField.value = '';
                 return;
             }
 
-            // 2. Wenn ein Wurf aussteht
             if (playerData.pendingCheck) {
-                appendStory(`🎲 **Dungeon Master:** Ich warte auf deine Würfelprobe! Klicke rechts unten auf **🎲 Würfeln**.`);
+                appendStory(`🎲 **Dungeon Master:** „Halt ein! Ich warte auf deine Würfelprobe. Klicke rechts unten auf **🎲 Würfeln**!“`);
                 inputField.value = '';
                 return;
             }
 
-            // 3. Multi-Step Aktionen starten
+            // Feste Spiel-Trigger erkennen
             if (actionText.includes("jagen") || actionText.includes("wald") || actionText.includes("suche wild")) {
                 advanceTime(1);
                 playerData.pendingCheck = 'hunting';
-                appendStory(`🌲 **Dungeon Master:** Du betauchst das Unterholz im ${locations[playerData.location].name}. Du musst dich leise bewegen und Spuren deuten.\n\n👉 **Führe eine Spurensuche-Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 11).`);
+                appendStory(`🌲 **Dungeon Master:** Du betauchst das Unterholz im ${locations[playerData.location].name}. Du musst dich leise bewegen.\n\n👉 **Führe eine Spurensuche-Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 11).`);
+                inputField.value = '';
+                return;
             } 
             else if (actionText.includes("dungeon") || actionText.includes("höhle") || actionText.includes("verlies")) {
                 advanceTime(2);
                 playerData.pendingCheck = 'dungeon_entry';
-                appendStory(`🗝️ **Dungeon Master:** Du stehst vor dem finsteren Gewölbe. Ein kalter Wind weht heraus. Wie willst du vorgehen? (Vorsichtig reinschleichen / Mit gezückter Waffe reinstürmen).\n\n👉 **Führe eine Wahrnehmungsprobe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 12).`);
-            } 
-            else if (actionText.includes("kräuter") || actionText.includes("pflanzen") || actionText.includes("sammeln")) {
-                advanceTime(1);
-                playerData.pendingCheck = 'herbs';
-                appendStory(`🌿 **Dungeon Master:** Du bückst dich im feuchten Moos, um nach heilenden Wurzeln und magischen Kräutern zu suchen.\n\n👉 **Führe eine Naturkunde-Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 10).`);
+                appendStory(`🗝️ **Dungeon Master:** Du stehst vor dem finsteren Gewölbe. Ein kalter Wind weht heraus.\n\n👉 **Führe eine Wahrnehmungsprobe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 12).`);
+                inputField.value = '';
+                return;
             }
-            else if (actionText.includes("schmiede") || actionText.includes("handwerk") || actionText.includes("waffe")) {
+            else if (actionText.includes("schmiede") || actionText.includes("handwerk")) {
                 openCraftingModal();
-                appendStory(`⚒️ **Dungeon Master:** Meisterschmied Thorgar mustert dich in seiner Esse. Wähle im Menü dein Material und starte den Schmiedeprozess.`);
+                appendStory(`⚒️ **Dungeon Master:** Meisterschmied Thorgar mustert dich in seiner Esse. Wähle im Menü dein Material.`);
+                inputField.value = '';
+                return;
             } 
             else if (actionText.includes("händler") || actionText.includes("npc") || actionText.includes("markt")) {
                 openNpcModal();
-                appendStory(`🛒 **Dungeon Master:** Du betrittst den Marktplatz. Händler Vane begutachtet deine Waren.`);
+                appendStory(`🛒 **Dungeon Master:** Du betrittst den Marktplatz.`);
+                inputField.value = '';
+                return;
             } 
-            else if (actionText.includes("schlaf") || actionText.includes("rast") || actionText.includes("lagerfeuer")) {
+            else if (actionText.includes("schlaf") || actionText.includes("rast")) {
                 advanceTime(4);
                 playerData.hp = playerData.maxHp;
                 if (playerData.maxMana > 0) playerData.mana = playerData.maxMana;
-                appendStory(`⛺ **Dungeon Master:** Du entfachst ein sicheres Lagerfeuer. Deine Lebenskraft und Mana erholen sich vollständig.`);
-            } 
-            else if (actionText.includes("boss")) {
-                playerData.pendingCheck = 'boss';
-                appendStory(`👑 **Dungeon Master:** Der Boss des Aktes stellt sich dir mit gezückter Klinge entgegen!\n\n👉 **Führe einen Angriffs-Wurf aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 14).`);
-            } 
-            else {
-                advanceTime(1);
-                playerData.pendingCheck = 'generic';
-                appendStory(`📍 **Dungeon Master:** Du versuchst: "${actionText}". Das erfordert Konzentration.\n\n👉 **Führe eine Probe aus!** Klicke rechts unten auf **🎲 Würfeln** (Zielwert: 10).`);
+                appendStory(`⛺ **Dungeon Master:** Du entfachst ein sicheres Lagerfeuer. HP und Mana vollständig erholt.`);
+                inputField.value = '';
+                return;
+            }
+
+            // Wenn es eine offene Frage oder Custom-Aktion ist -> Google Gemini KI-DM fragen (oder Fallback)
+            if (playerData.geminiApiKey) {
+                await askGeminiAI(actionText);
+            } else {
+                // Eingebauter intelligenter DM-Simulator für Fragen/Aktionen
+                simulateSmartDmResponse(actionText);
             }
 
             inputField.value = '';
@@ -1276,7 +1230,41 @@
             saveGame();
         }
 
-        // Multi-Step Jagd-Ernte
+        async function askGeminiAI(prompt) {
+            appendStory(`🤖 *Der Dungeon Master beratschlagt die Götter...*`);
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${playerData.geminiApiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: `Du bist ein epischer Dungeon Master in einem Text-RPG namens 'Pfad des Helden'. Der Spieler ${playerData.name} (Rasse: ${playerData.race}, Klasse: ${playerData.className}, Stufe ${playerData.level}, Ort: ${locations[playerData.location].name}) fragt oder tut: "${prompt}". Antworte stimmungsvoll, auf Deutsch, und gib ihm konkrete Ratschläge, wo er Ausrüstung bekommt, Quests startet oder was er als nächstes tun kann.` }]
+                        }]
+                    })
+                });
+                const data = await response.json();
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Die Schatten hüllen sich in Schweigen. Versuche es erneut.";
+                // Letzte Zeile (Lade-Nachricht) ersetzen oder anhängen
+                appendStory(`🧙‍♂️ **Dungeon Master:**\n\n${aiText}`);
+            } catch (err) {
+                appendStory(`🧙‍♂️ **Dungeon Master:** Die Verbindung zum astralen Netz ist gestört. Nutze deine Standard-Befehle ('jagen', 'dungeon', 'händler').`);
+            }
+        }
+
+        function simulateSmartDmResponse(prompt) {
+            let reply = "";
+            if (prompt.includes("ausrüstung") || prompt.includes("waffe") || prompt.includes("schwert") || prompt.includes("rüst")) {
+                reply = `🧙‍♂️ **Dungeon Master:** „Ausrüstung suchst du? Du kannst im Handwerksviertel bei Meisterschmied Thorgar (tippe 'schmiede') Basiswaffen kaufen oder seltene Erze und Hölzer nutzen, um legendäre Meisterklingen zu schmieden. Auch Händler Vane auf dem Marktplatz bietet nützliche Proviantgüter an!“`;
+            } else if (prompt.includes("quest") || prompt.includes("aufgabe") || prompt.includes("ziel")) {
+                reply = `🧙‍♂️ **Dungeon Master:** „Dein Schicksal liegt in den Sternen, ${playerData.name}. Öffne dein Quest-Logbuch (📜 oben rechts) oder sprich mit Mystiker Zylar, um die Fäden der Schattenkriege zu entwirren.“`;
+            } else if (prompt.includes("geld") || prompt.includes("gold")) {
+                reply = `🧙‍♂️ **Dungeon Master:** „Gold fällt nicht vom Himmel, Held! Gehe in den Aschenwald jagen (tippe 'gehe jagen'), erlege Tiere, nimm Felle und Fleisch mit und verkaufe sie beim Händler Vane.“`;
+            } else {
+                reply = `🧙‍♂️ **Dungeon Master:** „Du versuchst: '${prompt}'. Die Wände des ${locations[playerData.location].name} hallen von deinen Worten wider. Überlege dir genau, ob du lieber die Wildnis durchstreifst ('jagen'), ein Verlies betrittst ('dungeon') oder den Markt aufsuchst.“`;
+            }
+            appendStory(reply);
+        }
+
         function handleHuntHarvestChoice(text) {
             let animal = playerData.pendingContextData;
             let itemsGained = [];
@@ -1322,7 +1310,6 @@
             saveGame();
         }
 
-        // AUSWERTUNG DER WÜRFELPROBEN FÜR ALLE BEREICHE
         function resolvePendingCheck(rollValue) {
             let checkType = playerData.pendingCheck;
             playerData.pendingCheck = null;
@@ -1356,36 +1343,6 @@
                     appendStory(`💥 **Misserfolg (Würfel: ${rollValue})!** Du übersiehst eine Stolperfalle im Dunkeln und wirst von Armbrustbolzen getroffen (-${dmg} HP).`);
                 }
             }
-            else if (checkType === 'herbs') {
-                if (rollValue >= 10) {
-                    playerData.inventory.push({ name: "Heilkräuter", icon: "🌿", type: "potion", value: 15 });
-                    appendStory(`✨ **Erfolg (Würfel: ${rollValue})!** Du findest seltene Heilkräuter und verstaust sie im Rucksack.`);
-                } else {
-                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Du findest nur unbrauchbares Unkraut.`);
-                }
-            }
-            else if (checkType === 'boss') {
-                if (rollValue >= 14) {
-                    playerData.stats.bossesKilled++;
-                    appendStory(`🏆 **Triumph (Würfel: ${rollValue})!** Du besiegst den Boss in einem epischen Kampf!`);
-                    if (playerData.act < 4) { playerData.act++; appendStory(`🎉 Akt aufgestiegen: ${actsInfo[playerData.act].name}`); }
-                } else {
-                    playerData.stats.deaths++;
-                    playerData.hp = Math.max(1, playerData.hp - 45);
-                    appendStory(`💀 **Niederlage (Würfel: ${rollValue})!** Der Boss ist zu mächtig (-45 HP).`);
-                }
-            } 
-            else {
-                if (rollValue >= 10) {
-                    addXp(20);
-                    appendStory(`✅ **Erfolg (Würfel: ${rollValue})!** Aktion erfolgreich (+20 XP).`);
-                } else {
-                    appendStory(`❌ **Misserfolg (Würfel: ${rollValue})!** Keine besonderen Vorkommnisse.`);
-                }
-            }
-
-            updateSidebar();
-            saveGame();
         }
     </script>
 </body>
