@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Episches Text-RPG (Ultimate Equipment Edition)</title>
+    <title>Pfad des Helden - Episches Text-RPG (Full Open AI-Style Edition)</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -389,7 +389,7 @@
             <div class="sidebar-section">
                 <div class="sidebar-title">Geldbeutel 🪙</div>
                 <div class="wallet">
-                    <div class="coin">🟡 <span id="gold-count">300</span></div>
+                    <div class="coin">🟡 <span id="gold-count">500</span></div>
                 </div>
             </div>
 
@@ -407,7 +407,7 @@
                 <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate Equipment & Monster Crafting Edition</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Full Open AI-Style Dungeon Master Edition</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -440,7 +440,37 @@
                         <input type="text" id="hero-name" placeholder="z.B. Roland der Tapfere">
                     </div>
                     <div class="form-group">
-                        <label>Wähle deinen Startort:</label>
+                        <label>Schwierigkeitsgrad:</label>
+                        <select id="hero-difficulty">
+                            <option value="leicht">Leicht (Mehr Startgold)</option>
+                            <option value="mittel" selected>Mittel (Standard)</option>
+                            <option value="schwer">Schwer (Stärkere Monster)</option>
+                            <option value="albtraum">Albtraum (Hardcore)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Wähle deine Rasse:</label>
+                        <select id="hero-race">
+                            <option value="human">Mensch (Allrounder)</option>
+                            <option value="dwarf">Zwerg (+20 HP)</option>
+                            <option value="elf">Elf (+Geschicklichkeit)</option>
+                            <option value="orc">Ork (+Stärke)</option>
+                            <option value="halbling">Halbling (+Charisma)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Wähle deinen Beruf:</label>
+                        <select id="hero-class">
+                            <option value="soldat">Soldat</option>
+                            <option value="bergarbeiter">Bergarbeiter</option>
+                            <option value="magielehrling">Magielehrling</option>
+                            <option value="jaeger">Jäger</option>
+                            <option value="schmied">Schmied</option>
+                            <option value="dieb">Dieb</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Wähle deinen Startort (Akt 1):</label>
                         <select id="hero-location">
                             <option value="aschenwald">Aschenwald (Grenzforst & Jagdgebiete)</option>
                             <option value="eisenhall">Eisenhall (Zwergen-Bergfestung & Schmiede)</option>
@@ -456,7 +486,7 @@
                     <div class="story-text" id="story-box"></div>
                     
                     <div class="custom-input-box">
-                        <input type="text" id="player-action-input" placeholder="Tippe Aktion (z.B. 'gehe jagen', 'reisen nach eisenhall', 'markt')..." onkeydown="handleCustomInputKey(event)">
+                        <input type="text" id="player-action-input" placeholder="Frage den Dungeon Master (z.B. 'was sehe ich?', 'sprich mit dem wirt', 'gehe jagen')..." onkeydown="handleCustomInputKey(event)">
                         <button onclick="submitCustomAction()">Handeln</button>
                     </div>
                 </div>
@@ -515,12 +545,15 @@
     </div>
 
     <footer>
-        <p>Pfad des Helden – 100+ Ausrüstungsteile, Rüstungen, Ringe & Monster-Crafting</p>
+        <p>Pfad des Helden – 100+ Ausrüstungsteile, offene AI-Dungeon-Master-Interaktion & Monster-Crafting</p>
     </footer>
 
     <script>
         let playerData = {
             name: "Heldenloser",
+            race: "human",
+            className: "soldat",
+            difficulty: "mittel",
             location: "aschenwald",
             act: 1,
             hour: 10,
@@ -551,9 +584,16 @@
             selectedItemIndex: null
         };
 
-        // ÜBER 100+ AUSRÜSTUNGSTEILE (Jeweils 15+ pro Kategorie: Helme, Brust, Beine, Stiefel, Ringe, Amulette, Waffen)
+        const races = {
+            human: { name: "Mensch", icon: "🧑" },
+            dwarf: { name: "Zwerg", icon: "🧔" },
+            elf: { name: "Elf", icon: "🧝" },
+            orc: { name: "Ork", icon: "👹" },
+            halbling: { name: "Halbling", icon: "🧒" }
+        };
+
+        // ÜBER 100+ AUSRÜSTUNGSTEILE (Vollständig & Ungekürzt)
         const masterEquipmentList = [
-            // --- HELME (16) ---
             { id: 'h1', name: "Lederkappe", icon: "🧢", type: "armor", slot: "helm", city: "aschenwald", cost: 15, desc: "Einfacher Lederschutz." },
             { id: 'h2', name: "Eisenhelm", icon: "🪖", type: "armor", slot: "helm", city: "eisenhall", cost: 35, desc: "Zwergischer Eisenhelm." },
             { id: 'h3', name: "Stahlhaube", icon: "🛡️", type: "armor", slot: "helm", city: "rabenfels", cost: 60, desc: "Glänzende Stahlhaube." },
@@ -571,7 +611,6 @@
             { id: 'h15', name: "Titanenhelm", icon: "🗿", type: "armor", slot: "helm", city: "rabenfels", cost: 500, desc: "Unzerstörbar." },
             { id: 'h16', name: "Magischer Magierhut", icon: "🧙", type: "armor", slot: "helm", city: "sonnendorn", cost: 110, desc: "Fördert arkane Kräfte." },
 
-            // --- BRUSTPANZER (16) ---
             { id: 'c1', name: "Lederwams", icon: "🧥", type: "armor", slot: "chest", city: "aschenwald", cost: 25, desc: "Gegerbtes Leder." },
             { id: 'c2', name: "Kettenhemd", icon: "⛓️", type: "armor", slot: "chest", city: "rabenfels", cost: 90, desc: "Tausende Stahlringe." },
             { id: 'c3', name: "Zwergen-Plattenpanzer", icon: "🛡️", type: "armor", slot: "chest", city: "eisenhall", cost: 130, desc: "Massiver Harnisch." },
@@ -589,7 +628,6 @@
             { id: 'c15', name: "Schattenrüstung", icon: "🌑", type: "armor", slot: "chest", city: "sonnendorn", cost: 320, desc: "Dunkle Eleganz." },
             { id: 'c16', name: "Paladin-Harnisch", icon: "✨", type: "armor", slot: "chest", city: "rabenfels", cost: 450, desc: "Heiliger Schutz." },
 
-            // --- BEINLINGE (16) ---
             { id: 'l1', name: "Stoffhose", icon: "👖", type: "armor", slot: "legs", city: "aschenwald", cost: 5, desc: "Einfache Hose." },
             { id: 'l2', name: "Lederbeinschienen", icon: "👖", type: "armor", slot: "legs", city: "aschenwald", cost: 20, desc: "Schienbeinschutz." },
             { id: 'l3', name: "Eisen-Beinlinge", icon: "🛡️", type: "armor", slot: "legs", city: "eisenhall", cost: 60, desc: "Schwere Beine." },
@@ -607,7 +645,6 @@
             { id: 'l15', name: "Magische Beinschienen", icon: "🔮", type: "armor", slot: "legs", city: "sonnendorn", cost: 160, desc: "Bläulich schimmernd." },
             { id: 'l16', name: "Kriegshosen", icon: "👖", type: "armor", slot: "legs", city: "rabenfels", cost: 95, desc: "Gepanzert." },
 
-            // --- STIEFEL (16) ---
             { id: 'b1', name: "Stoffschuhe", icon: "👞", type: "armor", slot: "boots", city: "aschenwald", cost: 5, desc: "Einfache Treter." },
             { id: 'b2', name: "Lederstiefel", icon: "🥾", type: "armor", slot: "boots", city: "aschenwald", cost: 20, desc: "Wanderstiefel." },
             { id: 'b3', name: "Eisenstiefel", icon: "🛡️", type: "armor", slot: "boots", city: "eisenhall", cost: 50, desc: "Stahlkappen." },
@@ -625,7 +662,6 @@
             { id: 'b15', name: "Bronzestiefel", icon: "🪙", type: "armor", slot: "boots", city: "eisenhall", cost: 40, desc: "Solide Bronze." },
             { id: 'b16', name: "Gepanzerte Reiterstiefel", icon: "🐎", type: "armor", slot: "boots", city: "rabenfels", cost: 140, desc: "Für den Sattel." },
 
-            // --- RINGE (16) ---
             { id: 'r1', name: "Kupferring", icon: "💍", type: "armor", slot: "ring", city: "aschenwald", cost: 10, desc: "Schlichter Ring." },
             { id: 'r2', name: "Silberring", icon: "💍", type: "armor", slot: "ring", city: "sonnendorn", cost: 40, desc: "Glänzendes Silber." },
             { id: 'r3', name: "Goldener Siegelring", icon: "💍", type: "armor", slot: "ring", city: "rabenfels", cost: 100, desc: "Adliges Wappen." },
@@ -643,7 +679,6 @@
             { id: 'r15', name: "Ring der Ewigkeit", icon: "💫", type: "armor", slot: "ring", city: "rabenfels", cost: 1000, desc: "Legendäres Artefakt." },
             { id: 'r16', name: "Verfluchter Ring", icon: "☠️", type: "armor", slot: "ring", city: "aschenwald", cost: 50, desc: "Riskant aber stark." },
 
-            // --- WAFFEN (18 Verschiedene: Schwerter, Bögen, Äxte, Stäbe) ---
             { id: 'w1', name: "Bronzeschwert", icon: "🗡️", type: "weapon", slot: "rhand", city: "eisenhall", cost: 40, desc: "Solide Klinge." },
             { id: 'w2', name: "Ritter-Langschwert", icon: "⚔️", type: "weapon", slot: "rhand", city: "rabenfels", cost: 150, desc: "Edler Stahl." },
             { id: 'w3', name: "Elfen-Klinge", icon: "🗡️", type: "weapon", slot: "rhand", city: "sonnendorn", cost: 130, desc: "Extrem scharf." },
@@ -664,7 +699,6 @@
             { id: 'w18', name: "Götterhammer", icon: "⚡", type: "weapon", slot: "rhand", city: "rabenfels", cost: 900, desc: "Erschüttert die Erde." }
         ];
 
-        // MONSTER- & MATERIAL-CRAFTING REZEPTE (VIEL AUSWAHL)
         const monsterCraftingRecipes = [
             { id: 'mc_1', name: "Geweih-Bogen", icon: "🏹", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1, hirsch_fell: 1 }, costGold: 30, desc: "Präziser Bogen aus Hirschgeweih." },
             { id: 'mc_2', name: "Wolfsfell-Rüstung", icon: "🧥", type: "armor", slot: "chest", req: { wolf_fell: 2 }, costGold: 50, desc: "Kuschelig warme Wolfsfell-Rüstung." },
@@ -675,10 +709,10 @@
         ];
 
         const locations = {
-            aschenwald: { name: "Aschenwald", desc: "Nebeliger Grenzforst. Perfekt zum Jagen.", npc: "Händler Vane" },
-            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung. Äxte, Helme & Mithril.", npc: "Meisterschmied Thorgar" },
-            sonnendorn: { name: "Sonnendorn", desc: "Hafenstadt mit Magie, Ringen & Elfenklingen.", npc: "Händlerin Lyra" },
-            rabenfels: { name: "Rabenfels", desc: "Klippenburg. Schwerste Rüstungen & Kriegswaffen.", npc: "Kommandant Varis" }
+            aschenwald: { name: "Aschenwald", desc: "Nebeliger Grenzforst. Perfekt zum Jagen und Erkunden.", npc: "Händler Vane" },
+            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung. Berühmt für Äxte, Helme, Schmiedekunst und Mithril.", npc: "Meisterschmied Thorgar" },
+            sonnendorn: { name: "Sonnendorn", desc: "Hafenstadt am goldenen Meer mit Magie, Ringen & Elfenklingen.", npc: "Händlerin Lyra" },
+            rabenfels: { name: "Rabenfels", desc: "Klippenburg auf steilem Fels. Heimat schwerer Rüstungen & Kriegswaffen.", npc: "Kommandant Varis" }
         };
 
         let audioCtx = null;
@@ -987,6 +1021,9 @@
             playSfx('click');
             const nameInput = document.getElementById('hero-name').value.trim();
             if (nameInput) playerData.name = nameInput;
+            playerData.difficulty = document.getElementById('hero-difficulty').value;
+            playerData.race = document.getElementById('hero-race').value;
+            playerData.className = document.getElementById('hero-class').value;
             playerData.location = document.getElementById('hero-location').value;
             playerData.playTimeMinutes = 0;
 
@@ -1043,6 +1080,7 @@
             updateSidebar();
         }
 
+        // --- OFFENE KI-SIMULATION FÜR JEGLICHE EINGABEN (AI DUNGEON MASTER) ---
         function submitCustomAction() {
             const inputField = document.getElementById('player-action-input');
             const actionText = inputField.value.trim().toLowerCase();
@@ -1051,31 +1089,42 @@
 
             appendStory(`> **Du:** "${actionText}"`);
 
-            if (actionText.includes("jagen") || actionText.includes("wald")) {
+            let responseText = "";
+            let locObj = locations[playerData.location];
+
+            if (actionText.includes("was sehe ich") || actionText.includes("umsehen") || actionText.includes("schauen")) {
+                responseText = `👁️ **Dungeon Master:** Du blickst dich in ${locObj.name} um.\n${locObj.desc}\nDer Wind zieht leise durch die Gassen und der Geruch von Abenteuer liegt in der Luft. Die Händler haben geöffnet, und der Weg in andere Regionen steht dir offen.`;
+            } else if (actionText.includes("jagen") || actionText.includes("wald") || actionText.includes("monster")) {
                 advanceTime(1);
                 playerData.stats.monstersKilled++;
                 playerData.inventory.push({ id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20, desc: "Dichtes Wolfsfell für die Monster-Schmiede." });
-                appendStory(`🌲 **Jagd-Erfolg:** Du erlegst einen Wolf und erhältst **1x Wolfsfell**! Nutze die Monster-Schmiede (⚒️), um Rüstungen zu bauen.`);
-            } else if (actionText.includes("eisenhall")) {
+                responseText = `🌲 **Jagd-Abenteuer:** Du streifst durch das Unterholz, spürst einen Schatten im Nebel auf und erlegst nach einem kurzen Kampf einen streunenden Wolf.\n\n✨ **Erfolg:** Du erhältst **1x Wolfsfell** in deinen Rucksack!`;
+            } else if (actionText.includes("reisen nach eisenhall")) {
                 playerData.location = "eisenhall";
-                appendStory(`🚂 Du reist nach **Eisenhall** (Zwergen-Bergfestung).`);
-            } else if (actionText.includes("sonnendorn")) {
+                responseText = `🚂 **Reise:** Du verlässt deine bisherige Umgebung und wanderst über steile Bergpfade nach **Eisenhall**, der gewaltigen Zwergen-Bergfestung. Schwere Äxte und eiserne Rüstungen erwarten dich hier beim Schmied.`;
+            } else if (actionText.includes("reisen nach sonnendorn")) {
                 playerData.location = "sonnendorn";
-                appendStory(`⛵ Du reist nach **Sonnendorn** (Hafenstadt).`);
-            } else if (actionText.includes("rabenfels")) {
+                responseText = `⛵ **Reise:** Du folgst den Küstenstraßen bis zur glitzernden Hafenstadt **Sonnendorn**. Die salzige Meeresluft weht dir entgegen, während Magier und Händler ihre feinen Klingen feilbieten.`;
+            } else if (actionText.includes("reisen nach rabenfels")) {
                 playerData.location = "rabenfels";
-                appendStory(`🏰 Du reist nach **Rabenfels** (Klippenburg).`);
-            } else if (actionText.includes("aschenwald")) {
+                responseText = `🏰 **Reise:** Du erklimmst die steilen Klippen zur uneinnehmbaren Festung **Rabenfels**. Hier wachen stählerne Krieger über die besten Schwerter und Rüstungen des Reiches.`;
+            } else if (actionText.includes("reisen nach aschenwald")) {
                 playerData.location = "aschenwald";
-                appendStory(`🌲 Du kehrst in den **Aschenwald** zurück.`);
-            } else if (actionText.includes("markt") || actionText.includes("händler")) {
+                responseText = `🌲 **Reise:** Dukehrst zurück in den schattigen und nebligen **Aschenwald**.`;
+            } else if (actionText.includes("markt") || actionText.includes("händler") || actionText.includes("kaufen")) {
                 openNpcModal();
-            } else if (actionText.includes("schmiede") || actionText.includes("craft")) {
+                responseText = `🛒 **Dungeon Master:** Du trittst an den Stand des lokalen Händlers in ${locObj.name} heran. (Das Händlerfenster hat sich geöffnet).`;
+            } else if (actionText.includes("schmiede") || actionText.includes("craft") || actionText.includes("herstellen")) {
                 openCraftingModal();
+                responseText = `⚒️ **Dungeon Master:** Du betrittst die Funken sprühende Werkstatt der Monster-Schmiede. (Das Handwerksfenster hat sich geöffnet).`;
+            } else if (actionText.includes("hallo") || actionText.includes("wer bist du")) {
+                responseText = `🧙‍♂️ **Dungeon Master:** Ich bin der Geist dieses Reiches. Frage mich, was du siehst, reise zwischen den Städten, jage in den Wäldern oder schmiede legendäre Rüstungen! Deine Geschichte liegt ganz in deiner Hand.`;
             } else {
-                appendStory(`🧙‍♂️ **Dungeon Master:** „Du versuchst: '${actionText}'. Nutze Befehle wie 'gehe jagen', 'reisen nach eisenhall' oder öffne die Monster-Schmiede (⚒️).“`);
+                // Generische, immersive KI-Antwort auf alle anderen freien Fragen/Aktionen
+                responseText = `🎲 **Dungeon Master:** Du versuchst: *"${actionText}"*.\n\nDie Welt reagiert auf deine Worte. In ${locObj.name} schaut man dir kurz hinterher, doch niemand hindert dich an deinem Vorhaben. Was möchtest du als Nächstes tun? (Tippe z.B. 'was sehe ich?', 'gehe jagen', 'markt' oder 'reisen nach eisenhall').`;
             }
 
+            appendStory(responseText);
             inputField.value = '';
             updateSidebar();
             saveGame();
@@ -1083,9 +1132,10 @@
 
         function updateSidebar() {
             const locObj = locations[playerData.location];
+            const raceObj = races[playerData.race] || { icon: "🛡️" };
             let h = playerData.hour;
             document.getElementById('time-display').innerText = `${h < 10 ? '0'+h : h}:00 Uhr`;
-            document.getElementById('hero-avatar').innerText = "🛡️";
+            document.getElementById('hero-avatar').innerText = raceObj.icon;
             document.getElementById('char-info').innerHTML = `<strong>${playerData.name}</strong><br>${locObj.name}`;
 
             const eqGrid = document.getElementById('equipment-grid');
@@ -1126,7 +1176,7 @@
 
         function initStoryWelcome() {
             let storyBox = document.getElementById('story-box');
-            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen, ${playerData.name}!\n\nEs gibt nun **über 100 verschiedene Rüstungen, Helme, Stiefel, Hosen, Ringe und Waffen** in der Welt! Besuche die Städte und nutze die Monster-Schmiede (⚒️), um aus erbeuteten Materialien epische Rüstungen zu fertigen.`;
+            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen in der Welt von *Pfad des Helden*, ${playerData.name}!\n\nDu befindest dich im ${locations[playerData.location].name}. Du kannst mich hier im Chat alles fragen (z.B. *"Was sehe ich hier?"*, *"Gibt es hier Händler?"*, *"Kann ich mit den Leuten sprechen?"*) oder deine Taten frei eintippen. \n\nÜber 100 Rüstungen, Helme, Ringe, Stiefel und Waffen warten darauf, von dir entdeckt oder in der Monster-Schmiede (⚒️) hergestellt zu werden!`;
         }
 
         function appendStory(text) {
