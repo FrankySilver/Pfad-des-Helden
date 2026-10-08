@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Episches D&D Selber-Würfeln RPG (Ultimate Edition mit Musik)</title>
+    <title>Pfad des Helden - Episches D&D Selber-Würfeln RPG (Ultimate Edition)</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -175,7 +175,6 @@
 </head>
 <body>
 
-    <!-- YouTube Musikplayer Container -->
     <div id="youtube-player-container" style="display:none;"></div>
 
     <header>
@@ -249,7 +248,7 @@
                 <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate D&D Edition mit Musik</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate D&D Edition</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -259,19 +258,19 @@
                                 Kein Spielstand vorhanden
                             </div>
                         </div>
-                        <button class="choice-btn" onclick="openSettings()" style="text-align: center;">⚙️ Einstellungen & Musik</button>
+                        <button class="choice-btn" onclick="openSettings()" style="text-align: center;">⚙️ Einstellungen</button>
                     </div>
                 </div>
 
-                <!-- Einstellungen (mit Musik-Lautstärkeregler) -->
+                <!-- Einstellungen -->
                 <div id="settings-menu" class="hidden" style="max-width: 400px; margin: auto; text-align: left;">
-                    <h3 style="color: var(--accent-color); text-align: center;">🔊 Audio & Musik</h3>
+                    <h3 style="color: var(--accent-color); text-align: center;">🔊 Audio-Einstellungen</h3>
                     <div class="form-group">
                         <label>Lautstärke SFX:</label>
                         <input type="range" id="sfx-slider" min="0" max="100" value="80" oninput="updateSfxVolume(this.value)">
                     </div>
                     <div class="form-group" style="margin-top: 1rem;">
-                        <label>Lautstärke Hintergrundmusik (YouTube):</label>
+                        <label>Lautstärke Musik:</label>
                         <input type="range" id="music-slider" min="0" max="100" value="50" oninput="updateMusicVolume(this.value)">
                     </div>
                     <button class="choice-btn" onclick="closeSettings()" style="text-align: center; width: 100%; margin-top: 1rem;">Zurück</button>
@@ -380,6 +379,18 @@
         </div>
     </div>
 
+    <!-- Jagd Abenteuer Modal (Selber würfeln) -->
+    <div id="hunt-adventure-modal" class="modal hidden">
+        <div class="modal-content" style="width: 780px;">
+            <h3 id="ha-title" style="color: var(--accent-color); margin-top: 0; text-align: center;">Jagd-Ziel</h3>
+            <div id="ha-story" style="font-size: 0.95rem; line-height: 1.6; background: #111116; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 1rem; white-space: pre-line;"></div>
+            <div style="background: #1a1a24; padding: 0.6rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.85rem; border: 1px solid var(--accent-color); text-align: center;">
+                💡 <strong>Anleitung:</strong> Würfle mit der d20-Station unten rechts, addiere deinen Jagd-Modifikator und wähle aus, ob du bestanden hast!
+            </div>
+            <div id="ha-choices" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+        </div>
+    </div>
+
     <div id="questgiver-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">📜 Questbrett (Verfügbare Aufträge)</h3>
@@ -396,13 +407,13 @@
         </div>
     </div>
 
-    <!-- Quest Abenteuer Modal (Versteckte Schritt-Anzahl) -->
+    <!-- Quest Abenteuer Modal (Versteckte Schritt-Anzahl & Selber würfeln) -->
     <div id="quest-adventure-modal" class="modal hidden">
         <div class="modal-content" style="width: 780px;">
             <h3 id="qa-title" style="color: var(--accent-color); margin-top: 0; text-align: center;">Quest-Titel</h3>
             <div id="qa-story" style="font-size: 0.95rem; line-height: 1.6; background: #111116; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 1rem; white-space: pre-line; max-height: 350px; overflow-y: auto;"></div>
             <div style="background: #1a1a24; padding: 0.6rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.85rem; border: 1px solid var(--accent-color); text-align: center;">
-                💡 <strong>Anleitung:</strong> Würfle mit der d20-Station unten rechts, addiere deinen Skill-Modifikator und wähle unten aus!
+                💡 <strong>Anleitung:</strong> Würfle mit der d20-Station unten rechts, addiere deinen Skill-Modifikator und wähle aus, ob du bestanden hast!
             </div>
             <div id="qa-choices" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
         </div>
@@ -433,10 +444,9 @@
     </div>
 
     <footer>
-        <p>Pfad des Helden – 30 Epische Quests, Alle Items, Musik & Selber-Würfeln</p>
+        <p>Pfad des Helden – 30 Epische Quests, Alle Items & Selber-Würfeln</p>
     </footer>
 
-    <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
@@ -479,6 +489,7 @@
                 ring: null
             },
             currentActiveQuest: null,
+            currentHuntBeast: null,
             selectedItemIndex: null
         };
 
@@ -497,7 +508,6 @@
             rabenfels: { name: "Rabenfels", desc: "Trutzige Klippenburg auf steilem Fels.", npc: "Kommandant Varis" }
         };
 
-        // VOLLSTÄNDIGE ITEM-, RÜSTUNGS- UND WAFFENLISTE
         const arrowList = [
             { id: 'ar_1', name: "Holzpfeile", icon: "🏹", type: "arrow", slot: "arrows", city: "aschenwald", cost: 10, bonus: 1, desc: "Einfache Pfeile (+1 Schaden)." },
             { id: 'ar_2', name: "Eisenpfeile", icon: "🎯", type: "arrow", slot: "arrows", city: "eisenhall", cost: 25, bonus: 2, desc: "Robuste Pfeile (+2 Schaden)." }
@@ -599,20 +609,20 @@
             });
         });
 
-        // --- YOUTUBE API FÜR HINTERGRUNDMUSIK ---
+        // --- AUDIO & YOUTUBE ---
+        let ytPlayer = null;
+        let musicVolume = 50;
+
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-player-container', {
                 height: '0', width: '0', videoId: 'ipFaubyDUT4',
-                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'ipFaubyDUT4' },
-                events: { 'onReady': (event) => { event.target.setVolume(musicVolume); event.target.playVideo(); } }
+                playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'ipFaubyDUT4' },
+                events: { 'onReady': (event) => { event.target.setVolume(musicVolume); } }
             });
         }
-
         function updateMusicVolume(val) {
             musicVolume = parseInt(val);
-            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                ytPlayer.setVolume(musicVolume);
-            }
+            if (ytPlayer && typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(musicVolume);
         }
 
         let audioCtx = null;
@@ -622,9 +632,6 @@
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                ytPlayer.playVideo();
-            }
         }
 
         function playSfx(type = 'click') {
@@ -805,7 +812,7 @@
         }
         function closeActiveQuestsModal() { playSfx('click'); document.getElementById('active-quests-modal').classList.add('hidden'); }
 
-        // --- QUEST STEP ENGINE ---
+        // --- QUEST STEP ENGINE (Selber würfeln) ---
         function playQuestStep(quest) {
             playerData.currentActiveQuest = quest;
             let step = quest.steps[quest.currentStepIndex];
@@ -898,6 +905,7 @@
             document.getElementById('dice-widget-result').innerText = `Schaden: ${roll} + ${arrowBonus} = ${totalDmg}`;
         }
 
+        // --- JAGD REVIER (Mit Selber Würfeln) ---
         function openHuntModal() {
             playSfx('click');
             let content = document.getElementById('hunt-list-content');
@@ -909,31 +917,63 @@
                 div.innerHTML = `<div><strong>${beast.icon} ${beast.name}</strong><br><small>Beute: ${beast.rewardMat.name}</small></div>`;
                 let btn = document.createElement('button');
                 btn.className = 'choice-btn'; btn.style.padding = '0.3rem 0.8rem'; btn.style.fontSize = '0.8rem';
-                btn.innerText = 'Jagen'; btn.onclick = () => executeHunt(beast);
+                btn.innerText = 'Jagen'; btn.onclick = () => { closeHuntModal(); startHuntAdventure(beast); };
                 div.appendChild(btn); content.appendChild(div);
             });
             document.getElementById('hunt-modal').classList.remove('hidden');
         }
         function closeHuntModal() { playSfx('click'); document.getElementById('hunt-modal').classList.add('hidden'); }
 
-        function executeHunt(beast) {
-            closeHuntModal();
+        function startHuntAdventure(beast) {
+            playerData.currentHuntBeast = beast;
+            let skillVal = playerData.skills.jagd;
+            let modifier = Math.floor((skillVal - 10) / 2);
+
+            document.getElementById('ha-title').innerText = `🏹 Jagd auf: ${beast.icon} ${beast.name}`;
+            document.getElementById('ha-story').innerText = `Du pirschst durch die Wildnis, um Spuren von ${beast.name} zu finden. Plötzlich raschelt es im Unterholz! Das Ziel ist in Sichtweite. Du musst deinen Jagd-Skill einsetzen.`;
+
+            let choicesContainer = document.getElementById('ha-choices');
+            choicesContainer.innerHTML = `
+                <div style="background: #21212c; padding: 0.8rem; border-radius: 5px; border: 1px solid var(--accent-color); margin-bottom: 0.8rem;">
+                    <div><strong>Benötigte Fertigkeit:</strong> JAGD (Modifikator: ${modifier >= 0 ? '+' : ''}${modifier})</div>
+                    <div><strong>Zielwert zum Bestehen:</strong> ${beast.baseDiff}+ (d20 + Modifikator)</div>
+                </div>
+                <button class="choice-btn" onclick="resolveHuntStep(true)" style="background-color: #1b3a2b; border-color: var(--highlight); text-align: center;">✅ Wurf bestanden (Zielwert erreicht)</button>
+                <button class="choice-btn" onclick="resolveHuntStep(false)" style="background-color: #3b1a1a; border-color: #e74c3c; text-align: center;">❌ Wurf fehlgeschlagen (Zielwert verfehlt)</button>
+            `;
+
+            document.getElementById('hunt-adventure-modal').classList.remove('hidden');
+        }
+
+        function resolveHuntStep(success) {
+            playSfx('click');
+            let beast = playerData.currentHuntBeast;
             advanceTime(1);
-            let check = Math.floor(Math.random() * 20) + 1 + Math.floor((playerData.skills.jagd - 10) / 2);
-            let success = check >= beast.baseDiff;
             let responseText = "";
+
             if (success) {
                 playerData.stats.monstersKilled++;
                 playerData.xp += beast.xp;
                 checkLevelUp();
                 playerData.inventory.push({ ...beast.rewardMat, condition: 100 });
-                responseText = `🏹 **Jagd auf ${beast.name}:** Wurf-Ergebnis **${check}** (Benötigt: ${beast.baseDiff}). Erfolg! +1x ${beast.rewardMat.name}, +${beast.xp} XP!`;
+                responseText = `🏹 **Jagd erfolgreich!** Du hast ${beast.name} erlegt. +1x ${beast.rewardMat.name}, +${beast.xp} XP!`;
             } else {
                 let dmg = Math.max(5, beast.baseDiff);
                 playerData.hp = Math.max(0, playerData.hp - dmg);
-                responseText = `🏹 **Jagd auf ${beast.name}:** Wurf-Ergebnis **${check}** (Benötigt: ${beast.baseDiff}). Misserfolg! -${dmg} HP!`;
+                responseText = `🏹 **Jagd fehlgeschlagen!** ${beast.name} hat dich angegriffen und verwundet. -${dmg} HP!`;
+
+                if (playerData.hp <= 0) {
+                    playerData.stats.deaths++;
+                    responseText += `\n\n💀 **Du bist an deinen Verletzungen gestorben!** Das Spiel wird zurückgesetzt.`;
+                    document.getElementById('ha-story').innerText = responseText;
+                    document.getElementById('ha-choices').innerHTML = `<button class="choice-btn" onclick="location.reload()" style="text-align:center; background:#331111; border-color:#e74c3c;">Neuen Charakter erstellen</button>`;
+                    localStorage.removeItem('pfad_des_helden_save');
+                    return;
+                }
             }
-            appendStory(responseText);
+
+            document.getElementById('ha-story').innerText = responseText;
+            document.getElementById('ha-choices').innerHTML = `<button class="choice-btn" onclick="document.getElementById('hunt-adventure-modal').classList.add('hidden'); updateCityHub(); updateSidebar(); saveGame();" style="text-align:center;">Zurück in die Stadt</button>`;
             updateSidebar();
             saveGame();
         }
@@ -1118,7 +1158,6 @@
             playerData.hp = 100;
             playerData.maxHp = 100;
 
-            // Rassen Boni anwenden
             let r = races[playerData.race];
             if (r && r.bonus) {
                 if (r.bonus.all) {
@@ -1160,7 +1199,7 @@
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
                 document.getElementById('right-action-panel').classList.remove('hidden');
-                document.getElementById('craft-btn').classList.add('hidden');
+                document.getElementById('craft-btn').classList.remove('hidden');
                 document.getElementById('handbook-btn').classList.remove('hidden');
                 document.getElementById('quit-to-menu-btn').classList.remove('hidden');
                 document.getElementById('dice-widget').classList.remove('hidden');
