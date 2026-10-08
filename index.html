@@ -342,6 +342,7 @@
     <header>
         <h1>🛡️ Pfad des Helden</h1>
         <div class="header-right">
+            <button class="icon-btn" id="music-toggle-btn" onclick="toggleMusic()" title="Hintergrundmusik an/aus">🎵</button>
             <button class="icon-btn hidden" id="npc-btn" onclick="openNpcModal()" title="Städte & Händler">👥</button>
             <button class="icon-btn hidden" id="craft-btn" onclick="openCraftingModal()" title="Monster-Schmiede">⚒️</button>
             <button class="icon-btn hidden" id="questlog-btn" onclick="openQuestModal()" title="Quest-Logbuch">📜</button>
@@ -566,18 +567,19 @@
             gold: 500,
             stats: { monstersKilled: 0, bossesKilled: 0, questsCompleted: 0, totalGoldFound: 500, deaths: 0 },
             inventory: [
-                { id: 'karte_1', name: "Alte Karte", icon: "🗺️", type: "quest", desc: "Zeigt den Weg zum verlassenen Dungeon." },
-                { id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20, desc: "Kann in der Monster-Schmiede für Rüstungen genutzt werden." },
-                { id: 'hirsch_geweih', name: "Hirschgeweih", icon: "🦴", type: "hunt", value: 25, desc: "Perfekt zum Bau von Bögen und Griffen." },
-                { id: 'drachen_schuppe', name: "Drachenschuppe", icon: "🐉", type: "hunt", value: 100, desc: "Extrem seltene Schuppe für legendäre Rüstungen." }
+                { id: 'karte_1', name: "Alte Karte", icon: "🗺️", type: "quest", desc: "Zeigt den Weg zum verlassenen Dungeon.", cost: 0 },
+                { id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20, desc: "Kann in der Monster-Schmiede für Rüstungen genutzt werden.", cost: 20 },
+                { id: 'hirsch_geweih', name: "Hirschgeweih", icon: "🦴", type: "hunt", value: 25, desc: "Perfekt zum Bau von Bögen und Griffen.", cost: 25 },
+                { id: 'drachen_schuppe', name: "Drachenschuppe", icon: "🐉", type: "hunt", value: 100, desc: "Extrem seltene Schuppe für legendäre Rüstungen.", cost: 100 }
             ],
             quests: [{ id: 'q1', title: "Der Beginn des Abenteuers", desc: "Erkunde die Welt, jage Monster und schmiede epische Ausrüstung.", completed: false }],
             equipment: {
                 helm: null,
-                chest: { id: 'w_shirt', name: "Stoffhemd", icon: "👕", type: "armor", slot: "chest", desc: "Einfaches Leinenhemd." },
-                legs: { id: 'w_pants', name: "Stoffhose", icon: "👖", type: "armor", slot: "legs", desc: "Bequeme Hose." },
-                boots: { id: 'w_boots', name: "Stoffschuhe", icon: "👞", type: "armor", slot: "boots", desc: "Leichte Schuhe." },
-                rhand: { id: 'w_dagger', name: "Dolch", icon: "🗡️", type: "weapon", slot: "rhand", desc: "Kleine Klinge." },
+                chest: { id: 'w_shirt', name: "Stoffhemd", icon: "👕", type: "armor", slot: "chest", desc: "Einfaches Leinenhemd.", cost: 5 },
+                legs: { id: 'w_pants', name: "Stoffhose", icon: "👖", type: "armor", slot: "legs", desc: "Bequeme Hose.", cost: 5 },
+                boots: { id: 'w_boots', name: "Stoffschuhe", icon: "👞", type: "armor", slot: "boots", desc: "Leichte Schuhe.", cost: 5 },
+                rhand: { id: 'w_dagger', name: "Dolch", icon: "🗡️", type: "weapon", slot: "rhand", desc: "Kleine Klinge.", cost: 15 },
+                arrows: null,
                 ring: null
             },
             pendingCheck: null,
@@ -592,7 +594,21 @@
             halbling: { name: "Halbling", icon: "🧒" }
         };
 
-        // ÜBER 100+ AUSRÜSTUNGSTEILE (Vollständig & Ungekürzt)
+        // 10 VERSCHIEDENE PFEILE
+        const arrowList = [
+            { id: 'ar_1', name: "Holzpfeile", icon: "🏹", type: "arrow", slot: "arrows", city: "aschenwald", cost: 10, bonus: 1, desc: "Einfache hölzerne Pfeile (+1 Schaden)." },
+            { id: 'ar_2', name: "Eisenpfeile", icon: "🎯", type: "arrow", slot: "arrows", city: "eisenhall", cost: 25, bonus: 2, desc: "Robuste Pfeile mit Eisenspitze (+2 Schaden)." },
+            { id: 'ar_3', name: "Jagdpfeile", icon: "🎯", type: "arrow", slot: "arrows", city: "aschenwald", cost: 40, bonus: 3, desc: "Perfekt ausbalancierte Jagdpfeile (+3 Schaden)." },
+            { id: 'ar_4', name: "Stahlpfeile", icon: "🗡️", type: "arrow", slot: "arrows", city: "rabenfels", cost: 60, bonus: 4, desc: "Schwere Stahlpfeile (+4 Schaden)." },
+            { id: 'ar_5', name: "Elfen-Sternpfeile", icon: "✨", type: "arrow", slot: "arrows", city: "sonnendorn", cost: 90, bonus: 5, desc: "Magische Pfeile aus Mondholz (+5 Schaden)." },
+            { id: 'ar_6', name: "Feuerpfeile", icon: "🔥", type: "arrow", slot: "arrows", city: "rabenfels", cost: 120, bonus: 6, desc: "Entzünden sich beim Abschuss (+6 Schaden)." },
+            { id: 'ar_7', name: "Mithrilpfeile", icon: "💎", type: "arrow", slot: "arrows", city: "eisenhall", cost: 160, bonus: 7, desc: "Federleichte Mithril-Spitzen (+7 Schaden)." },
+            { id: 'ar_8', name: "Schattenpfeile", icon: "🌑", type: "arrow", slot: "arrows", city: "sonnendorn", cost: 200, bonus: 8, desc: "Lautlose Pfeile der Nacht (+8 Schaden)." },
+            { id: 'ar_9', name: "Titanenpfeile", icon: "🗿", type: "arrow", slot: "arrows", city: "rabenfels", cost: 260, bonus: 9, desc: "Durchschlagen dicke Panzerung (+9 Schaden)." },
+            { id: 'ar_10', name: "Drachen-Brandpfeile", icon: "🐉", type: "arrow", slot: "arrows", city: "rabenfels", cost: 350, bonus: 10, desc: "Legendäre Pfeile mit Drachenfeuer (+10 Schaden)." }
+        ];
+
+        // ÜBER 100+ AUSRÜSTUNGSTEILE (Inklusive Pfeile in der Master-List)
         const masterEquipmentList = [
             { id: 'h1', name: "Lederkappe", icon: "🧢", type: "armor", slot: "helm", city: "aschenwald", cost: 15, desc: "Einfacher Lederschutz." },
             { id: 'h2', name: "Eisenhelm", icon: "🪖", type: "armor", slot: "helm", city: "eisenhall", cost: 35, desc: "Zwergischer Eisenhelm." },
@@ -696,16 +712,19 @@
             { id: 'w15', name: "Zweihaänder", icon: "⚔️", type: "weapon", slot: "rhand", city: "rabenfels", cost: 250, desc: "Zweihand-Klinge." },
             { id: 'w16', name: "Runenschwert", icon: "🔮", type: "weapon", slot: "rhand", city: "eisenhall", cost: 400, desc: "Aus alten Mythen." },
             { id: 'w17', name: "Drachenknochen-Bogen", icon: "🐉", type: "weapon", slot: "rhand", city: "rabenfels", cost: 750, desc: "Legendärer Bogen." },
-            { id: 'w18', name: "Götterhammer", icon: "⚡", type: "weapon", slot: "rhand", city: "rabenfels", cost: 900, desc: "Erschüttert die Erde." }
+            { id: 'w18', name: "Götterhammer", icon: "⚡", type: "weapon", slot: "rhand", city: "rabenfels", cost: 900, desc: "Erschüttert die Erde." },
+            
+            // Pfeile in Masterliste einbetten
+            ...arrowList
         ];
 
         const monsterCraftingRecipes = [
-            { id: 'mc_1', name: "Geweih-Bogen", icon: "🏹", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1, hirsch_fell: 1 }, costGold: 30, desc: "Präziser Bogen aus Hirschgeweih." },
-            { id: 'mc_2', name: "Wolfsfell-Rüstung", icon: "🧥", type: "armor", slot: "chest", req: { wolf_fell: 2 }, costGold: 50, desc: "Kuschelig warme Wolfsfell-Rüstung." },
-            { id: 'mc_3', name: "Wolfs-Beinschienen", icon: "👖", type: "armor", slot: "legs", req: { wolf_fell: 1 }, costGold: 25, desc: "Robuste Beinschienen aus Fell." },
-            { id: 'mc_4', name: "Drachenschuppen-Platte", icon: "🛡️", type: "armor", slot: "chest", req: { drachen_schuppe: 2, wolf_fell: 1 }, costGold: 200, desc: "Unzerstörbare Rüstung aus Drachenschuppen." },
-            { id: 'mc_5', name: "Drachenschuppen-Helm", icon: "🐉", type: "armor", slot: "helm", req: { drachen_schuppe: 1 }, costGold: 120, desc: "Kopfschutz aus Wyvern-Schuppen." },
-            { id: 'mc_6', name: "Geweih-Dolch", icon: "🗡️", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1 }, costGold: 20, desc: "Flinke Klinge mit Geweih-Griff." }
+            { id: 'mc_1', name: "Geweih-Bogen", icon: "🏹", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1, hirsch_fell: 1 }, costGold: 30, cost: 30, desc: "Präziser Bogen aus Hirschgeweih." },
+            { id: 'mc_2', name: "Wolfsfell-Rüstung", icon: "🧥", type: "armor", slot: "chest", req: { wolf_fell: 2 }, costGold: 50, cost: 50, desc: "Kuschelig warme Wolfsfell-Rüstung." },
+            { id: 'mc_3', name: "Wolfs-Beinschienen", icon: "👖", type: "armor", slot: "legs", req: { wolf_fell: 1 }, costGold: 25, cost: 25, desc: "Robuste Beinschienen aus Fell." },
+            { id: 'mc_4', name: "Drachenschuppen-Platte", icon: "🛡️", type: "armor", slot: "chest", req: { drachen_schuppe: 2, wolf_fell: 1 }, costGold: 200, cost: 200, desc: "Unzerstörbare Rüstung aus Drachenschuppen." },
+            { id: 'mc_5', name: "Drachenschuppen-Helm", icon: "🐉", type: "armor", slot: "helm", req: { drachen_schuppe: 1 }, costGold: 120, cost: 120, desc: "Kopfschutz aus Wyvern-Schuppen." },
+            { id: 'mc_6', name: "Geweih-Dolch", icon: "🗡️", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1 }, costGold: 20, cost: 20, desc: "Flinke Klinge mit Geweih-Griff." }
         ];
 
         const locations = {
@@ -716,12 +735,76 @@
         };
 
         let audioCtx = null;
+        let musicInterval = null;
+        let isMusicPlaying = false;
         let playTimeInterval = null;
         let sfxVolume = 0.8;
 
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        // HINTERGRUNDMUSIK (Epischer Cinematic/Fantasy Ambient Sound à la YouTube-Inspiration)
+        function toggleMusic() {
+            initAudio();
+            isMusicPlaying = !isMusicPlaying;
+            const btn = document.getElementById('music-toggle-btn');
+            if (isMusicPlaying) {
+                btn.style.background = 'var(--accent-color)';
+                btn.style.color = '#000';
+                startEpicAmbientMusic();
+                appendStory("🎵 Epische Hintergrundmusik gestartet.");
+            } else {
+                btn.style.background = '#22222e';
+                btn.style.color = 'var(--accent-color)';
+                if (musicInterval) clearInterval(musicInterval);
+                appendStory("🔇 Hintergrundmusik gestoppt.");
+            }
+        }
+
+        function startEpicAmbientMusic() {
+            if (musicInterval) clearInterval(musicInterval);
+            
+            // Sphärische, tiefe epische Akkordfolge (Cinematic Fantasy)
+            const chords = [
+                [130.81, 196.00, 261.63], // C minor / Episch tief
+                [116.54, 174.61, 233.08], // Bb Major
+                [103.83, 155.56, 207.65], // Ab Major
+                [110.00, 164.81, 220.00]  // A minor
+            ];
+            let step = 0;
+
+            function playChord() {
+                if (!isMusicPlaying || !audioCtx) return;
+                const notes = chords[step % chords.length];
+                step++;
+
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        if (!isMusicPlaying) return;
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        
+                        osc.type = idx === 0 ? 'sawtooth' : 'sine';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                        // Atmosphärischer, warmer Soundverlauf
+                        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 1.5);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 4.5);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 4.8);
+                    }, idx * 400);
+                });
+            }
+
+            playChord();
+            musicInterval = setInterval(playChord, 5000);
         }
 
         function playSfx(type = 'click') {
@@ -777,10 +860,15 @@
             playSfx('click');
             const hours = Math.floor(playerData.playTimeMinutes / 60);
             const mins = playerData.playTimeMinutes % 60;
+            
+            // Bonusschaden durch ausgerüstete Pfeile berechnen
+            let arrowBonus = (playerData.equipment.arrows && playerData.equipment.arrows.bonus) ? playerData.equipment.arrows.bonus : 0;
+
             document.getElementById('stats-content').innerHTML = `
                 <div>Spielzeit: <strong>${hours}h ${mins}m</strong></div>
                 <div>Erlegte Monster: <strong>${playerData.stats.monstersKilled}</strong></div>
                 <div>Gold gefunden: <strong>${playerData.stats.totalGoldFound}</strong></div>
+                <div>Aktueller Pfeil-Schadensbonus: <strong style="color:var(--highlight);">+${arrowBonus} Schaden</strong></div>
             `;
             document.getElementById('handbook-modal').classList.remove('hidden');
         }
@@ -796,7 +884,6 @@
                 div.innerHTML = `<strong>${q.completed ? '✅' : '📜'} ${q.title}</strong><br><small>${q.desc}</small>`;
                 content.appendChild(div);
             });
-            document.getElementById('questlog-modal').classList.add('hidden');
             document.getElementById('questlog-modal').classList.remove('hidden');
         }
         function closeQuestModal() { playSfx('click'); document.getElementById('questlog-modal').classList.add('hidden'); }
@@ -825,7 +912,6 @@
                 content.appendChild(div);
             });
 
-            document.getElementById('crafting-modal').classList.add('hidden');
             document.getElementById('crafting-modal').classList.remove('hidden');
         }
         function closeCraftingModal() { playSfx('click'); document.getElementById('crafting-modal').classList.add('hidden'); }
@@ -858,6 +944,7 @@
                 type: rec.type,
                 slot: rec.slot,
                 desc: rec.desc,
+                cost: rec.cost || 50,
                 condition: 100
             });
 
@@ -866,13 +953,14 @@
             openCraftingModal();
         }
 
+        // HÄNDLER & VERKAUFS-SYSTEM (-30% vom Kaufpreis)
         function openNpcModal() {
             playSfx('click');
             let currentLoc = locations[playerData.location];
             document.getElementById('npc-modal-title').innerText = `👥 Händler in ${currentLoc.name} (${currentLoc.npc})`;
             
             let content = document.getElementById('npc-list-content');
-            content.innerHTML = '';
+            content.innerHTML = `<h4 style="color:var(--accent-color); margin: 0 0 0.5rem 0;">Kaufen:</h4>`;
 
             let localItems = masterEquipmentList.filter(item => item.city === playerData.location);
             localItems.forEach(item => {
@@ -893,7 +981,47 @@
                 content.appendChild(div);
             });
 
-            document.getElementById('npc-modal').classList.add('hidden');
+            // Verkaufen-Sektion (30% weniger als Kaufpreis)
+            let sellHeader = document.createElement('h4');
+            sellHeader.style.color = 'var(--accent-color)';
+            sellHeader.style.margin = '1rem 0 0.5rem 0';
+            sellHeader.innerText = 'Gegenstände verkaufen (-30% vom Wert):';
+            content.appendChild(sellHeader);
+
+            let sellableCount = 0;
+            playerData.inventory.forEach((item, invIdx) => {
+                if (!item) return;
+                sellableCount++;
+                let originalCost = item.cost || 20;
+                let sellPrice = Math.floor(originalCost * 0.7); // 30% weniger als Kaufpreis
+
+                let div = document.createElement('div');
+                div.className = 'quest-modal-item';
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                div.innerHTML = `<div><strong>${item.icon} ${item.name}</strong><br><small>Verkaufswert: 🟡 ${sellPrice} Gold</small></div>`;
+
+                let btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.style.backgroundColor = '#331111';
+                btn.style.borderColor = '#e74c3c';
+                btn.style.padding = '0.3rem 0.8rem';
+                btn.style.fontSize = '0.8rem';
+                btn.innerText = `Verkaufen (${sellPrice}g)`;
+                btn.onclick = () => sellItem(invIdx, sellPrice);
+                div.appendChild(btn);
+                content.appendChild(div);
+            });
+
+            if (sellableCount === 0) {
+                let p = document.createElement('p');
+                p.style.fontSize = '0.8rem';
+                p.style.color = '#888';
+                p.innerText = 'Dein Rucksack ist leer.';
+                content.appendChild(p);
+            }
+
             document.getElementById('npc-modal').classList.remove('hidden');
         }
         function closeNpcModal() { playSfx('click'); document.getElementById('npc-modal').classList.add('hidden'); }
@@ -910,6 +1038,17 @@
             } else { alert("Nicht genug Gold!"); }
         }
 
+        function sellItem(invIdx, price) {
+            playSfx('click');
+            let item = playerData.inventory[invIdx];
+            if (!item) return;
+            playerData.inventory.splice(invIdx, 1);
+            playerData.gold += price;
+            alert(`💰 Du hast ${item.name} für ${price} Gold verkauft!`);
+            updateSidebar();
+            openNpcModal();
+        }
+
         function handleInventoryClick(index) {
             let item = playerData.inventory[index];
             if (!item) return;
@@ -922,10 +1061,10 @@
             let container = document.getElementById('modal-actions-container');
             container.innerHTML = '';
 
-            if (item.type === 'armor' || item.type === 'weapon') {
+            if (item.type === 'armor' || item.type === 'weapon' || item.type === 'arrow') {
                 let eqBtn = document.createElement('button');
                 eqBtn.className = 'choice-btn';
-                eqBtn.innerText = '🛡️ Ausrüsten';
+                eqBtn.innerText = item.type === 'arrow' ? '🏹 Pfeile ausrüsten' : '🛡️ Ausrüsten';
                 eqBtn.onclick = () => { equipItemFromInventory(index); closeItemModal(); };
                 container.appendChild(eqBtn);
             }
@@ -943,7 +1082,6 @@
             };
             container.appendChild(dropBtn);
 
-            document.getElementById('item-action-modal').classList.add('hidden');
             document.getElementById('item-action-modal').classList.remove('hidden');
         }
 
@@ -1012,7 +1150,6 @@
             playSfx('click');
             if (localStorage.getItem('pfad_des_helden_save') && !confirm("Alten Spielstand überschreiben?")) return;
             document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('char-creation').classList.add('hidden');
             document.getElementById('char-creation').classList.remove('hidden');
         }
 
@@ -1052,12 +1189,12 @@
                 document.getElementById('main-menu').classList.add('hidden');
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
-                document.getElementById('dice-widget').classList.add('hidden');
-                document.getElementById('quit-to-menu-btn').classList.add('hidden');
-                document.getElementById('handbook-btn').classList.add('hidden');
-                document.getElementById('questlog-btn').classList.add('hidden');
-                document.getElementById('npc-btn').classList.add('hidden');
-                document.getElementById('craft-btn').classList.add('hidden');
+                document.getElementById('dice-widget').classList.remove('hidden');
+                document.getElementById('quit-to-menu-btn').classList.remove('hidden');
+                document.getElementById('handbook-btn').classList.remove('hidden');
+                document.getElementById('questlog-btn').classList.remove('hidden');
+                document.getElementById('npc-btn').classList.remove('hidden');
+                document.getElementById('craft-btn').classList.remove('hidden');
                 startPlayTimeCounter();
                 updateSidebar();
                 appendStory(`📜 Abenteuer fortgesetzt in ${locations[playerData.location].name}.`);
@@ -1097,7 +1234,7 @@
             } else if (actionText.includes("jagen") || actionText.includes("wald") || actionText.includes("monster")) {
                 advanceTime(1);
                 playerData.stats.monstersKilled++;
-                playerData.inventory.push({ id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20, desc: "Dichtes Wolfsfell für die Monster-Schmiede." });
+                playerData.inventory.push({ id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20, cost: 20, desc: "Dichtes Wolfsfell für die Monster-Schmiede." });
                 responseText = `🌲 **Jagd-Abenteuer:** Du streifst durch das Unterholz, spürst einen Schatten im Nebel auf und erlegst nach einem kurzen Kampf einen streunenden Wolf.\n\n✨ **Erfolg:** Du erhältst **1x Wolfsfell** in deinen Rucksack!`;
             } else if (actionText.includes("reisen nach eisenhall")) {
                 playerData.location = "eisenhall";
@@ -1110,7 +1247,7 @@
                 responseText = `🏰 **Reise:** Du erklimmst die steilen Klippen zur uneinnehmbaren Festung **Rabenfels**. Hier wachen stählerne Krieger über die besten Schwerter und Rüstungen des Reiches.`;
             } else if (actionText.includes("reisen nach aschenwald")) {
                 playerData.location = "aschenwald";
-                responseText = `🌲 **Reise:** Dukehrst zurück in den schattigen und nebligen **Aschenwald**.`;
+                responseText = `🌲 **Reise:** Du kehrst zurück in den schattigen und nebligen **Aschenwald**.`;
             } else if (actionText.includes("markt") || actionText.includes("händler") || actionText.includes("kaufen")) {
                 openNpcModal();
                 responseText = `🛒 **Dungeon Master:** Du trittst an den Stand des lokalen Händlers in ${locObj.name} heran. (Das Händlerfenster hat sich geöffnet).`;
@@ -1120,7 +1257,6 @@
             } else if (actionText.includes("hallo") || actionText.includes("wer bist du")) {
                 responseText = `🧙‍♂️ **Dungeon Master:** Ich bin der Geist dieses Reiches. Frage mich, was du siehst, reise zwischen den Städten, jage in den Wäldern oder schmiede legendäre Rüstungen! Deine Geschichte liegt ganz in deiner Hand.`;
             } else {
-                // Generische, immersive KI-Antwort auf alle anderen freien Fragen/Aktionen
                 responseText = `🎲 **Dungeon Master:** Du versuchst: *"${actionText}"*.\n\nDie Welt reagiert auf deine Worte. In ${locObj.name} schaut man dir kurz hinterher, doch niemand hindert dich an deinem Vorhaben. Was möchtest du als Nächstes tun? (Tippe z.B. 'was sehe ich?', 'gehe jagen', 'markt' oder 'reisen nach eisenhall').`;
             }
 
@@ -1141,14 +1277,15 @@
             const eqGrid = document.getElementById('equipment-grid');
             const slots = [
                 { key: 'helm', label: 'Helm' }, { key: 'chest', label: 'Brust' }, { key: 'legs', label: 'Hose' },
-                { key: 'boots', label: 'Schuhe' }, { key: 'rhand', label: 'Waffe' }, { key: 'ring', label: 'Ring' }
+                { key: 'boots', label: 'Schuhe' }, { key: 'rhand', label: 'Waffe' }, { key: 'arrows', label: 'Pfeile' }, { key: 'ring', label: 'Ring' }
             ];
             eqGrid.innerHTML = '';
             slots.forEach(s => {
                 let item = playerData.equipment[s.key];
                 let div = document.createElement('div');
                 div.className = 'equipment-slot';
-                div.innerHTML = `<span>${s.label}</span>${item ? item.icon : '🛡️'}`;
+                let defaultIcon = s.key === 'arrows' ? '🏹' : '🛡️';
+                div.innerHTML = `<span>${s.label}</span>${item ? item.icon : defaultIcon}`;
                 if (item) {
                     div.setAttribute('title', `${item.name} - ${item.desc} (Klick zum Ablegen)`);
                     div.onclick = () => handleEquipmentSlotClick(s.key);
@@ -1176,7 +1313,7 @@
 
         function initStoryWelcome() {
             let storyBox = document.getElementById('story-box');
-            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen in der Welt von *Pfad des Helden*, ${playerData.name}!\n\nDu befindest dich im ${locations[playerData.location].name}. Du kannst mich hier im Chat alles fragen (z.B. *"Was sehe ich hier?"*, *"Gibt es hier Händler?"*, *"Kann ich mit den Leuten sprechen?"*) oder deine Taten frei eintippen. \n\nÜber 100 Rüstungen, Helme, Ringe, Stiefel und Waffen warten darauf, von dir entdeckt oder in der Monster-Schmiede (⚒️) hergestellt zu werden!`;
+            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen in der Welt von *Pfad des Helden*, ${playerData.name}!\n\nDu befindest dich im ${locations[playerData.location].name}. Du kannst mich hier im Chat alles fragen (z.B. *"Was sehe ich hier?"*, *"Gibt es hier Händler?"*, *"Kann ich mit den Leuten sprechen?"*) oder deine Taten frei eintippen. \n\nÜber 100 Rüstungen, Helme, Ringe, Stiefel, Bögen, Pfeile und Ringe warten darauf, von dir entdeckt oder gekauft zu werden! Klicke oben auf das 🎵-Symbol, um die epische Musik zu starten.`;
         }
 
         function appendStory(text) {
