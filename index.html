@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Episches D&D Text-RPG (Ultimate Edition)</title>
+    <title>Pfad des Helden - Episches D&D Mehrschritt-RPG</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -14,7 +14,6 @@
             --accent-hover: #f39c12;
             --border-color: #2a2a35;
             --highlight: #4ecca3;
-            --mana-color: #3498db;
             --hp-color: #e74c3c;
             --xp-color: #9b59b6;
         }
@@ -35,336 +34,141 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
         }
-        h1 {
-            color: var(--accent-color);
-            margin: 0;
-            font-size: 1.6rem;
-        }
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
+        h1 { color: var(--accent-color); margin: 0; font-size: 1.6rem; }
+        .header-right { display: flex; align-items: center; gap: 0.8rem; }
         .icon-btn {
-            background: #22222e;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: transform 0.2s, background 0.2s;
+            background: #22222e; border: 1px solid var(--accent-color); color: var(--accent-color);
+            width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-size: 1.1rem; transition: 0.2s;
         }
-        .icon-btn:hover {
-            background: var(--accent-color);
-            color: #000;
-        }
+        .icon-btn:hover { background: var(--accent-color); color: #000; }
 
         .main-container {
-            display: flex;
-            flex: 1;
-            max-width: 1700px;
-            width: 100%;
-            margin: 1.5rem auto;
-            gap: 1.5rem;
-            padding: 0 1rem;
-            box-sizing: border-box;
+            display: flex; flex: 1; max-width: 1700px; width: 100%;
+            margin: 1.5rem auto; gap: 1.5rem; padding: 0 1rem; box-sizing: border-box;
         }
 
         sidebar {
-            width: 380px;
-            background-color: var(--sidebar-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            box-sizing: border-box;
-            max-height: 92vh;
-            overflow-y: auto;
+            width: 380px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 1.2rem; display: flex; flex-direction: column; gap: 1.2rem;
+            box-sizing: border-box; max-height: 92vh; overflow-y: auto;
         }
 
         .right-action-panel {
-            width: 240px;
-            background-color: var(--sidebar-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            box-sizing: border-box;
-            max-height: 92vh;
+            width: 250px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 1.2rem; display: flex; flex-direction: column; gap: 1rem;
+            box-sizing: border-box; max-height: 92vh; overflow-y: auto;
         }
 
-        .sidebar-section {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.8rem;
-        }
+        .sidebar-section { border-bottom: 1px solid var(--border-color); padding-bottom: 0.8rem; }
         .sidebar-section:last-child { border-bottom: none; }
         .sidebar-title {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            color: var(--accent-color);
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-size: 0.9rem; text-transform: uppercase; color: var(--accent-color);
+            margin-bottom: 0.5rem; font-weight: bold; letter-spacing: 1px;
         }
 
         .time-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #1e1e28;
-            padding: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            border: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 10px; background: #1e1e28;
+            padding: 0.5rem; border-radius: 4px; font-size: 0.85rem; border: 1px solid var(--border-color);
             margin-bottom: 0.5rem;
         }
-        .time-icon { font-size: 1.4rem; }
-
-        .profile-header {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
+        .profile-header { display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem; }
         .hero-avatar {
-            width: 55px;
-            height: 55px;
-            background: #22222e;
-            border: 2px solid var(--accent-color);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
+            width: 55px; height: 55px; background: #22222e; border: 2px solid var(--accent-color);
+            border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
         }
 
         .status-bar-container {
-            margin-top: 0.3rem;
-            background: #222;
-            border-radius: 4px;
-            overflow: hidden;
-            height: 12px;
-            position: relative;
-            border: 1px solid #444;
+            margin-top: 0.3rem; background: #222; border-radius: 4px; overflow: hidden;
+            height: 12px; position: relative; border: 1px solid #444;
         }
         .status-fill { height: 100%; transition: width 0.3s; }
         .hp-fill { background-color: var(--hp-color); }
         .xp-fill { background-color: var(--xp-color); }
         .status-text {
-            position: absolute;
-            width: 100%;
-            top: 0; left: 0;
-            font-size: 0.65rem;
-            text-align: center;
-            color: #fff;
-            font-weight: bold;
-            line-height: 12px;
-            text-shadow: 1px 1px 1px #000;
+            position: absolute; width: 100%; top: 0; left: 0; font-size: 0.65rem;
+            text-align: center; color: #fff; font-weight: bold; line-height: 12px; text-shadow: 1px 1px 1px #000;
         }
 
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            font-size: 0.75rem;
-        }
-        .skill-badge {
-            background: #1e1e28;
-            border: 1px solid var(--border-color);
-            padding: 0.4rem;
-            border-radius: 4px;
-            text-align: center;
-        }
+        .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 0.75rem; }
+        .skill-badge { background: #1e1e28; border: 1px solid var(--border-color); padding: 0.4rem; border-radius: 4px; text-align: center; }
         .skill-badge span { display: block; font-weight: bold; color: var(--accent-color); }
 
-        .equipment-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            font-size: 0.75rem;
-        }
+        .equipment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 0.75rem; }
         .equipment-slot {
-            background: #1e1e28;
-            border: 1px solid var(--border-color);
-            padding: 0.4rem;
-            border-radius: 4px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.2s;
-            min-height: 35px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: #1e1e28; border: 1px solid var(--border-color); padding: 0.4rem;
+            border-radius: 4px; text-align: center; cursor: pointer; transition: 0.2s; min-height: 35px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
         .equipment-slot:hover { border-color: var(--accent-color); }
         .equipment-slot span { display: block; font-size: 0.65rem; color: #888; }
 
         .wallet {
-            display: flex;
-            justify-content: space-around;
-            background: #1e1e28;
-            padding: 0.5rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            border: 1px solid #3a3a4a;
+            display: flex; justify-content: space-around; background: #1e1e28;
+            padding: 0.5rem; border-radius: 6px; font-size: 0.9rem; font-weight: bold; border: 1px solid #3a3a4a;
         }
-        .coin { display: flex; align-items: center; gap: 4px; }
 
-        .backpack-container {
-            background: #181822;
-            border: 2px dashed #444;
-            border-radius: 6px;
-            padding: 0.8rem;
-        }
-        .backpack-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-        }
+        .backpack-container { background: #181822; border: 2px dashed #444; border-radius: 6px; padding: 0.8rem; }
+        .backpack-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
         .inventory-slot {
-            width: 100%;
-            aspect-ratio: 1;
-            background: #22222e;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: transform 0.1s, border-color 0.2s;
+            width: 100%; aspect-ratio: 1; background: #22222e; border: 1px solid var(--border-color);
+            border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            position: relative; cursor: pointer; font-size: 1.2rem; transition: 0.2s;
         }
         .inventory-slot:hover { border-color: var(--accent-color); transform: scale(1.05); }
 
         .content-area { flex: 1; display: flex; flex-direction: column; position: relative; }
         .game-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: space-between;
+            background-color: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            flex: 1; display: flex; flex-direction: column; justify-content: space-between;
         }
         .story-text {
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            min-height: 250px;
-            max-height: 450px;
-            overflow-y: auto;
-            white-space: pre-line;
-            background: #111116;
-            padding: 1.2rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
+            font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem;
+            min-height: 320px; max-height: 500px; overflow-y: auto; white-space: pre-line;
+            background: #111116; padding: 1.2rem; border-radius: 6px; border: 1px solid var(--border-color);
         }
 
         .choice-btn {
-            background-color: #21212c;
-            color: var(--text-color);
-            border: 1px solid var(--accent-color);
-            padding: 0.8rem 1.2rem;
-            border-radius: 5px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s;
-            width: 100%;
-            margin-bottom: 0.4rem;
+            background-color: #21212c; color: var(--text-color); border: 1px solid var(--accent-color);
+            padding: 0.8rem 1.2rem; border-radius: 5px; text-align: left; cursor: pointer;
+            font-size: 1rem; transition: 0.2s; width: 100%; margin-bottom: 0.5rem;
         }
         .choice-btn:hover { background-color: var(--accent-color); color: #000; }
 
-        .custom-input-box {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1rem;
-        }
-        .custom-input-box input {
-            flex: 1; padding: 0.9rem;
-            background: #111116; border: 1px solid var(--accent-color);
-            color: white; border-radius: 4px; font-size: 1rem;
-        }
-        .custom-input-box button {
-            background-color: var(--highlight); color: #000;
-            border: none; padding: 0 1.5rem; font-weight: bold;
-            border-radius: 4px; cursor: pointer; font-size: 1rem;
-        }
-
         .dice-widget {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: #1b1b26;
-            border: 2px solid var(--accent-color);
-            border-radius: 10px;
-            padding: 0.8rem 1.2rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.7);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            position: fixed; bottom: 25px; right: 25px; background: #1b1b26;
+            border: 2px solid var(--accent-color); border-radius: 10px; padding: 0.8rem 1.2rem;
+            text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.7); z-index: 100;
+            display: flex; flex-direction: column; gap: 6px;
         }
         .dice-btn {
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: transform 0.1s;
+            background: var(--accent-color); color: #000; border: none; padding: 0.4rem 0.8rem;
+            font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 0.85rem;
         }
-        .dice-btn:active { transform: scale(0.95); }
         .dice-result { font-size: 0.8rem; color: #aaa; }
 
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: flex; align-items: center;
-            justify-content: center; z-index: 1000;
+            background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000;
         }
         .modal-content {
-            background: var(--card-bg); border: 2px solid var(--accent-color);
-            border-radius: 8px; padding: 2rem; width: 680px; max-height: 85vh;
-            overflow-y: auto; box-shadow: 0 5px 25px rgba(0,0,0,0.8);
+            background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 2rem; width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 5px 25px rgba(0,0,0,0.8);
         }
         .quest-modal-item {
-            background: #1e1e28; padding: 0.8rem; border-radius: 4px;
-            margin-bottom: 0.6rem; font-size: 0.85rem; border-left: 3px solid var(--accent-color);
+            background: #1e1e28; padding: 0.8rem; border-radius: 4px; margin-bottom: 0.6rem;
+            font-size: 0.85rem; border-left: 3px solid var(--accent-color);
         }
 
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.3rem; color: var(--accent-color); font-size: 0.9rem; }
         .form-group select, .form-group input {
-            width: 100%; padding: 0.7rem;
-            background: #111116; border: 1px solid var(--border-color);
-            color: white; border-radius: 4px; font-size: 1rem;
+            width: 100%; padding: 0.7rem; background: #111116; border: 1px solid var(--border-color); color: white; border-radius: 4px; font-size: 1rem;
         }
 
-        footer {
-            text-align: center; padding: 1rem;
-            background-color: var(--card-bg);
-            border-top: 1px solid var(--border-color);
-            font-size: 0.85rem; color: #888;
-        }
+        footer { text-align: center; padding: 1rem; background-color: var(--card-bg); border-top: 1px solid var(--border-color); font-size: 0.85rem; color: #888; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -383,13 +187,14 @@
     </header>
 
     <div class="main-container">
+        <!-- Sidebar Links -->
         <sidebar id="sidebar" class="hidden">
             <div class="sidebar-section">
                 <div class="time-box">
                     <div id="time-icon" class="time-icon">☀️</div>
                     <div>
-                        <div id="time-display" style="font-weight: bold; color: var(--accent-color);">10:00 Uhr (Tag)</div>
-                        <div id="act-display" style="font-size: 0.75rem; color: #aaa;">Akt 1</div>
+                        <div id="time-display" style="font-weight: bold; color: var(--accent-color);">10:00 Uhr</div>
+                        <div id="location-sub-display" style="font-size: 0.75rem; color: #aaa;">Aschenwald</div>
                     </div>
                 </div>
 
@@ -436,11 +241,13 @@
             </div>
         </sidebar>
 
+        <!-- Hauptbereich -->
         <div class="content-area">
             <div class="game-card">
+                <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Full D&D Text-RPG Edition</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">D&D Mehrschritt-Klick-Edition</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -454,6 +261,7 @@
                     </div>
                 </div>
 
+                <!-- Einstellungen -->
                 <div id="settings-menu" class="hidden" style="max-width: 400px; margin: auto; text-align: left;">
                     <h3 style="color: var(--accent-color); text-align: center;">🔊 Audio-Einstellungen</h3>
                     <div class="form-group">
@@ -468,6 +276,7 @@
                     <button class="choice-btn" onclick="returnToMainMenuFromSettings()" style="text-align: center; width: 100%; margin-top: 0.6rem; background-color: #331111; border-color: #e74c3c;">🏠 Zum Hauptmenü</button>
                 </div>
 
+                <!-- Charaktererstellung -->
                 <div id="char-creation" class="hidden">
                     <h3 style="color: var(--accent-color); margin-top: 0;">Heldenerschaffung (Akt 1)</h3>
                     <div class="form-group">
@@ -480,7 +289,6 @@
                             <option value="leicht">Leicht (Mehr Startgold)</option>
                             <option value="mittel" selected>Mittel (Standard)</option>
                             <option value="schwer">Schwer (Stärkere Monster)</option>
-                            <option value="albtraum">Albtraum (Hardcore)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -516,34 +324,35 @@
                     <button class="choice-btn" onclick="createHero()" style="text-align: center; margin-top: 1rem; background-color: var(--accent-color); color: #000; font-weight: bold;">Kampagne starten</button>
                 </div>
 
+                <!-- Text-RPG Spielansicht (Reine Klick-Auswahl im Stadt-Hub) -->
                 <div id="game-view" class="hidden" style="display: flex; flex-direction: column; flex: 1;">
                     <div class="story-text" id="story-box"></div>
-                    
-                    <div class="custom-input-box">
-                        <input type="text" id="player-action-input" placeholder="Frage den Dungeon Master (z.B. 'umsehen', 'reisen'...) oder nutze rechts die Schnellwahl..." onkeydown="handleCustomInputKey(event)">
-                        <button onclick="submitCustomAction()">Handeln</button>
-                    </div>
+                    <div id="city-actions-container" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: auto;"></div>
                 </div>
             </div>
         </div>
 
+        <!-- Rechte Schnellwahl -->
         <div id="right-action-panel" class="right-action-panel hidden">
-            <div class="sidebar-title">Schnellwahl ⚡</div>
-            <button class="choice-btn" onclick="openHuntModal()" style="text-align: center;" title="Gehe auf Monster- und Tierjagd">🏹 Jagen</button>
-            <button class="choice-btn" onclick="openNpcModal()" style="text-align: center;" title="Händler für Ausrüstung und Verkauf">👥 Händlerviertel</button>
-            <button class="choice-btn" onclick="openQuestGiverModal()" style="text-align: center;" title="Neue Quests in dieser Stadt annehmen">📜 Quests annehmen</button>
-            <button class="choice-btn" onclick="openActiveQuestsModal()" style="text-align: center;" title="Starte deine angenommenen Quests">🎯 Aktive Quests</button>
-            <button class="choice-btn" onclick="openCraftingModal()" style="text-align: center;" title="Stelle Rüstungen und Waffen aus Beute her">⚒️ Monsterschmiede</button>
+            <div class="sidebar-title">Aktionen ⚡</div>
+            <button class="choice-btn" onclick="openTravelModal()" style="text-align: center;">🗺️ Stadt wechseln</button>
+            <button class="choice-btn" onclick="openQuestGiverModal()" style="text-align: center;">📜 Quests annehmen</button>
+            <button class="choice-btn" onclick="openActiveQuestsModal()" style="text-align: center;">🎯 Aktive Quests</button>
+            <button class="choice-btn" onclick="openNpcModal()" style="text-align: center;">👥 Händlerviertel</button>
+            <button class="choice-btn" onclick="openCraftingModal()" style="text-align: center;">⚒️ Monsterschmiede</button>
+            <button class="choice-btn" onclick="openHuntModal()" style="text-align: center;">🏹 Jagen gehen</button>
         </div>
     </div>
 
+    <!-- D&D Würfel Widget Unten Rechts -->
     <div id="dice-widget" class="dice-widget hidden">
         <div style="font-size: 0.75rem; color: var(--accent-color); font-weight: bold;">D&D Würfel-Station</div>
-        <button class="dice-btn" onclick="rollD20Widget()">🎲 d20 Würfel (Angriff / Skill)</button>
-        <button class="dice-btn" onclick="rollDamageWidget()" style="background: #e74c3c; color: white;">⚔️ Schadenswürfel (d6/d8)</button>
+        <button class="dice-btn" onclick="rollD20Widget()">🎲 d20 Würfel</button>
+        <button class="dice-btn" onclick="rollDamageWidget()" style="background: #e74c3c; color: white;">⚔️ Schadenswürfel</button>
         <div id="dice-widget-result" class="dice-result">Ergebnis: -</div>
     </div>
 
+    <!-- Modals -->
     <div id="item-action-modal" class="modal hidden">
         <div class="modal-content">
             <h3 id="modal-item-title" style="color: var(--accent-color); margin-top: 0; text-align: center;">Gegenstands-Details</h3>
@@ -553,10 +362,17 @@
         </div>
     </div>
 
+    <div id="travel-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🗺️ Reisekarte: Wähle dein Reiseziel</h3>
+            <div id="travel-list-content" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;"></div>
+            <button class="choice-btn" onclick="closeTravelModal()" style="text-align: center; width: 100%;">Schließen</button>
+        </div>
+    </div>
+
     <div id="hunt-modal" class="modal hidden">
         <div class="modal-content">
-            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🏹 Wähle deine Jagdbeute</h3>
-            <p style="font-size: 0.8rem; color: #aaa; text-align: center; margin-bottom: 1rem;">Deine Jagdfertigkeit entscheidet über deinen Erfolg!</p>
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🏹 Jagdrevier</h3>
             <div id="hunt-list-content" style="max-height: 380px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.4rem;"></div>
             <button class="choice-btn" onclick="closeHuntModal()" style="text-align: center; width: 100%;">Schließen</button>
         </div>
@@ -564,8 +380,7 @@
 
     <div id="questgiver-modal" class="modal hidden">
         <div class="modal-content">
-            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">📜 Questbrett: Verfügbare Aufträge</h3>
-            <p style="font-size: 0.85rem; color: #aaa; text-align: center; margin-bottom: 1rem;">Nimm Quests an, um sie im Reiter 'Aktive Quests' zu starten:</p>
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">📜 Questbrett (Verfügbare Aufträge)</h3>
             <div id="questgiver-list-content" style="max-height: 380px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem;"></div>
             <button class="choice-btn" onclick="closeQuestGiverModal()" style="text-align: center; width: 100%;">Schließen</button>
         </div>
@@ -573,17 +388,17 @@
 
     <div id="active-quests-modal" class="modal hidden">
         <div class="modal-content">
-            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🎯 Aktive Quests (2–8 Min. Abenteuer)</h3>
-            <p style="font-size: 0.85rem; color: #aaa; text-align: center; margin-bottom: 1rem;">Wähle eine angenommene Quest aus, um das Abenteuer zu starten:</p>
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">🎯 Aktive Quests (Mehrschritt-Abenteuer)</h3>
             <div id="active-quests-list-content" style="max-height: 380px; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem;"></div>
             <button class="choice-btn" onclick="closeActiveQuestsModal()" style="text-align: center; width: 100%;">Schließen</button>
         </div>
     </div>
 
+    <!-- Mehrschritt D&D Quest Abenteuer Modal -->
     <div id="quest-adventure-modal" class="modal hidden">
-        <div class="modal-content" style="width: 720px;">
+        <div class="modal-content" style="width: 750px;">
             <h3 id="qa-title" style="color: var(--accent-color); margin-top: 0; text-align: center;">Quest-Titel</h3>
-            <div id="qa-story" style="font-size: 0.95rem; line-height: 1.6; background: #111116; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 1rem; white-space: pre-line; max-height: 320px; overflow-y: auto;"></div>
+            <div id="qa-story" style="font-size: 0.95rem; line-height: 1.6; background: #111116; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 1rem; white-space: pre-line; max-height: 350px; overflow-y: auto;"></div>
             <div id="qa-choices" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
         </div>
     </div>
@@ -598,8 +413,7 @@
 
     <div id="crafting-modal" class="modal hidden">
         <div class="modal-content">
-            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">⚒️ Monsterschmiede & Handwerk</h3>
-            <p style="font-size: 0.8rem; color: #aaa; text-align: center; margin-bottom: 1rem;">Stelle aus Jagdbeute mächtige Ausrüstung her!</p>
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">⚒️ Monsterschmiede</h3>
             <div id="crafting-list-content" style="max-height: 380px; overflow-y: auto; margin-bottom: 1rem;"></div>
             <button class="choice-btn" onclick="closeCraftingModal()" style="text-align: center; width: 100%;">Schließen</button>
         </div>
@@ -614,7 +428,7 @@
     </div>
 
     <footer>
-        <p>Pfad des Helden – 30 D&D-Quests, Monsterschmiede & Würfel-Station</p>
+        <p>Pfad des Helden – 30 Mehrschritt-D&D-Quests, Monsterschmiede & Klick-Gameplay</p>
     </footer>
 
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -626,7 +440,6 @@
             className: "soldat",
             difficulty: "mittel",
             location: "aschenwald",
-            act: 1,
             hour: 10,
             playTimeMinutes: 0,
             level: 1,
@@ -643,20 +456,20 @@
                 magie: 10,
                 handel: 10
             },
-            stats: { monstersKilled: 0, bossesKilled: 0, questsCompleted: 0, totalGoldFound: 500, deaths: 0 },
+            stats: { monstersKilled: 0, questsCompleted: 0, totalGoldFound: 500, deaths: 0 },
             inventory: [
-                { id: 'karte_1', name: "Alte Karte", icon: "🗺️", type: "quest", desc: "Zeigt den Weg zum verlassenen Dungeon.", cost: 0 },
-                { id: 'skill_buch_jagd', name: "Jagdbuch: Meisterpirsch", icon: "📖", type: "book", skillTarget: "jagd", boost: 3, desc: "Erhöht dauerhaft deine Jagdfertigkeit um +3.", cost: 50 },
-                { id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20, desc: "Dichtes Wolfsfell.", cost: 20 }
+                { id: 'karte_1', name: "Alte Karte", icon: "🗺️", type: "quest", desc: "Zeigt den Weg.", cost: 0 },
+                { id: 'skill_buch_jagd', name: "Jagdbuch", icon: "📖", type: "book", skillTarget: "jagd", boost: 3, desc: "Erhöht Jagd +3.", cost: 50 },
+                { id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", type: "hunt", value: 20, desc: "Dichtes Fell.", cost: 20 }
             ],
             quests: [],
             completedQuestIds: [],
             equipment: {
                 helm: null,
-                chest: { id: 'w_shirt', name: "Stoffhemd", icon: "👕", type: "armor", slot: "chest", desc: "Einfaches Leinenhemd.", cost: 5 },
-                legs: { id: 'w_pants', name: "Stoffhose", icon: "👖", type: "armor", slot: "legs", desc: "Bequeme Hose.", cost: 5 },
-                boots: { id: 'w_boots', name: "Stoffschuhe", icon: "👞", type: "armor", slot: "boots", desc: "Leichte Schuhe.", cost: 5 },
-                rhand: { id: 'w_dagger', name: "Dolch", icon: "🗡️", type: "weapon", slot: "rhand", desc: "Kleine Klinge.", cost: 15 },
+                chest: { id: 'w_shirt', name: "Stoffhemd", icon: "👕", type: "armor", slot: "chest", desc: "Leinenhemd.", cost: 5 },
+                legs: { id: 'w_pants', name: "Stoffhose", icon: "👖", type: "armor", slot: "legs", desc: "Hose.", cost: 5 },
+                boots: { id: 'w_boots', name: "Stoffschuhe", icon: "👞", type: "armor", slot: "boots", desc: "Schuhe.", cost: 5 },
+                rhand: { id: 'w_dagger', name: "Dolch", icon: "🗡️", type: "weapon", slot: "rhand", desc: "Dolch.", cost: 15 },
                 arrows: null,
                 ring: null
             },
@@ -672,101 +485,765 @@
             halbling: { name: "Halbling", icon: "🧒" }
         };
 
+        const locations = {
+            aschenwald: { name: "Aschenwald", desc: "Nebeliger Grenzforst mit dichten Jagdgebieten.", npc: "Händler Vane" },
+            eisenhall: { name: "Eisenhall", desc: "Mächtige Zwergen-Bergfestung und tiefe Stollen.", npc: "Meisterschmied Thorgar" },
+            sonnendorn: { name: "Sonnendorn", desc: "Wunderschöne Hafenstadt am goldenen Meer.", npc: "Händlerin Lyra" },
+            rabenfels: { name: "Rabenfels", desc: "Trutzige Klippenburg auf steilem Fels.", npc: "Kommandant Varis" }
+        };
+
+        // 30 MEHRSCHRITT-QUESTS (JEDE QUEST HAT 2 BIS 3 SCHRITTE MIT KAMPF/ENTSCHEIDUNG)
         const masterQuestsDatabase = [
+            // --- ASCHENWALD (8 Quests) ---
             {
                 id: 'q_ash_1', city: 'aschenwald', title: "Die geheimnisvollen Lichter", desc: "Untersuche mysteriöse Lichter auf den Klippen.",
-                intro: "Nacht bricht über den Aschenwald herein. Auf den windumtosten Klippen im Norden tanzen unheimliche, bläuliche Lichter. Die Dorfbewohner flüstern von verlorenen Seelen oder Banditen. Du machst dich mit gezückter Waffe auf den Weg...",
-                choices: [
-                    { text: "Schleiche dich lautlos an", skill: 'schleichen', target: 12, successText: "Du bewegst dich wie ein Geist durch das Unterholz und erreichst das Ritual ungesehen.", failText: "Ein morscher Ast knackt laut! Du wirst entdeckt und schwer getroffen." },
-                    { text: "Stürme direkt in das Lager", skill: 'angriff', target: 13, successText: "Du preschst vor und überraschst die Gestalten im offenen Nahkampf!", failText: "Du stolperst über eine Stolperfalle und wirst von hinten attackiert." }
-                ],
-                successGold: 150, successXp: 100
-            },
-            {
-                id: 'q_ash_2', city: 'aschenwald', title: "Wolfsplage im Unterholz", desc: "Säubere den Pfad von einer aggressiven Wolfsmeute.",
-                intro: "Holzfäller trauen sich nicht mehr in den Südwald. Eine besonders blutrünstige Meute hat die Wege abgeriegelt.",
-                choices: [
-                    { text: "Stelle den Alpha im offenen Kampf", skill: 'angriff', target: 11, successText: "Mit wuchtigen Hieben zwingst du das Alphatier in die Knie.", failText: "Der Alpha weicht aus und zerfetzt deinen Arm." },
-                    { text: "Spure sie mit Jagdinstinkt auf", skill: 'jagd', target: 10, successText: "Du findest ihr Versteck im dichten Nebel und überlistest sie.", failText: "Du verlierst die Fährte und wirst im Sumpf attackiert." }
-                ],
-                successGold: 100, successXp: 80
-            },
-            { id: 'q_ash_3', city: 'aschenwald', title: "Der verlorene Händlerwagen", desc: "Finde die Karawane im nebeligen Forst.", intro: "Eine Wagenladung voller Silber ist verschollen.", choices: [{ text: "Spuren im Schlamm folgen", skill: 'jagd', target: 9, successText: "Du entdeckst den Wagen.", failText: "Du läufst im Kreis." }], successGold: 120, successXp: 70 },
-            { id: 'q_ash_4', city: 'aschenwald', title: "Der Druidenschrein", desc: "Aktiviere den verlassenen Schrein im Herzen des Waldes.", intro: "Magische Runen leuchten schwach.", choices: [{ text: "Nutze arkane Magie", skill: 'magie', target: 12, successText: "Der Schrein erwacht.", failText: "Magisches Feedback trifft dich." }], successGold: 130, successXp: 90 },
-            { id: 'q_ash_5', city: 'aschenwald', title: "Sumpfkräuter für die Hexe", desc: "Sammle seltene Heilkräuter im tiefen Moor.", intro: "Die Kräuter wachsen nur in giftigen Zonen.", choices: [{ text: "Vorsichtig durchqueren", skill: 'verteidigung', target: 11, successText: "Du bleibst unverletzt.", failText: "Giftige Sporen treffen dich." }], successGold: 90, successXp: 60 },
-            { id: 'q_ash_6', city: 'aschenwald', title: "Banditen im alten Turm", desc: "Räuchere das Banditennest aus.", intro: "Räuber terrorisieren Reisende.", choices: [{ text: "Nachts einbrechen", skill: 'schleichen', target: 13, successText: "Du plünderst ihre Kiste unbemerkt.", failText: "Wachen fangen dich ab." }], successGold: 160, successXp: 110 },
-            { id: 'q_ash_7', city: 'aschenwald', title: "Die flüsternden Bäume", desc: "Finde heraus, warum der Wald zu flüstern scheint.", intro: "Magische Energien verzerren den Klang.", choices: [{ text: "Meditieren und lauschen", skill: 'magie', target: 11, successText: "Du hörst die Botschaft.", failText: "Der Lärm erschöpft dich." }], successGold: 110, successXp: 70 },
-            { id: 'q_ash_8', city: 'aschenwald', title: "Der Ruf des alten Bären", desc: "Erlege den legendären Urwald-Grizzly.", intro: "Ein Monster von Bär durchstreift das Unterholz.", choices: [{ text: "Direkter Kampf", skill: 'angriff', target: 15, successText: "Du bezwingst das Biest epischen Ausmaßes!", failText: "Der Bär wirft dich zu Boden." }], successGold: 250, successXp: 180 },
-
-            {
-                id: 'q_eis_1', city: 'eisenhall', title: "Eingestürzte Stollen", desc: "Rette verschüttete Bergleute in den Tiefen von Eisenhall.",
-                intro: "Ein lautes Grollen erschütterte die Bergfestung. Schacht 4 ist eingestürzt und das Kreischen von Monstern dringt aus der Dunkelheit.",
-                choices: [
-                    { text: "Stemme den Felsen mit roher Kraft beiseite", skill: 'angriff', target: 12, successText: "Mit vereinten Kräften schaffst du eine Bresche und rettest alle.", failText: "Ein Stein rutscht nach und quetscht deine Schulter schwer." },
-                    { text: "Finde den stabilen Lüftungsschacht", skill: 'schleichen', target: 11, successText: "Du findest einen sicheren Nebeneingang zu den Bergleuten.", failText: "Du verirrst dich in giftigen Gasen." }
-                ],
-                successGold: 140, successXp: 90
-            },
-            { id: 'q_eis_2', city: 'eisenhall', title: "Der gestohlene Mithril-Barren", desc: "Spüre den diebischen Goblin in den Minen auf.", intro: "Ein wertvoller Barren wurde aus der königlichen Schmiede entwendet.", choices: [{ text: "Verfolge die Fußspuren", skill: 'jagd', target: 11, successText: "Du stellst den Dieb.", failText: "Die Spuren verlaufen im Sand." }], successGold: 150, successXp: 95 },
-            { id: 'q_eis_3', city: 'eisenhall', title: "Schmiedefeuer entfachen", desc: "Bringe magische Kohle aus dem Lavastollen.", intro: "Der Meister braucht unbändige Hitze.", choices: [{ text: "Durch die Hitze schleichen", skill: 'verteidigung', target: 13, successText: "Du sicherst die Kohle.", failText: "Verbrennungen schwächen dich." }], successGold: 130, successXp: 85 },
-            { id: 'q_eis_4', city: 'eisenhall', title: "Die Rache des Steingolems", desc: "Zerstöre den Wächter des unterirdischen Tempels.", intro: "Ein Golem blockiert den Zugang zu alten Relikten.", choices: [{ text: "Attackiere die Schwachstelle", skill: 'angriff', target: 16, successText: "Der Koloss bricht zusammen.", failText: "Deine Waffe zerspringt am Stein." }], successGold: 220, successXp: 160 },
-            { id: 'q_eis_5', city: 'eisenhall', title: "Zwergisches Gebräu", desc: "Besorge Zutaten für das legendäre Festbier.", intro: "Ohne feurigen Pilzwein kein Fest.", choices: [{ text: "Sammle Pilze im Dunkeln", skill: 'jagd', target: 10, successText: "Perfekte Ausbeute.", failText: "Du erwischt giftige Pilze." }], successGold: 95, successXp: 60 },
-            { id: 'q_eis_6', city: 'eisenhall', title: "Der Test des Amboss", desc: "Beweise deine Geschicklichkeit an der Esse.", intro: "Der Meisterschmied fordert dich heraus.", choices: [{ text: "Handwerkskunst anwenden", skill: 'handel', target: 12, successText: "Ein Meisterwerk entsteht.", failText: "Das Eisen verzieht sich." }], successGold: 125, successXp: 80 },
-            { id: 'q_eis_7', city: 'eisenhall', title: "Das Echo der Tiefe", desc: "Erforsche den geheimnisvollen Abgrund.", intro: "Stimmen rufen aus der Tiefe der Erde.", choices: [{ text: "Geistigen Widerstand leisten", skill: 'magie', target: 13, successText: "Du widerstehst der Illusion.", failText: "Panik erfasst deinen Geist." }], successGold: 160, successXp: 100 },
-            { id: 'q_eis_8', city: 'eisenhall', title: "Der König der Höhlentrolle", desc: "Bezwinge den Obergroß-Troll in den Tiefen.", intro: "Ein gewaltiges Monstrum bedroht die unteren Minen.", choices: [{ text: "Entschlossener Sturmangriff", skill: 'angriff', target: 17, successText: "Der Troll stürzt in den Abgrund!", failText: "Seine Keule trifft dich schwer." }], successGold: 300, successXp: 200 },
-
-            {
-                id: 'q_son_1', city: 'sonnendorn', title: "Das Geheimnis des Magierturms", desc: "Entschlüssele die arkanen Barrieren im Observatorium.",
-                intro: "Blaue Blitze zucken aus der Spitze des höchsten Turms in Sonnendorn. Der Erzmagier sucht Hilfe.",
-                choices: [
-                    { text: "Bebreche die Runen mit arkane Macht", skill: 'magie', target: 13, successText: "Die Barriere glättet sich und gibt den Weg frei.", failText: "Ein magischer Rückschlag verbrennt deine Augenbrauen." },
-                    { text: "Finde den magischen Wartungsschacht", skill: 'schleichen', target: 12, successText: "Du schleichst dich an den Wachen vorbei ins Innere.", failText: "Magische Fallen schnappen zu." }
+                steps: [
+                    {
+                        text: "Nacht bricht über den Aschenwald herein. Auf den windumtosten Klippen im Norden tanzen unheimliche, bläuliche Lichter. Du erreichst den Fuß der Klippen. Der Pfad ist steil und steinschlaggefährdet.",
+                        choices: [
+                            { text: "Klettere vorsichtig über die Felsen (Verteidigung 11)", skill: 'verteidigung', target: 11, successStep: 2, failStep: 3 },
+                            { text: "Suche nach einem verdeckten Seitenpfad (Schleichen 12)", skill: 'schleichen', target: 12, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Du hast die Hochfläche erreicht! Am Rand eines alten Steinkreises brennt ein unheimliches Hexenfeuer. Kultisten singen dunkle Gesänge und bemerken dich fast.",
+                        choices: [
+                            { text: "Überraschungsangriff auf den Anführer (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' },
+                            { text: "Nutze arkane Magie, um das Ritual zu stören (Magie 12)", skill: 'magie', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du stolperst über loses Geröll! Steine stürzen ab und du wirst von Wachen überrascht (-15 HP). Du musst dich verteidigen!",
+                        choices: [
+                            { text: "Kämpfe dich durch die Wachen (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
                 ],
                 successGold: 160, successXp: 110
             },
-            { id: 'q_son_2', city: 'sonnendorn', title: "Die verlorene Schiffsladung", desc: "Berge magische Artefakte vom Meeresgrund.", intro: "Ein Handelsschiff sank vor der goldenen Küste.", choices: [{ text: "Geschickt tauchen", skill: 'verteidigung', target: 11, successText: "Du sicherst die Schätze.", failText: "Die Strömung reißt dich fort." }], successGold: 140, successXp: 90 },
-            { id: 'q_son_3', city: 'sonnendorn', title: "Diebesbande am Hafen", desc: "Überliste die Seiden-Diebe im alten Viertel.", intro: "Edle Stoffe und Juwelen verschwinden nächtlich.", choices: [{ text: "Unbemerkt verfolgen", skill: 'schleichen', target: 14, successText: "Du schnappst sie auf frischer Tat.", failText: "Sie entkommen in den Gassen." }], successGold: 155, successXp: 100 },
-            { id: 'q_son_4', city: 'sonnendorn', title: "Der verfluchte Spiegel", desc: "Banne den Geist aus dem antiken Spiegel.", intro: "Wer hineinblickt, verliert den Verstand.", choices: [{ text: "Exorzismus wirken", skill: 'magie', target: 15, successText: "Der Fluch bricht.", failText: "Der Geist blickt in deine Seele." }], successGold: 200, successXp: 140 },
-            { id: 'q_son_5', city: 'sonnendorn', title: "Sirenen im Mondschein", desc: "Wehre den Gesang der Meereswesen ab.", intro: "Matrosen springen ins offene Wasser.", choices: [{ text: "Widerstandskraft beweisen", skill: 'verteidigung', target: 13, successText: "Du widerstehst dem Bann.", failText: "Du verlierst fast die Besinnung." }], successGold: 175, successXp: 120 },
-            { id: 'q_son_6', city: 'sonnendorn', title: "Der entführte Lehrling", desc: "Befreie den Magielehrling aus dem Versteck.", intro: "Dunkle Magier haben ihn verschleppt.", choices: [{ text: "Schneller Überraschungsangriff", skill: 'angriff', target: 14, successText: "Lehrling ist frei!", failText: "Magische Schilde blockieren dich." }], successGold: 190, successXp: 130 },
-            { id: 'q_son_7', city: 'sonnendorn', title: "Der Herrscher der Gezeiten", desc: "Bezwinge das Seeungeheuer im Hafenbecken.", intro: "Ein Leviathan blockiert alle Schifffahrt.", choices: [{ text: "Epischer Kampf mit Harpunen & Magie", skill: 'angriff', target: 18, successText: "Das Monster sinkt in die Tiefe!", failText: "Dein Boot wird zerschmettert." }], successGold: 350, successXp: 220 },
-
             {
-                id: 'q_rab_1', city: 'rabenfels', title: "Die Belagerung der Klippenburg", desc: "Wehre den nächtlichen Angriff der Orkarmee ab.",
-                intro: "Trommeln dröhnen durch das Felsmassiv. Orks stürmen das Haupttor von Rabenfels!",
-                choices: [
-                    { text: "Führe den Gegenangriff an der Bresche an", skill: 'angriff', target: 14, successText: "Du schlägst die vorderen Reihen der Orks in die Flucht!", failText: "Du wirst von einem gewaltigen Krieger zurückgedrängt." },
-                    { text: "Halte die Stellung und verteidige das Tor", skill: 'verteidigung', target: 13, successText: "Dein Schild hält stand, kein Feind kommt vorbei.", failText: "Das Tor bricht unter wuchtigen Hieben ein." }
+                id: 'q_ash_2', city: 'aschenwald', title: "Wolfsplage im Unterholz", desc: "Säubere den Pfad von einer aggressiven Wolfsmeute.",
+                steps: [
+                    {
+                        text: "Holzfäller klagen über eine riesige Meute, die den Handelspfad blockiert. Du betrittst den nebeligen Wald.",
+                        choices: [
+                            { text: "Spure die Wölfe mit Jagdinstinkt auf (Jagd 10)", skill: 'jagd', target: 10, successStep: 2, failStep: 3 },
+                            { text: "Locker durchstreifen und auf Lärm warten (Verteidigung 11)", skill: 'verteidigung', target: 11, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Du findest den Lagerplatz der Meute. Der Alphawolf springt aus dem Unterholz an deine Kehle!",
+                        choices: [
+                            { text: "Wehre den Sprung ab und kontere (Angriff 11)", skill: 'angriff', target: 11, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du tappst in eine Stolperfalle der Meute und wirst verletzt (-15 HP).",
+                        choices: [
+                            { text: "Stelle dich dem Rudel im Nahkampf (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 110, successXp: 85
+            },
+            {
+                id: 'q_ash_3', city: 'aschenwald', title: "Der verlorene Händlerwagen", desc: "Finde die Karawane im nebeligen Forst.",
+                steps: [
+                    {
+                        text: "Eine Wagenladung voller Silber wurde im tiefen Forst überfallen.",
+                        choices: [
+                            { text: "Folge den Reifenspuren im Schlamm (Jagd 9)", skill: 'jagd', target: 9, successStep: 2, failStep: 3 },
+                            { text: "Befrage Waldläufer nach Gerüchten (Handel 10)", skill: 'handel', target: 10, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Du erreichst den verlassenen Wagen. Goblingebissene Späher bewachen die Kisten!",
+                        choices: [
+                            { text: "Vertreibe die Goblins im Sturmangriff (Angriff 11)", skill: 'angriff', target: 11, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du trittst in eine Schlingfalle (-10 HP).",
+                        choices: [
+                            { text: "Befreiungsschlag mit dem Schwert (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 130, successXp: 75
+            },
+            {
+                id: 'q_ash_4', city: 'aschenwald', title: "Der Druidenschrein", desc: "Aktiviere den verlassenen Schrein.",
+                steps: [
+                    {
+                        text: "Magische Runen leuchten im Herzen des Urwalds.",
+                        choices: [
+                            { text: "Studiere die alten Inschriften (Magie 11)", skill: 'magie', target: 11, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Schrein verlangt eine arkanen Tribut.",
+                        choices: [
+                            { text: "Kanalisiere arkane Energie (Magie 13)", skill: 'magie', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Magischer Rückschlag trifft deinen Geist (-15 HP).",
+                        choices: [
+                            { text: "Erzwinge die Aktivierung (Magie 12)", skill: 'magie', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 140, successXp: 95
+            },
+            {
+                id: 'q_ash_5', city: 'aschenwald', title: "Sumpfkräuter für die Hexe", desc: "Sammle seltene Heilkräuter im Moor.",
+                steps: [
+                    {
+                        text: "Giftiger Nebel liegt über dem Moor.",
+                        choices: [
+                            { text: "Durchquere das Moor vorsichtig (Verteidigung 11)", skill: 'verteidigung', target: 11, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Riesige Sumpfspinnen lauern im Schilf!",
+                        choices: [
+                            { text: "Zerschlage die Spinnennetze (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du atmest giftige Sporen ein (-15 HP).",
+                        choices: [
+                            { text: "Fliehe zum sicheren Ufer (Verteidigung 10)", skill: 'verteidigung', target: 10, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 95, successXp: 65
+            },
+            {
+                id: 'q_ash_6', city: 'aschenwald', title: "Banditen im alten Turm", desc: "Räuchere das Banditennest aus.",
+                steps: [
+                    {
+                        text: "Ein verfallener Wachturm dient Räubern als Versteck.",
+                        choices: [
+                            { text: "Schleiche durch das kaputte Tor (Schleichen 13)", skill: 'schleichen', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Die Banditen feiern am Lagerfeuer.",
+                        choices: [
+                            { text: "Überrasche sie im Handgemenge (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Wachen entdecken dich am Eingang (-15 HP).",
+                        choices: [
+                            { text: "Harter Nahkampf (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 170, successXp: 115
+            },
+            {
+                id: 'q_ash_7', city: 'aschenwald', title: "Die flüsternden Bäume", desc: "Finde heraus, was den Wald stört.",
+                steps: [
+                    {
+                        text: "Unnatürliches Flüstern erfüllt die Luft.",
+                        choices: [
+                            { text: "Horche in die magischen Strömungen (Magie 12)", skill: 'magie', target: 12, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Ein verdorbener Baumgeist greift an!",
+                        choices: [
+                            { text: "Banne den Geist mit Zaubern (Magie 14)", skill: 'magie', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Wurzeln packen deine Beine (-15 HP).",
+                        choices: [
+                            { text: "Reiß dich mit Kraft frei (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 120, successXp: 80
+            },
+            {
+                id: 'q_ash_8', city: 'aschenwald', title: "Der Ruf des alten Bären", desc: "Erlege den Urwald-Grizzly.",
+                steps: [
+                    {
+                        text: "Spuren eines gigantischen Bären im Unterholz.",
+                        choices: [
+                            { text: "Verfolge die Pratzenspuren (Jagd 13)", skill: 'jagd', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Grizzly stellt dich in einer Höhle!",
+                        choices: [
+                            { text: "Epischer Kampf gegen den Bären (Angriff 15)", skill: 'angriff', target: 15, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Der Bär erwischt dich mit einer Tatzenhiebe (-20 HP).",
+                        choices: [
+                            { text: "Gegenangriff wagen (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 260, successXp: 190
+            },
+
+            // --- EISENHALL (8 Quests) ---
+            {
+                id: 'q_eis_1', city: 'eisenhall', title: "Eingestürzte Stollen", desc: "Rette verschüttete Bergleute.",
+                steps: [
+                    {
+                        text: "Schacht 4 ist nach einem Beben eingestürzt. Geräusche von Monstern dringen aus dem Schutt.",
+                        choices: [
+                            { text: "Stemme die Felsen mit roher Kraft weg (Angriff 12)", skill: 'angriff', target: 12, successStep: 2, failStep: 3 },
+                            { text: "Finde den alten Lüftungsschacht (Schleichen 11)", skill: 'schleichen', target: 11, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Du hast die Bergleute erreicht, doch finstere Höhlengoblins bedrohen sie!",
+                        choices: [
+                            { text: "Stürze dich auf die Goblins (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Ein Nachbeben wirft dich auf den Boden (-15 HP).",
+                        choices: [
+                            { text: "Kämpfe dich durch den Schutt (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 150, successXp: 95
+            },
+            {
+                id: 'q_eis_2', city: 'eisenhall', title: "Der gestohlene Mithril-Barren", desc: "Spüre den diebischen Dieb in den Minen auf.",
+                steps: [
+                    {
+                        text: "Ein wertvoller Barren wurde aus der königlichen Schmiede entwendet.",
+                        choices: [
+                            { text: "Verfolge die Fußspuren im Stollen (Jagd 11)", skill: 'jagd', target: 11, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Dieb hat sich in einer Sackgasse verschanzt.",
+                        choices: [
+                            { text: "Stelle ihn im Zweikampf (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du verlierst die Spur im Dunkeln und tappst in eine Falle (-15 HP).",
+                        choices: [
+                            { text: "Folge dem Lärm der Spitzhacke (Jagd 12)", skill: 'jagd', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 160, successXp: 100
+            },
+            {
+                id: 'q_eis_3', city: 'eisenhall', title: "Schmiedefeuer entfachen", desc: "Bringe magische Kohle aus dem Lavastollen.",
+                steps: [
+                    {
+                        text: "Extrem heiße Lavaströme blockieren den Weg.",
+                        choices: [
+                            { text: "Navigiere geschickt durch die Hitze (Verteidigung 13)", skill: 'verteidigung', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Feuerelementare bewachen die Kohlebecken!",
+                        choices: [
+                            { text: "Bekämpfe die Elementare (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Hitzewelle verbrennt deine Rüstung (-15 HP).",
+                        choices: [
+                            { text: "Erzwinge den Durchgang (Verteidigung 12)", skill: 'verteidigung', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 140, successXp: 90
+            },
+            {
+                id: 'q_eis_4', city: 'eisenhall', title: "Die Rache des Steingolems", desc: "Zerstöre den Wächter des Tempels.",
+                steps: [
+                    {
+                        text: "Ein antiker Golem erwacht zu neuem Leben.",
+                        choices: [
+                            { text: "Analysere seine Schwachstellen (Magie 13)", skill: 'magie', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Koloss schlägt mit gewaltigen Fäusten zu!",
+                        choices: [
+                            { text: "Zerschlage seinen Kern (Angriff 16)", skill: 'angriff', target: 16, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Ein Steinblock trifft dich voll (-20 HP).",
+                        choices: [
+                            { text: "Gegenschlag im Nahkampf (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 230, successXp: 170
+            },
+            {
+                id: 'q_eis_5', city: 'eisenhall', title: "Zwergisches Gebräu", desc: "Besorge Zutaten für das Festbier.",
+                steps: [
+                    {
+                        text: "Sammle seltene Pilze in finsteren Grotten.",
+                        choices: [
+                            { text: "Sichere die Pilze im Dunkeln (Jagd 10)", skill: 'jagd', target: 10, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Höhlenspinnen greifen an!",
+                        choices: [
+                            { text: "Besiege die Spinnen (Angriff 11)", skill: 'angriff', target: 11, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du nimmst giftigen Pilzstaub auf (-15 HP).",
+                        choices: [
+                            { text: "Rette dich ins Freie (Verteidigung 10)", skill: 'verteidigung', target: 10, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 100, successXp: 70
+            },
+            {
+                id: 'q_eis_6', city: 'eisenhall', title: "Der Test des Amboss", desc: "Beweise Geschicklichkeit an der Esse.",
+                steps: [
+                    {
+                        text: "Der Meisterschmied verlangt eine Meisterprüfung.",
+                        choices: [
+                            { text: "Handwerkskunst & Handel nutzen (Handel 12)", skill: 'handel', target: 12, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Forme das glühende Metall perfekt.",
+                        choices: [
+                            { text: "Przise Hammerschläge (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Das Eisen verzieht sich vor Hitze (-10 HP).",
+                        choices: [
+                            { text: "Rette das Werkstück (Handel 11)", skill: 'handel', target: 11, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 130, successXp: 85
+            },
+            {
+                id: 'q_eis_7', city: 'eisenhall', title: "Das Echo der Tiefe", desc: "Erforsche den geheimnisvollen Abgrund.",
+                steps: [
+                    {
+                        text: "Stimmlosen Rufen aus der Tiefe folgen.",
+                        choices: [
+                            { text: "Geistigen Schutz aufbauen (Magie 13)", skill: 'magie', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Schattenwesen attackieren deinen Geist!",
+                        choices: [
+                            { text: "Banne die Schatten (Magie 15)", skill: 'magie', target: 15, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Panik überwältigt dich (-15 HP).",
+                        choices: [
+                            { text: "Widerstehe der Dunkelheit (Verteidigung 13)", skill: 'verteidigung', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 170, successXp: 110
+            },
+            {
+                id: 'q_eis_8', city: 'eisenhall', title: "Der König der Höhlentrolle", desc: "Bezwinge den Obergroß-Troll.",
+                steps: [
+                    {
+                        text: "Ein gewaltiges Trollmonster terrorisiert die Stollen.",
+                        choices: [
+                            { text: "Spüre sein Lager auf (Jagd 14)", skill: 'jagd', target: 14, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Troll schwingt eine massive Stein-Keule!",
+                        choices: [
+                            { text: "Sturmangriff auf den Trollkönig (Angriff 17)", skill: 'angriff', target: 17, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Die Keule trifft dich schwer (-25 HP).",
+                        choices: [
+                            { text: "Entschlossener Gegenangriff (Angriff 15)", skill: 'angriff', target: 15, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 320, successXp: 210
+            },
+
+            // --- SONNENDORN (7 Quests) ---
+            {
+                id: 'q_son_1', city: 'sonnendorn', title: "Das Geheimnis des Magierturms", desc: "Entschlüssele arkanen Barrieren.",
+                steps: [
+                    {
+                        text: "Blaue Blitze zucken aus der Spitze des Turms.",
+                        choices: [
+                            { text: "Durchbreche die Runen mit Magie (Magie 13)", skill: 'magie', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Im Observatorium warten magische Wächter.",
+                        choices: [
+                            { text: "Zerstöre die Wächterkristalle (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Magischer Rückschlag verbrennt dich (-15 HP).",
+                        choices: [
+                            { text: "Beschwöre Schutzschilde (Magie 12)", skill: 'magie', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 170, successXp: 120
+            },
+            {
+                id: 'q_son_2', city: 'sonnendorn', title: "Die verlorene Schiffsladung", desc: "Berge Artefakte vom Meeresgrund.",
+                steps: [
+                    {
+                        text: "Ein Handelsschiff sank vor der Küste.",
+                        choices: [
+                            { text: "Tauche geschickt zum Wrack (Verteidigung 11)", skill: 'verteidigung', target: 11, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Wassermonster bewachen die Kisten!",
+                        choices: [
+                            { text: "Kämpfe unter Wasser (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Die Strömung drückt dich gegen Felsen (-15 HP).",
+                        choices: [
+                            { text: "Kämpfe dich frei (Verteidigung 12)", skill: 'verteidigung', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 150, successXp: 95
+            },
+            {
+                id: 'q_son_3', city: 'sonnendorn', title: "Diebesbande am Hafen", desc: "Überliste Seiden-Diebe.",
+                steps: [
+                    {
+                        text: "Edle Stoffe verschwinden nächtlich am Kai.",
+                        choices: [
+                            { text: "Verfolge die Diebe unbemerkt (Schleichen 14)", skill: 'schleichen', target: 14, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Du stellst sie in einer Lagerhalle.",
+                        choices: [
+                            { text: "Stelle die Diebe im Handgemenge (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Sie werfen Rauchbomben und verletzen dich (-15 HP).",
+                        choices: [
+                            { text: "Fang sie im Nahkampf ab (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 160, successXp: 105
+            },
+            {
+                id: 'q_son_4', city: 'sonnendorn', title: "Der verfluchte Spiegel", desc: "Banne den Geist im Spiegel.",
+                steps: [
+                    {
+                        text: "Ein antiker Spiegel strahlt dunkle Magie aus.",
+                        choices: [
+                            { text: "Wirke einen starken Exorzismus (Magie 15)", skill: 'magie', target: 15, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Geist bricht aus dem Glas hervor!",
+                        choices: [
+                            { text: "Vernichte den manifestierten Geist (Magie 16)", skill: 'magie', target: 16, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Der Fluch lähmt deinen Körper (-20 HP).",
+                        choices: [
+                            { text: "Widerstehe dem Bann (Magie 14)", skill: 'magie', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 210, successXp: 150
+            },
+            {
+                id: 'q_son_5', city: 'sonnendorn', title: "Sirenen im Mondschein", desc: "Wehre den Gesang ab.",
+                steps: [
+                    {
+                        text: "Sirenen locken Seefahrer in die Klippen.",
+                        choices: [
+                            { text: "Widerstehe dem verlockenden Gesang (Verteidigung 13)", skill: 'verteidigung', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Die Sirenen greifen direkt an!",
+                        choices: [
+                            { text: "Schlage sie im Nahkampf zurück (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du verlierst fast den Verstand (-15 HP).",
+                        choices: [
+                            { text: "Fokussiere deinen Willen (Verteidigung 12)", skill: 'verteidigung', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 180, successXp: 125
+            },
+            {
+                id: 'q_son_6', city: 'sonnendorn', title: "Der entführte Lehrling", desc: "Befreie den Magielehrling.",
+                steps: [
+                    {
+                        text: "Dunkle Magier haben einen Lehrling verschleppt.",
+                        choices: [
+                            { text: "Spüre ihr geheimes Versteck auf (Jagd 12)", skill: 'jagd', target: 12, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Die Entführer bewachen das Verlies.",
+                        choices: [
+                            { text: "Stürme das Verlies mit gezücktem Stahl (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Magische Fallen schnappen zu (-15 HP).",
+                        choices: [
+                            { text: "Befreiungsschlag (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 200, successXp: 135
+            },
+            {
+                id: 'q_son_7', city: 'sonnendorn', title: "Der Herrscher der Gezeiten", desc: "Bezwinge das Seeungeheuer.",
+                steps: [
+                    {
+                        text: "Ein Leviathan blockiert die Hafeneinfahrt.",
+                        choices: [
+                            { text: "Bereite Harpune und Zauber vor (Jagd 15)", skill: 'jagd', target: 15, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Das Ungeheuer bricht aus den Wellen hervor!",
+                        choices: [
+                            { text: "Epischer Kampf gegen den Leviathan (Angriff 18)", skill: 'angriff', target: 18, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Dein Boot wird von einer Riesenwelle zertrümmert (-25 HP).",
+                        choices: [
+                            { text: "Letzter verzweifelter Angriff (Angriff 16)", skill: 'angriff', target: 16, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 360, successXp: 230
+            },
+
+            // --- RABENFELS (7 Quests) ---
+            {
+                id: 'q_rab_1', city: 'rabenfels', title: "Die Belagerung der Klippenburg", desc: "Wehre den Orkangriff ab.",
+                steps: [
+                    {
+                        text: "Orks stürmen das Haupttor von Rabenfels!",
+                        choices: [
+                            { text: "Führe den Gegenangriff an der Bresche (Angriff 14)", skill: 'angriff', target: 14, successStep: 2, failStep: 3 },
+                            { text: "Halte die Stellung am Burgtor (Verteidigung 13)", skill: 'verteidigung', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Ork-Hauptmann dringt in den Burghof vor!",
+                        choices: [
+                            { text: "Stelle den Hauptmann im Duell (Angriff 15)", skill: 'angriff', target: 15, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Das Tor bricht unter wuchtigen Hieben ein (-20 HP).",
+                        choices: [
+                            { text: "Wirf dich den Anstürmenden entgegen (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 190, successXp: 130
+            },
+            {
+                id: 'q_rab_2', city: 'rabenfels', title: "Der Spion auf der Zinne", desc: "Enttarnte den Verräter.",
+                steps: [
+                    {
+                        text: "Geheime Pläne wurden nach draußen geschmuggelt.",
+                        choices: [
+                            { text: "Observiere unauffällig die Zinne (Schleichen 13)", skill: 'schleichen', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Du ertappst den Verräter bei der Übergabe.",
+                        choices: [
+                            { text: "Überwältige ihn sofort (Angriff 13)", skill: 'angriff', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Er zieht einen Dolch und verletzt dich (-15 HP).",
+                        choices: [
+                            { text: "Entwaffne ihn im Nahkampf (Angriff 12)", skill: 'angriff', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 170, successXp: 110
+            },
+            {
+                id: 'q_rab_3', city: 'rabenfels', title: "Der Flug des Raben", desc: "Überbringe eine dringende Botschaft.",
+                steps: [
+                    {
+                        text: "Jede Minute zählt durch feindliches Gebiet.",
+                        choices: [
+                            { text: "Heimlich durch die Linien schleichen (Schleichen 14)", skill: 'schleichen', target: 14, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Feindliche Patrouillen versperren den Pass.",
+                        choices: [
+                            { text: "Schlage dich im Eilmarsch durch (Verteidigung 13)", skill: 'verteidigung', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Du wirst von Bogenschützen beschossen (-15 HP).",
+                        choices: [
+                            { text: "Fliehe in den Schutz der Felsen (Verteidigung 12)", skill: 'verteidigung', target: 12, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
                 ],
                 successGold: 180, successXp: 120
             },
-            { id: 'q_rab_2', city: 'rabenfels', title: "Der Spion auf der Zinne", desc: "Enttarnte den Verräter in den eigenen Reihen.", intro: "Geheime Pläne wurden nach draußen geschmuggelt.", choices: [{ text: "Unauffällig observieren", skill: 'schleichen', target: 13, successText: "Du überführst den Spion.", failText: "Er bemerkt dich und entkommt." }], successGold: 160, successXp: 105 },
-            { id: 'q_rab_3', city: 'rabenfels', title: "Der Flug des Raben", desc: "Überbringe eine dringende Botschaft durch feindliches Gebiet.", intro: "Jede Minute zählt für das Überleben der Festung.", choices: [{ text: "Heimlich durchschleichen", skill: 'schleichen', target: 14, successText: "Botschaft überbracht.", failText: "Du gerätst in Gefangenschaft." }], successGold: 170, successXp: 115 },
-            { id: 'q_rab_4', city: 'rabenfels', title: "Geister der gefallenen Ritter", desc: "Besänftige die ruhelosen Seelen in der Gruft.", intro: "Klagen hallen aus den unterirdischen Grabstätten.", choices: [{ text: "Mit sakraler Magie beten", skill: 'magie', target: 13, successText: "Die Ritter finden Frieden.", failText: "Die Geister greifen an." }], successGold: 185, successXp: 125 },
-            { id: 'q_rab_5', city: 'rabenfels', title: "Das Katapult-Duell", desc: "Zerstöre die Belagerungsmaschinen der Feinde.", intro: "Feuergeschosse treffen täglich die Mauern.", choices: [{ text: "Gezielter Sabotageakt", skill: 'angriff', target: 15, successText: "Die Katapulte explodieren!", failText: "Wachen entdecken dich." }], successGold: 210, successXp: 150 },
-            { id: 'q_rab_6', city: 'rabenfels', title: "Ehrenschwert des Kommandanten", desc: "Finde das geraubte Klingenstück im Orklager.", intro: "Das Symbol der Festung wurde entehrt.", choices: [{ text: "Harten Nahkampf führen", skill: 'angriff', target: 16, successText: "Schwert zurückgeholt!", failText: "Du wirst entwaffnet." }], successGold: 240, successXp: 170 },
-            { id: 'q_rab_7', city: 'rabenfels', title: "Der Champion der Finsternis", desc: "Besiege den Heerführer der Invasoren im Zweikampf.", intro: "Ein riesiger Krieger fordert den besten Kämpfer heraus.", choices: [{ text: "Epischer Endkampf", skill: 'angriff', target: 19, successText: "Du streckst den Champion nieder! Rabenfels ist gerettet!", failText: "Du unterliegst seiner rohen Gewalt." }], successGold: 500, successXp: 300 }
+            {
+                id: 'q_rab_4', city: 'rabenfels', title: "Geister der gefallenen Ritter", desc: "Besänftige ruhelose Seelen.",
+                steps: [
+                    {
+                        text: "Klagen hallen aus der alten Gruft.",
+                        choices: [
+                            { text: "Wirke sakrale Segensmagie (Magie 13)", skill: 'magie', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Die Ritter erheben sich als Schattenkrieger!",
+                        choices: [
+                            { text: "Banne die geisterhaften Horden (Magie 15)", skill: 'magie', target: 15, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Kalter Grabatem friert deine Glieder ein (-20 HP).",
+                        choices: [
+                            { text: "Widerstehe der Kälte (Verteidigung 13)", skill: 'verteidigung', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 195, successXp: 135
+            },
+            {
+                id: 'q_rab_5', city: 'rabenfels', title: "Das Katapult-Duell", desc: "Zerstöre feindliche Maschinen.",
+                steps: [
+                    {
+                        text: "Belagerungsgeschütze beschießen die Mauern.",
+                        choices: [
+                            { text: "Gezielter Sabotageakt im Dunkeln (Schleichen 14)", skill: 'schleichen', target: 14, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Wachen entdecken dich beim Sprengsatz legen!",
+                        choices: [
+                            { text: "Zünde die Ladung und kämpfe dich frei (Angriff 15)", skill: 'angriff', target: 15, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Eine Explosion wirft dich um (-20 HP).",
+                        choices: [
+                            { text: "Fliehe über die Zinne (Verteidigung 13)", skill: 'verteidigung', target: 13, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 220, successXp: 155
+            },
+            {
+                id: 'q_rab_6', city: 'rabenfels', title: "Ehrenschwert des Kommandanten", desc: "Finde das geraubte Klingenstück.",
+                steps: [
+                    {
+                        text: "Das Symbol der Festung wurde gestohlen.",
+                        choices: [
+                            { text: "Spüre die Orklagestätte auf (Jagd 13)", skill: 'jagd', target: 13, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Orkhäuptling trägt das Klingenstück als Trophäe.",
+                        choices: [
+                            { text: "Harter Zweikampf um das Schwert (Angriff 16)", skill: 'angriff', target: 16, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Der Häuptling trifft dich schwer (-20 HP).",
+                        choices: [
+                            { text: "Entschlossener Gegenangriff (Angriff 14)", skill: 'angriff', target: 14, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 250, successXp: 175
+            },
+            {
+                id: 'q_rab_7', city: 'rabenfels', title: "Der Champion der Finsternis", desc: "Besiege den Heerführer im Zweikampf.",
+                steps: [
+                    {
+                        text: "Ein riesiger Krieger fordert den besten Kämpfer heraus.",
+                        choices: [
+                            { text: "Stelle dich der ultimativen Herausforderung (Angriff 18)", skill: 'angriff', target: 18, successStep: 2, failStep: 3 }
+                        ]
+                    },
+                    {
+                        text: "Der Champion entfesselt dunkle Kräfte!",
+                        choices: [
+                            { text: "Breche seinen Willen mit letzter Kraft (Angriff 19)", skill: 'angriff', target: 19, successResult: 'win', failResult: 'lose' }
+                        ]
+                    },
+                    {
+                        text: "Seine Klinge durchdringt deine Rüstung (-30 HP).",
+                        choices: [
+                            { text: "Verzweifelter finaler Hieb (Angriff 17)", skill: 'angriff', target: 17, successResult: 'win', failResult: 'lose' }
+                        ]
+                    }
+                ],
+                successGold: 550, successXp: 320
+            }
         ];
 
+        // --- YOUTUBE API ---
         let ytPlayer = null;
         let isMusicPlaying = false;
         let musicVolume = 50;
 
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-player-container', {
-                height: '0',
-                width: '0',
-                videoId: 'ipFaubyDUT4',
+                height: '0', width: '0', videoId: 'ipFaubyDUT4',
                 playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'ipFaubyDUT4' },
                 events: { 'onReady': (event) => { event.target.setVolume(musicVolume); } }
             });
         }
-
         function updateMusicVolume(val) {
             musicVolume = parseInt(val);
-            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                ytPlayer.setVolume(musicVolume);
-            }
+            if (ytPlayer && typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(musicVolume);
         }
 
         let audioCtx = null;
@@ -791,7 +1268,6 @@
             osc.start();
             osc.stop(audioCtx.currentTime + 0.1);
         }
-
         function updateSfxVolume(val) { sfxVolume = val / 100; playSfx('click'); }
 
         function openSettings() {
@@ -801,7 +1277,6 @@
             document.getElementById('game-view').classList.add('hidden');
             document.getElementById('settings-menu').classList.remove('hidden');
         }
-
         function closeSettings() {
             playSfx('click');
             document.getElementById('settings-menu').classList.add('hidden');
@@ -811,7 +1286,6 @@
                 document.getElementById('main-menu').classList.remove('hidden');
             }
         }
-
         function returnToMainMenuFromSettings() {
             playSfx('click');
             document.getElementById('settings-menu').classList.add('hidden');
@@ -841,6 +1315,52 @@
         }
         function closeHandbook() { playSfx('click'); document.getElementById('handbook-modal').classList.add('hidden'); }
 
+        // --- REISEKARTE (Stadtwechsel) ---
+        function openTravelModal() {
+            playSfx('click');
+            let content = document.getElementById('travel-list-content');
+            content.innerHTML = `<p style="font-size:0.85rem; color:#aaa; margin-bottom:0.5rem;">Wähle eine Stadt zum Bereisen:</p>`;
+            
+            Object.entries(locations).forEach(([key, loc]) => {
+                if (key === playerData.location) return;
+                let btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.innerHTML = `🏰 <strong>${loc.name}</strong><br><small>${loc.desc}</small>`;
+                btn.onclick = () => { travelToCity(key); closeTravelModal(); };
+                content.appendChild(btn);
+            });
+            document.getElementById('travel-modal').classList.remove('hidden');
+        }
+        function closeTravelModal() { playSfx('click'); document.getElementById('travel-modal').classList.add('hidden'); }
+
+        function travelToCity(cityKey) {
+            playSfx('click');
+            playerData.location = cityKey;
+            advanceTime(2);
+            updateCityHub();
+            updateSidebar();
+            saveGame();
+            alert(`🗺️ Du bist nach ${locations[cityKey].name} gereist!`);
+        }
+
+        // --- STADT-HUB (Klick-Auswahl im Hauptfenster) ---
+        function updateCityHub() {
+            let loc = locations[playerData.location];
+            let storyBox = document.getElementById('story-box');
+            storyBox.innerText = `🏰 **${loc.name}**\n${loc.desc}\n\nDu befindest dich im Stadtzentrum. Wähle unten eine Aktivität aus, um fortzufahren:`;
+
+            let actionsContainer = document.getElementById('city-actions-container');
+            actionsContainer.innerHTML = `
+                <button class="choice-btn" onclick="openQuestGiverModal()">📜 Zum Questbrett (Quests annehmen)</button>
+                <button class="choice-btn" onclick="openActiveQuestsModal()">🎯 Aktive Quests starten (${playerData.quests.length} im Log)</button>
+                <button class="choice-btn" onclick="openNpcModal()">👥 Händlerviertel (${loc.npc})</button>
+                <button class="choice-btn" onclick="openCraftingModal()">⚒️ Monsterschmiede</button>
+                <button class="choice-btn" onclick="openHuntModal()">🏹 In die Wildnis zum Jagen gehen</button>
+                <button class="choice-btn" onclick="openTravelModal()">🗺️ In eine andere Stadt reisen</button>
+            `;
+        }
+
+        // --- QUESTS ANNEHMEN ---
         function openQuestGiverModal() {
             playSfx('click');
             let content = document.getElementById('questgiver-list-content');
@@ -849,7 +1369,7 @@
             let available = masterQuestsDatabase.filter(q => q.city === playerData.location && !playerData.quests.some(aq => aq.id === q.id) && !playerData.completedQuestIds.includes(q.id));
 
             if (available.length === 0) {
-                content.innerHTML = `<p style="color:#aaa; font-size:0.85rem;">Keine weiteren Quests in ${locations[playerData.location].name} verfügbar. Besuche andere Städte!</p>`;
+                content.innerHTML = `<p style="color:#aaa; font-size:0.85rem;">Keine weiteren Quests in ${locations[playerData.location].name} verfügbar. Bereise andere Städte!</p>`;
             } else {
                 available.forEach(q => {
                     let div = document.createElement('div');
@@ -875,20 +1395,21 @@
 
         function acceptQuest(q) {
             playSfx('click');
-            playerData.quests.push({ ...q });
-            alert(`📜 Quest angenommen: "${q.title}"!\nDu kannst sie jetzt über den Reiter 'Aktive Quests' starten.`);
+            playerData.quests.push({ ...q, currentStepIndex: 0 });
+            alert(`📜 Quest angenommen: "${q.title}"! Du kannst sie im Reiter 'Aktive Quests' starten.`);
             closeQuestGiverModal();
             updateSidebar();
             saveGame();
         }
 
+        // --- AKTIVE QUESTS STARTEN ---
         function openActiveQuestsModal() {
             playSfx('click');
             let content = document.getElementById('active-quests-list-content');
             content.innerHTML = '';
 
             if (playerData.quests.length === 0) {
-                content.innerHTML = `<p style="color:#aaa; font-size:0.85rem;">Du hast keine aktiven Quests. Nimm zuerst welche am Questbrett an!</p>`;
+                content.innerHTML = `<p style="color:#aaa; font-size:0.85rem;">Du hast keine aktiven Quests. Nimm welche am Questbrett an!</p>`;
             } else {
                 playerData.quests.forEach(q => {
                     let div = document.createElement('div');
@@ -896,14 +1417,14 @@
                     div.style.display = 'flex';
                     div.style.justifyContent = 'space-between';
                     div.style.alignItems = 'center';
-                    div.innerHTML = `<div><strong>🎯 ${q.title}</strong><br><small>${q.desc}</small></div>`;
+                    div.innerHTML = `<div><strong>🎯 ${q.title}</strong><br><small>${q.desc} (Fortschritt: Schritt ${q.currentStepIndex + 1}/${q.steps.length})</small></div>`;
 
                     let btn = document.createElement('button');
                     btn.className = 'choice-btn';
                     btn.style.padding = '0.3rem 0.8rem';
                     btn.style.fontSize = '0.8rem';
-                    btn.innerText = 'Starten';
-                    btn.onclick = () => { closeActiveQuestsModal(); playQuestAdventure(q); };
+                    btn.innerText = 'Fortführen';
+                    btn.onclick = () => { closeActiveQuestsModal(); playQuestStep(q); };
                     div.appendChild(btn);
                     content.appendChild(div);
                 });
@@ -912,28 +1433,31 @@
         }
         function closeActiveQuestsModal() { playSfx('click'); document.getElementById('active-quests-modal').classList.add('hidden'); }
 
-        function playQuestAdventure(quest) {
+        // --- MEHRSCHRITT QUEST ENGINE ---
+        function playQuestStep(quest) {
             playerData.currentActiveQuest = quest;
-            document.getElementById('qa-title').innerText = `🎯 ${quest.title}`;
-            document.getElementById('qa-story').innerText = quest.intro;
-            
+            let step = quest.steps[quest.currentStepIndex];
+
+            document.getElementById('qa-title').innerText = `🎯 ${quest.title} (Schritt ${quest.currentStepIndex + 1}/${quest.steps.length})`;
+            document.getElementById('qa-story').innerText = step.text;
+
             let choicesContainer = document.getElementById('qa-choices');
             choicesContainer.innerHTML = '';
 
-            quest.choices.forEach(ch => {
+            step.choices.forEach(ch => {
                 let btn = document.createElement('button');
                 btn.className = 'choice-btn';
                 let skillVal = playerData.skills[ch.skill] || 10;
                 let neededRoll = Math.max(2, ch.target - Math.floor((skillVal - 10)/2));
-                btn.innerHTML = `🎲 <strong>${ch.text}</strong><br><small>Wähle d20 (Zielwert: ${neededRoll}+ mit ${ch.skill.toUpperCase()}-Modifikator)</small>`;
-                btn.onclick = () => executeQuestChoice(ch, quest);
+                btn.innerHTML = `🎲 <strong>${ch.text}</strong><br><small>d20-Zielwert: ${neededRoll}+ mit ${ch.skill.toUpperCase()}-Modifikator</small>`;
+                btn.onclick = () => executeMultiStepChoice(ch, quest);
                 choicesContainer.appendChild(btn);
             });
 
             document.getElementById('quest-adventure-modal').classList.remove('hidden');
         }
 
-        function executeQuestChoice(choice, quest) {
+        function executeMultiStepChoice(choice, quest) {
             playSfx('click');
             let roll = Math.floor(Math.random() * 20) + 1;
             let skillVal = playerData.skills[choice.skill] || 10;
@@ -941,25 +1465,32 @@
             let total = roll + modifier;
             let success = total >= choice.target;
 
-            let resultText = `\n\n--- WÜRFELERGEBNIS ---\nd20-Wurf: **${roll}** (Modifikator: ${modifier >= 0 ? '+' : ''}${modifier} durch ${choice.skill.toUpperCase()} = **Gesamtwert ${total}**).\nBenötigt: **${choice.target}+**\n\n`;
+            let resultText = `\n\n--- WÜRFELERGEBNIS ---\nd20-Wurf: **${roll}** (Modifikator: ${modifier >= 0 ? '+' : ''}${modifier} = **Gesamtwert ${total}** | Benötigt: ${choice.target}+)\n\n`;
 
             if (success) {
-                resultText += `✅ **Erfolg!** ${choice.successText}\n\n🏆 **Quest abgeschlossen!** Du erhältst 🟡 ${quest.successGold} Gold und ⭐ ${quest.successXp} XP!`;
-                playerData.gold += quest.successGold;
-                playerData.stats.totalGoldFound += quest.successGold;
-                playerData.xp += quest.successXp;
-                playerData.stats.questsCompleted++;
-                checkLevelUp();
+                resultText += `✅ **Erfolg!** Du meisterst diese Situation problemlos.`;
+                if (choice.successResult === 'win') {
+                    // Quest komplett gewonnen!
+                    resultText += `\n\n🏆 **Quest erfolgreich abgeschlossen!** Belohnung: 🟡 ${quest.successGold} Gold & ⭐ ${quest.successXp} XP!`;
+                    playerData.gold += quest.successGold;
+                    playerData.stats.totalGoldFound += quest.successGold;
+                    playerData.xp += quest.successXp;
+                    playerData.stats.questsCompleted++;
+                    checkLevelUp();
 
-                playerData.quests = playerData.quests.filter(q => q.id !== quest.id);
-                playerData.completedQuestIds.push(quest.id);
+                    playerData.quests = playerData.quests.filter(q => q.id !== quest.id);
+                    playerData.completedQuestIds.push(quest.id);
 
-                document.getElementById('qa-story').innerText += resultText;
-                document.getElementById('qa-choices').innerHTML = `<button class="choice-btn" onclick="document.getElementById('quest-adventure-modal').classList.add('hidden'); updateSidebar(); saveGame();" style="text-align:center;">Abenteuer abschließen</button>`;
+                    document.getElementById('qa-story').innerText += resultText;
+                    document.getElementById('qa-choices').innerHTML = `<button class="choice-btn" onclick="document.getElementById('quest-adventure-modal').classList.add('hidden'); updateCityHub(); updateSidebar(); saveGame();" style="text-align:center;">Abenteuer beenden</button>`;
+                    return;
+                } else if (choice.successStep !== undefined) {
+                    quest.currentStepIndex = choice.successStep - 1;
+                }
             } else {
-                let dmg = 25;
+                let dmg = 15;
                 playerData.hp = Math.max(0, playerData.hp - dmg);
-                resultText += `❌ **Fehlschlag!** ${choice.failText}\n\nDu erleidest **-${dmg} HP** Schaden!`;
+                resultText += `❌ **Misserfolg!** Du scheiterst und erleidest **-${dmg} HP** Schaden!`;
 
                 if (playerData.hp <= 0) {
                     playerData.stats.deaths++;
@@ -968,33 +1499,37 @@
                     document.getElementById('qa-choices').innerHTML = `<button class="choice-btn" onclick="location.reload()" style="text-align:center; background:#331111; border-color:#e74c3c;">Neuen Charakter erstellen</button>`;
                     localStorage.removeItem('pfad_des_helden_save');
                     return;
-                } else {
-                    resultText += `\n\n⚠️ **Die Quest ist fehlgeschlagen**, da du den Wurf verpatzt hast! Sie bleibt in deinen aktiven Quests, damit du es später erneut versuchen kannst.`;
+                }
+
+                if (choice.failResult === 'lose') {
+                    resultText += `\n\n⚠️ Du wurdet zurückgedrängt. Die Quest schlägt fehl, bleibt aber im Log für einen erneuten Versuch.`;
+                    playerData.quests = playerData.quests.filter(q => q.id !== quest.id);
                     document.getElementById('qa-story').innerText += resultText;
-                    document.getElementById('qa-choices').innerHTML = `<button class="choice-btn" onclick="document.getElementById('quest-adventure-modal').classList.add('hidden'); updateSidebar(); saveGame();" style="text-align:center;">Zurückziehen</button>`;
+                    document.getElementById('qa-choices').innerHTML = `<button class="choice-btn" onclick="document.getElementById('quest-adventure-modal').classList.add('hidden'); updateCityHub(); updateSidebar(); saveGame();" style="text-align:center;">Zurückziehen</button>`;
+                    return;
+                } else if (choice.failStep !== undefined) {
+                    quest.currentStepIndex = choice.failStep - 1;
                 }
             }
+
+            document.getElementById('qa-story').innerText += resultText;
+            document.getElementById('qa-choices').innerHTML = `<button class="choice-btn" onclick="playQuestStep(quest)" style="text-align:center;">Nächster Schritt</button>`;
             updateSidebar();
         }
 
+        // --- WÜRFEL WIDGET UNTEN RECHTS ---
         function rollD20Widget() {
             playSfx('dice');
             let roll = Math.floor(Math.random() * 20) + 1;
-            let text = `d20 Wurf: ${roll}`;
-            if (roll === 20) text += " 🔥 NAT 20!";
-            else if (roll === 1) text += " 💀 NAT 1!";
-            document.getElementById('dice-widget-result').innerText = text;
+            document.getElementById('dice-widget-result').innerText = `d20: ${roll}`;
             appendStory(`🎲 **Würfelstation:** d20 gewürfelt: **${roll}**.`);
         }
-
         function rollDamageWidget() {
             playSfx('dice');
             let roll = Math.floor(Math.random() * 8) + 1;
             let weaponName = playerData.equipment.rhand ? playerData.equipment.rhand.name : "Fäuste";
-            let arrowBonus = playerData.equipment.arrows ? playerData.equipment.arrows.bonus : 0;
-            let totalDmg = roll + arrowBonus;
-            document.getElementById('dice-widget-result').innerText = `Schaden: ${roll} + ${arrowBonus} = ${totalDmg}`;
-            appendStory(`⚔️ **Schadenswürfel:** Mit ${weaponName} hast du **${roll} Schaden** (+${arrowBonus} Pfeil-Bonus = **${totalDmg} Schaden**) gewürfelt!`);
+            document.getElementById('dice-widget-result').innerText = `Schaden: ${roll}`;
+            appendStory(`⚔️ **Schadenswürfel:** Mit ${weaponName} hast du **${roll} Schaden** gewürfelt!`);
         }
 
         const huntingBeasts = [
@@ -1005,52 +1540,30 @@
             { id: 'mat_wyvern', name: "Wyvern", icon: "🐉", baseDiff: 20, rewardMat: { id: 'drachen_schuppe', name: "Drachenschuppe", icon: "🐉", desc: "Schuppe.", cost: 150 }, xp: 100 }
         ];
 
-        const arrowList = [
-            { id: 'ar_1', name: "Holzpfeile", icon: "🏹", type: "arrow", slot: "arrows", city: "aschenwald", cost: 10, bonus: 1, desc: "Einfache Pfeile (+1 Schaden)." },
-            { id: 'ar_2', name: "Eisenpfeile", icon: "🎯", type: "arrow", slot: "arrows", city: "eisenhall", cost: 25, bonus: 2, desc: "Robuste Pfeile (+2 Schaden)." }
-        ];
-
         const masterEquipmentList = [
-            { id: 'h1', name: "Lederkappe", icon: "🧢", type: "armor", slot: "helm", city: "aschenwald", cost: 15, desc: "Einfacher Lederschutz." },
+            { id: 'h1', name: "Lederkappe", icon: "🧢", type: "armor", slot: "helm", city: "aschenwald", cost: 15, desc: "Lederschutz." },
             { id: 'c1', name: "Lederwams", icon: "🧥", type: "armor", slot: "chest", city: "aschenwald", cost: 25, desc: "Gegerbtes Leder." },
-            { id: 'w1', name: "Bronzeschwert", icon: "🗡️", type: "weapon", slot: "rhand", city: "eisenhall", cost: 40, desc: "Solide Klinge." },
-            ...arrowList
+            { id: 'w1', name: "Bronzeschwert", icon: "🗡️", type: "weapon", slot: "rhand", city: "eisenhall", cost: 40, desc: "Solide Klinge." }
         ];
 
         const monsterCraftingRecipes = [
             { id: 'mc_1', name: "Geweih-Bogen", icon: "🏹", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1 }, costGold: 30, cost: 30, desc: "Präziser Bogen." }
         ];
 
-        const locations = {
-            aschenwald: { name: "Aschenwald", desc: "Nebeliger Grenzforst.", npc: "Händler Vane" },
-            eisenhall: { name: "Eisenhall", desc: "Zwergen-Bergfestung.", npc: "Meisterschmied Thorgar" },
-            sonnendorn: { name: "Sonnendorn", desc: "Hafenstadt am goldenen Meer.", npc: "Händlerin Lyra" },
-            rabenfels: { name: "Rabenfels", desc: "Klippenburg auf steilem Fels.", npc: "Kommandant Varis" }
-        };
-
         function openHuntModal() {
             playSfx('click');
             let content = document.getElementById('hunt-list-content');
             content.innerHTML = '';
-
             huntingBeasts.forEach(beast => {
                 let div = document.createElement('div');
                 div.className = 'quest-modal-item';
-                div.style.display = 'flex';
-                div.style.justifyContent = 'space-between';
-                div.style.alignItems = 'center';
+                div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
                 div.innerHTML = `<div><strong>${beast.icon} ${beast.name}</strong><br><small>Beute: ${beast.rewardMat.name}</small></div>`;
-
                 let btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.style.padding = '0.3rem 0.8rem';
-                btn.style.fontSize = '0.8rem';
-                btn.innerText = 'Jagen';
-                btn.onclick = () => executeHunt(beast);
-                div.appendChild(btn);
-                content.appendChild(div);
+                btn.className = 'choice-btn'; btn.style.padding = '0.3rem 0.8rem'; btn.style.fontSize = '0.8rem';
+                btn.innerText = 'Jagen'; btn.onclick = () => executeHunt(beast);
+                div.appendChild(btn); content.appendChild(div);
             });
-
             document.getElementById('hunt-modal').classList.remove('hidden');
         }
         function closeHuntModal() { playSfx('click'); document.getElementById('hunt-modal').classList.add('hidden'); }
@@ -1068,19 +1581,17 @@
             advanceTime(1);
             let check = performCheck('jagd', beast.baseDiff);
             let responseText = "";
-
             if (check.success) {
                 playerData.stats.monstersKilled++;
                 playerData.xp += beast.xp;
                 checkLevelUp();
                 playerData.inventory.push({ ...beast.rewardMat, condition: 100 });
-                responseText = `🏹 **Jagd auf ${beast.name}:**\nd20-Wurf: **${check.roll}** (Gesamtwert: **${check.total}**).\n\n✅ **Erfolg!** Du erlegst das Tier und erhältst **+1x ${beast.rewardMat.name}** und **+${beast.xp} XP**!`;
+                responseText = `🏹 **Jagd auf ${beast.name}:** d20-Wurf: **${check.roll}** (Gesamtwert: **${check.total}**). Erfolg! +1x ${beast.rewardMat.name}, +${beast.xp} XP!`;
             } else {
                 let dmg = Math.max(5, beast.baseDiff);
                 playerData.hp = Math.max(0, playerData.hp - dmg);
-                responseText = `🏹 **Jagd auf ${beast.name}:**\nd20-Wurf: **${check.roll}** (Gesamtwert: **${check.total}**).\n\n❌ **Fehlschlag!** Das Tier attackiert dich (**-${dmg} HP**)!`;
+                responseText = `🏹 **Jagd auf ${beast.name}:** d20-Wurf: **${check.roll}** (Gesamtwert: **${check.total}**). Misserfolg! -${dmg} HP!`;
             }
-
             appendStory(responseText);
             updateSidebar();
             saveGame();
@@ -1103,26 +1614,17 @@
         function openCraftingModal() {
             playSfx('click');
             let content = document.getElementById('crafting-list-content');
-            content.innerHTML = `<p style="font-size:0.8rem; color:#aaa; margin-bottom:0.8rem;">Stelle aus Jagdbeute mächtige Ausrüstung her.</p>`;
-
+            content.innerHTML = `<p style="font-size:0.8rem; color:#aaa; margin-bottom:0.8rem;">Stelle Ausrüstung her.</p>`;
             monsterCraftingRecipes.forEach(rec => {
                 let div = document.createElement('div');
                 div.className = 'quest-modal-item';
-                div.style.display = 'flex';
-                div.style.justifyContent = 'space-between';
-                div.style.alignItems = 'center';
-                div.innerHTML = `<div><strong>${rec.icon} ${rec.name}</strong><br><small>${rec.desc}<br>Preis: ${rec.costGold} Gold</small></div>`;
-
+                div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
+                div.innerHTML = `<div><strong>${rec.icon} ${rec.name}</strong><br><small>Preis: ${rec.costGold} Gold</small></div>`;
                 let btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.style.padding = '0.3rem 0.8rem';
-                btn.style.fontSize = '0.8rem';
-                btn.innerText = 'Herstellen';
-                btn.onclick = () => craftMonsterItem(rec);
-                div.appendChild(btn);
-                content.appendChild(div);
+                btn.className = 'choice-btn'; btn.style.padding = '0.3rem 0.8rem'; btn.style.fontSize = '0.8rem';
+                btn.innerText = 'Herstellen'; btn.onclick = () => craftMonsterItem(rec);
+                div.appendChild(btn); content.appendChild(div);
             });
-
             document.getElementById('crafting-modal').classList.remove('hidden');
         }
         function closeCraftingModal() { playSfx('click'); document.getElementById('crafting-modal').classList.add('hidden'); }
@@ -1141,55 +1643,18 @@
             playSfx('click');
             let currentLoc = locations[playerData.location];
             document.getElementById('npc-modal-title').innerText = `👥 Händlerviertel in ${currentLoc.name}`;
-            
             let content = document.getElementById('npc-list-content');
             content.innerHTML = `<h4 style="color:var(--accent-color); margin: 0 0 0.5rem 0;">Kaufen:</h4>`;
-
-            let localItems = masterEquipmentList.filter(item => item.city === playerData.location);
-            localItems.forEach(item => {
+            
+            masterEquipmentList.filter(item => item.city === playerData.location).forEach(item => {
                 let div = document.createElement('div');
                 div.className = 'quest-modal-item';
-                div.style.display = 'flex';
-                div.style.justifyContent = 'space-between';
-                div.style.alignItems = 'center';
-                div.innerHTML = `<div><strong>${item.icon} ${item.name}</strong><br><small>${item.desc} (${item.cost} Gold)</small></div>`;
-                
+                div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
+                div.innerHTML = `<div><strong>${item.icon} ${item.name}</strong><br><small>${item.cost} Gold</small></div>`;
                 let btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.style.padding = '0.3rem 0.8rem';
-                btn.style.fontSize = '0.8rem';
-                btn.innerText = 'Kaufen';
-                btn.onclick = () => buyItem(item);
-                div.appendChild(btn);
-                content.appendChild(div);
-            });
-
-            let sellHeader = document.createElement('h4');
-            sellHeader.style.color = 'var(--accent-color)';
-            sellHeader.style.margin = '1rem 0 0.5rem 0';
-            sellHeader.innerText = 'Sofort-Verkauf:';
-            content.appendChild(sellHeader);
-
-            playerData.inventory.forEach((item, invIdx) => {
-                if (!item) return;
-                let sellPrice = Math.max(5, Math.floor((item.cost || 20) * 0.7));
-                let div = document.createElement('div');
-                div.className = 'quest-modal-item';
-                div.style.display = 'flex';
-                div.style.justifyContent = 'space-between';
-                div.style.alignItems = 'center';
-                div.innerHTML = `<div><strong>${item.icon} ${item.name}</strong><br><small>Erlös: 🟡 ${sellPrice} Gold</small></div>`;
-
-                let btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.style.backgroundColor = '#331111';
-                btn.style.borderColor = '#e74c3c';
-                btn.style.padding = '0.3rem 0.8rem';
-                btn.style.fontSize = '0.8rem';
-                btn.innerText = `Verkaufen (+${sellPrice}g)`;
-                btn.onclick = () => sellItemDirect(invIdx, sellPrice);
-                div.appendChild(btn);
-                content.appendChild(div);
+                btn.className = 'choice-btn'; btn.style.padding = '0.3rem 0.8rem'; btn.style.fontSize = '0.8rem';
+                btn.innerText = 'Kaufen'; btn.onclick = () => buyItem(item);
+                div.appendChild(btn); content.appendChild(div);
             });
 
             document.getElementById('npc-modal').classList.remove('hidden');
@@ -1207,28 +1672,15 @@
             } else { alert("Nicht genug Gold!"); }
         }
 
-        function sellItemDirect(invIdx, price) {
-            playSfx('click');
-            let item = playerData.inventory[invIdx];
-            if (!item) return;
-            playerData.inventory.splice(invIdx, 1);
-            playerData.gold += price;
-            updateSidebar();
-            openNpcModal();
-        }
-
         function handleInventoryClick(index) {
             let item = playerData.inventory[index];
             if (!item) return;
             playSfx('click');
             playerData.selectedItemIndex = index;
-
             document.getElementById('modal-item-title').innerText = `${item.icon} ${item.name}`;
-            document.getElementById('modal-item-desc').innerHTML = `<strong>Beschreibung:</strong><br>${item.desc || 'Keine Beschreibung.'}`;
-            
+            document.getElementById('modal-item-desc').innerHTML = `<strong>Beschreibung:</strong><br>${item.desc}`;
             let container = document.getElementById('modal-actions-container');
             container.innerHTML = '';
-
             if (item.type === 'book') {
                 let readBtn = document.createElement('button');
                 readBtn.className = 'choice-btn';
@@ -1241,29 +1693,15 @@
                     updateSidebar();
                 };
                 container.appendChild(readBtn);
-            } else if (item.type === 'armor' || item.type === 'weapon' || item.type === 'arrow') {
+            } else {
                 let eqBtn = document.createElement('button');
                 eqBtn.className = 'choice-btn';
                 eqBtn.innerText = '🛡️ Ausrüsten';
                 eqBtn.onclick = () => { equipItemFromInventory(index); closeItemModal(); };
                 container.appendChild(eqBtn);
             }
-
-            let dropBtn = document.createElement('button');
-            dropBtn.className = 'choice-btn';
-            dropBtn.style.backgroundColor = '#331111';
-            dropBtn.style.borderColor = '#e74c3c';
-            dropBtn.innerText = '🗑️ Wegwerfen';
-            dropBtn.onclick = () => {
-                playerData.inventory.splice(index, 1);
-                closeItemModal();
-                updateSidebar();
-            };
-            container.appendChild(dropBtn);
-
             document.getElementById('item-action-modal').classList.remove('hidden');
         }
-
         function closeItemModal() { playSfx('click'); document.getElementById('item-action-modal').classList.add('hidden'); }
 
         function equipItemFromInventory(index) {
@@ -1271,7 +1709,6 @@
             if (!item) return;
             let targetSlot = item.slot;
             let currentlyEquipped = playerData.equipment[targetSlot];
-
             playerData.equipment[targetSlot] = item;
             playerData.inventory.splice(index, 1);
             if (currentlyEquipped) playerData.inventory.push(currentlyEquipped);
@@ -1351,7 +1788,7 @@
 
             startPlayTimeCounter();
             updateSidebar();
-            initStoryWelcome();
+            updateCityHub();
             saveGame();
         }
 
@@ -1365,13 +1802,13 @@
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
                 document.getElementById('right-action-panel').classList.remove('hidden');
-                document.getElementById('craft-btn').classList.add('hidden');
+                document.getElementById('craft-btn').classList.remove('hidden');
                 document.getElementById('handbook-btn').classList.remove('hidden');
                 document.getElementById('quit-to-menu-btn').classList.remove('hidden');
                 document.getElementById('dice-widget').classList.remove('hidden');
                 startPlayTimeCounter();
                 updateSidebar();
-                appendStory(`📜 Abenteuer fortgesetzt in ${locations[playerData.location].name}.`);
+                updateCityHub();
             }
         }
 
@@ -1391,52 +1828,12 @@
             updateSidebar();
         }
 
-        function submitCustomAction() {
-            const inputField = document.getElementById('player-action-input');
-            const actionText = inputField.value.trim().toLowerCase();
-            if (!actionText) return;
-            playSfx('click');
-
-            appendStory(`> **Du:** "${actionText}"`);
-            let locObj = locations[playerData.location];
-            let check = performCheck('verteidigung', 12);
-            let responseText = "";
-
-            if (actionText.includes("umsehen") || actionText.includes("was sehe ich")) {
-                advanceTime(1);
-                responseText = `👁️ **d20 Wurf (${check.roll}):** Du blickst dich in ${locObj.name} um. ${locObj.desc}`;
-            } else if (actionText.includes("jagen")) {
-                openHuntModal();
-                responseText = `🏹 **Dungeon Master:** Du machst dich bereit zur Jagd.`;
-            } else if (actionText.includes("händler") || actionText.includes("markt")) {
-                openNpcModal();
-                responseText = `👥 **Dungeon Master:** Du betrittst das Händlerviertel.`;
-            } else if (actionText.includes("quest")) {
-                openQuestGiverModal();
-                responseText = `📜 **Dungeon Master:** Du besuchst das Questbrett.`;
-            } else {
-                advanceTime(1);
-                if (check.success) {
-                    playerData.xp += 20;
-                    checkLevelUp();
-                    responseText = `🎲 **Handlungsprüfung (d20: ${check.roll}):** Erfolg bei *"${actionText}"*! (+20 XP)`;
-                } else {
-                    playerData.hp = Math.max(0, playerData.hp - 10);
-                    responseText = `🎲 **Handlungsprüfung (d20: ${check.roll}):** Schwierigkeiten bei *"${actionText}"* (-10 HP).`;
-                }
-            }
-
-            appendStory(responseText);
-            inputField.value = '';
-            updateSidebar();
-            saveGame();
-        }
-
         function updateSidebar() {
             const locObj = locations[playerData.location];
             const raceObj = races[playerData.race] || { icon: "🛡️" };
             let h = playerData.hour;
             document.getElementById('time-display').innerText = `${h < 10 ? '0'+h : h}:00 Uhr`;
+            document.getElementById('location-sub-display').innerText = locObj.name;
             document.getElementById('hero-avatar').innerText = raceObj.icon;
             document.getElementById('char-info').innerHTML = `<strong>${playerData.name}</strong><br>${locObj.name}`;
 
@@ -1460,14 +1857,12 @@
                 let item = playerData.equipment[s.key];
                 let div = document.createElement('div');
                 div.className = 'equipment-slot';
-                
                 if (item) {
                     div.innerHTML = `<span>${s.label}</span>${item.icon}`;
-                    div.setAttribute('title', `${item.name}: ${item.desc} (Klick zum Ablegen)`);
+                    div.setAttribute('title', `${item.name}: ${item.desc}`);
                     div.onclick = () => handleEquipmentSlotClick(s.key);
                 } else {
                     div.innerHTML = `<span>${s.label}</span>`;
-                    div.removeAttribute('title');
                 }
                 eqGrid.appendChild(div);
             });
@@ -1497,18 +1892,11 @@
             }
         }
 
-        function initStoryWelcome() {
-            let storyBox = document.getElementById('story-box');
-            storyBox.innerText = `🎲 **Dungeon Master:** Willkommen, ${playerData.name}!\n\n**Übersicht der Schnellwahl-Buttons (rechts):**\n- **🏹 Jagen:** Gehe in der Natur auf die Jagd nach Tieren und Monstern, um seltene Beute und XP zu erhalten.\n- **👥 Händlerviertel:** Besuche den lokalen Markt, um neue Ausrüstung zu kaufen oder gefundene Gegenstände direkt gegen Gold zu verkaufen.\n- **📜 Quests annehmen:** Schaue auf dem Questbrett nach neuen Aufträgen, die speziell in deiner aktuellen Stadt aushängen.\n- **🎯 Aktive Quests:** Starte hier deine angenommenen Quests und spiele interaktive D&D-Abenteuer.\n- **⚒️ Monsterschmiede:** Verarbeite gesammelte Monsterteile und Beute zu mächtigen neuen Waffen und Rüstungen.\n\nUnten rechts findest du zudem deine **D&D-Würfelstation** für d20-Proben und Schadenswürfe. Wenn du bei einer Quest scheiterst aber überlebst, bleibt sie im Log. Stirbst du (0 HP), ist dein Charakter endgültig tot!`;
-        }
-
         function appendStory(text) {
             let storyBox = document.getElementById('story-box');
             storyBox.innerText += "\n\n" + text;
             storyBox.scrollTop = storyBox.scrollHeight;
         }
-
-        function handleCustomInputKey(event) { if (event.key === 'Enter') submitCustomAction(); }
     </script>
 </body>
 </html>
