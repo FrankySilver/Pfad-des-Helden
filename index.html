@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Episches D&D Selber-Würfeln RPG</title>
+    <title>Pfad des Helden - Episches D&D Selber-Würfeln RPG (Ultimate Edition)</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -137,7 +137,6 @@
         }
         .choice-btn:hover { background-color: var(--accent-color); color: #000; }
 
-        /* Würfel Widget Unten Rechts */
         .dice-widget {
             position: fixed; bottom: 25px; right: 25px; background: #1b1b26;
             border: 2px solid var(--accent-color); border-radius: 10px; padding: 0.8rem 1.2rem;
@@ -249,7 +248,7 @@
                 <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">D&D Selber-Würfeln Edition</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate D&D Edition</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -278,7 +277,7 @@
                     <button class="choice-btn" onclick="returnToMainMenuFromSettings()" style="text-align: center; width: 100%; margin-top: 0.6rem; background-color: #331111; border-color: #e74c3c;">🏠 Zum Hauptmenü</button>
                 </div>
 
-                <!-- Charaktererstellung -->
+                <!-- Charaktererstellung mit Rassen-Boni -->
                 <div id="char-creation" class="hidden">
                     <h3 style="color: var(--accent-color); margin-top: 0;">Heldenerschaffung</h3>
                     <div class="form-group">
@@ -296,11 +295,11 @@
                     <div class="form-group">
                         <label>Wähle deine Rasse:</label>
                         <select id="hero-race">
-                            <option value="human">Mensch</option>
-                            <option value="dwarf">Zwerg (+20 HP)</option>
-                            <option value="elf">Elf</option>
-                            <option value="orc">Ork</option>
-                            <option value="halbling">Halbling</option>
+                            <option value="human">Mensch (+2 Alle Fertigkeiten)</option>
+                            <option value="dwarf">Zwerg (+20 Max HP & +2 Verteidigung)</option>
+                            <option value="elf">Elf (+3 Schleichen & +2 Magie)</option>
+                            <option value="orc">Ork (+4 Angriff & -1 Handel)</option>
+                            <option value="halbling">Halbling (+3 Handel & +2 Schleichen)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -326,7 +325,7 @@
                     <button class="choice-btn" onclick="createHero()" style="text-align: center; margin-top: 1rem; background-color: var(--accent-color); color: #000; font-weight: bold;">Kampagne starten</button>
                 </div>
 
-                <!-- Stadt-Hub (Hauptansicht) -->
+                <!-- Stadt-Hub -->
                 <div id="game-view" class="hidden" style="display: flex; flex-direction: column; flex: 1;">
                     <div class="story-text" id="story-box"></div>
                     <div id="city-actions-container" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: auto;"></div>
@@ -346,7 +345,7 @@
         </div>
     </div>
 
-    <!-- D&D Würfel Widget Unten Rechts (Selber würfeln!) -->
+    <!-- D&D Würfel Widget -->
     <div id="dice-widget" class="dice-widget hidden">
         <div style="font-size: 0.75rem; color: var(--accent-color); font-weight: bold;">D&D Würfel-Station</div>
         <button class="dice-btn" onclick="rollD20Widget()">🎲 d20 Würfeln</button>
@@ -396,13 +395,13 @@
         </div>
     </div>
 
-    <!-- Episches 5-20 Schritt Quest Abenteuer Modal mit Selbst-Würfeln -->
+    <!-- Quest Abenteuer Modal (Versteckte Schritt-Anzahl) -->
     <div id="quest-adventure-modal" class="modal hidden">
         <div class="modal-content" style="width: 780px;">
             <h3 id="qa-title" style="color: var(--accent-color); margin-top: 0; text-align: center;">Quest-Titel</h3>
             <div id="qa-story" style="font-size: 0.95rem; line-height: 1.6; background: #111116; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 1rem; white-space: pre-line; max-height: 350px; overflow-y: auto;"></div>
             <div style="background: #1a1a24; padding: 0.6rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.85rem; border: 1px solid var(--accent-color); text-align: center;">
-                💡 <strong>Anleitung:</strong> Klicke unten rechts auf den d20-Würfel, addiere deinen Skill-Modifikator und klicke dann auf <strong>'Bestanden'</strong> oder <strong>'Fehlgeschlagen'</strong>!
+                💡 <strong>Anleitung:</strong> Würfle mit der d20-Station unten rechts, addiere deinen Skill-Modifikator und wähle unten aus!
             </div>
             <div id="qa-choices" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
         </div>
@@ -418,7 +417,7 @@
 
     <div id="crafting-modal" class="modal hidden">
         <div class="modal-content">
-            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">⚒️ Monsterschmiede</h3>
+            <h3 style="color: var(--accent-color); margin-top: 0; text-align: center;">⚒️ Monsterschmiede & Handwerk</h3>
             <div id="crafting-list-content" style="max-height: 380px; overflow-y: auto; margin-bottom: 1rem;"></div>
             <button class="choice-btn" onclick="closeCraftingModal()" style="text-align: center; width: 100%;">Schließen</button>
         </div>
@@ -433,7 +432,7 @@
     </div>
 
     <footer>
-        <p>Pfad des Helden – 30 Epische 5-20 Schritt Quests & Aktives Selbst-Würfeln</p>
+        <p>Pfad des Helden – 30 Epische Quests, Alle Items & Selber-Würfeln</p>
     </footer>
 
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -482,11 +481,11 @@
         };
 
         const races = {
-            human: { name: "Mensch", icon: "🧑" },
-            dwarf: { name: "Zwerg", icon: "🧔" },
-            elf: { name: "Elf", icon: "🧝" },
-            orc: { name: "Ork", icon: "👹" },
-            halbling: { name: "Halbling", icon: "🧒" }
+            human: { name: "Mensch", icon: "🧑", bonus: { all: 2 } },
+            dwarf: { name: "Zwerg", icon: "🧔", bonus: { hp: 20, verteidigung: 2 } },
+            elf: { name: "Elf", icon: "🧝", bonus: { schleichen: 3, magie: 2 } },
+            orc: { name: "Ork", icon: "👹", bonus: { angriff: 4, handel: -1 } },
+            halbling: { name: "Halbling", icon: "🧒", bonus: { handel: 3, schleichen: 2 } }
         };
 
         const locations = {
@@ -496,10 +495,39 @@
             rabenfels: { name: "Rabenfels", desc: "Trutzige Klippenburg auf steilem Fels.", npc: "Kommandant Varis" }
         };
 
-        // HILFSFUNKTION ZUR GENERIERUNG VON 5 BIS 20 SCHRITTEN PRO QUEST
+        // VOLLSTÄNDIGE ITEM-, RÜSTUNGS- UND WAFFENLISTE
+        const arrowList = [
+            { id: 'ar_1', name: "Holzpfeile", icon: "🏹", type: "arrow", slot: "arrows", city: "aschenwald", cost: 10, bonus: 1, desc: "Einfache Pfeile (+1 Schaden)." },
+            { id: 'ar_2', name: "Eisenpfeile", icon: "🎯", type: "arrow", slot: "arrows", city: "eisenhall", cost: 25, bonus: 2, desc: "Robuste Pfeile (+2 Schaden)." }
+        ];
+
+        const masterEquipmentList = [
+            { id: 'h1', name: "Lederkappe", icon: "🧢", type: "armor", slot: "helm", city: "aschenwald", cost: 15, desc: "Einfacher Lederschutz." },
+            { id: 'c1', name: "Lederwams", icon: "🧥", type: "armor", slot: "chest", city: "aschenwald", cost: 25, desc: "Gegerbtes Leder." },
+            { id: 'l1', name: "Lederhose", icon: "👖", type: "armor", slot: "legs", city: "aschenwald", cost: 20, desc: "Robuste Hose." },
+            { id: 'b1', name: "Lederstiefel", icon: "🥾", type: "armor", slot: "boots", city: "aschenwald", cost: 18, desc: "Feste Stiefel." },
+            { id: 'w1', name: "Bronzeschwert", icon: "🗡️", type: "weapon", slot: "rhand", city: "eisenhall", cost: 40, desc: "Solide Klinge." },
+            { id: 'w2', name: "Stahlhammer", icon: "🔨", type: "weapon", slot: "rhand", city: "eisenhall", cost: 65, desc: "Wuchtiger Zwergenhammer." },
+            { id: 'r1', name: "Ring der Macht", icon: "💍", type: "ring", slot: "ring", city: "sonnendorn", cost: 120, desc: "Magischer Ring." },
+            ...arrowList
+        ];
+
+        const monsterCraftingRecipes = [
+            { id: 'mc_1', name: "Geweih-Bogen", icon: "🏹", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1 }, costGold: 30, cost: 30, desc: "Präziser Bogen aus Jagdbeute." },
+            { id: 'mc_2', name: "Drachen-Rüstung", icon: "🛡️", type: "armor", slot: "chest", req: { drachen_schuppe: 1 }, costGold: 100, cost: 150, desc: "Unverwüstliche Rüstung." }
+        ];
+
+        const huntingBeasts = [
+            { id: 'mat_rabbit', name: "Wildhase", icon: "🐇", baseDiff: 8, rewardMat: { id: 'hase_fell', name: "Hasenfell", icon: "🐇", desc: "Weiches Fell.", cost: 10 }, xp: 10 },
+            { id: 'mat_wolf', name: "Waldwolf", icon: "🐺", baseDiff: 12, rewardMat: { id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", desc: "Wolfsfell.", cost: 20 }, xp: 20 },
+            { id: 'mat_boar', name: "Wildschwein", icon: "🐗", baseDiff: 14, rewardMat: { id: 'schwein_hauer', name: "Eberhauer", icon: "🐗", desc: "Spitzer Hauer.", cost: 25 }, xp: 25 },
+            { id: 'mat_bear', name: "Grizzlybär", icon: "🐻", baseDiff: 17, rewardMat: { id: 'baeren_fell', name: "Bärenfell", icon: "🐻", desc: "Dichtes Bärenfell.", cost: 50 }, xp: 45 },
+            { id: 'mat_wyvern', name: "Wyvern", icon: "🐉", baseDiff: 20, rewardMat: { id: 'drachen_schuppe', name: "Drachenschuppe", icon: "🐉", desc: "Schuppe.", cost: 150 }, xp: 100 }
+        ];
+
         function generateStepsForQuest(title, city) {
             let steps = [];
-            let totalSteps = Math.floor(Math.random() * 6) + 10; // 10 bis 15 Schritte für echtes D&D Feeling
+            let totalSteps = Math.floor(Math.random() * 6) + 10; // 10-15 Schritte
             let skillsList = ['angriff', 'verteidigung', 'schleichen', 'jagd', 'magie', 'handel'];
 
             steps.push({
@@ -510,7 +538,7 @@
 
             for (let i = 2; i < totalSteps; i++) {
                 steps.push({
-                    text: `Schritt ${i}/${totalSteps}: Du dringst tiefer in das Gefahrengebiet vor. Unerwartete Hindernisse und Feinde stellen sich dir in den Weg. Du musst wachsam sein!`,
+                    text: `Du dringst tiefer in das Gefahrengebiet vor. Unerwartete Hindernisse und Feinde stellen sich dir in den Weg. Du musst wachsam sein!`,
                     skill: skillsList[Math.floor(Math.random() * skillsList.length)],
                     target: 10 + Math.floor(i / 3)
                 });
@@ -525,7 +553,6 @@
             return steps;
         }
 
-        // 30 MASTER QUESTS MIT DYNAMISCHEN MEHRSCHRITTEN (5-20)
         const masterQuestsDatabase = [];
         const baseQuestNames = [
             { id: 'q_ash_1', city: 'aschenwald', title: "Die geheimnisvollen Lichter", desc: "Untersuche mysteriöse Lichter auf den Klippen.", gold: 180, xp: 120 },
@@ -700,7 +727,7 @@
             `;
         }
 
-        // --- QUESTS ANNEHMEN ---
+        // --- QUESTS ANNEHMEN (Ohne Schritte-Anzeige) ---
         function openQuestGiverModal() {
             playSfx('click');
             let content = document.getElementById('questgiver-list-content');
@@ -717,7 +744,7 @@
                     div.style.display = 'flex';
                     div.style.justifyContent = 'space-between';
                     div.style.alignItems = 'center';
-                    div.innerHTML = `<div><strong>📜 ${q.title}</strong> (${q.steps.length} Schritte)<br><small>${q.desc}<br>Belohnung: 🟡 ${q.gold} Gold & ${q.xp} XP</small></div>`;
+                    div.innerHTML = `<div><strong>📜 ${q.title}</strong><br><small>${q.desc}<br>Belohnung: 🟡 ${q.gold} Gold & ${q.xp} XP</small></div>`;
 
                     let btn = document.createElement('button');
                     btn.className = 'choice-btn';
@@ -736,7 +763,7 @@
         function acceptQuest(q) {
             playSfx('click');
             playerData.quests.push(JSON.parse(JSON.stringify({ ...q, currentStepIndex: 0 })));
-            alert(`📜 Quest angenommen: "${q.title}" (${q.steps.length} Schritte)! Du kannst sie im Reiter 'Aktive Quests' starten.`);
+            alert(`📜 Quest angenommen: "${q.title}"! Du kannst sie im Reiter 'Aktive Quests' starten.`);
             closeQuestGiverModal();
             updateSidebar();
             saveGame();
@@ -757,7 +784,8 @@
                     div.style.display = 'flex';
                     div.style.justifyContent = 'space-between';
                     div.style.alignItems = 'center';
-                    div.innerHTML = `<div><strong>🎯 ${q.title}</strong><br><small>${q.desc} (Fortschritt: Schritt ${q.currentStepIndex + 1}/${q.steps.length})</small></div>`;
+                    // Versteckt die exakte Anzahl der Schritte für den Spieler
+                    div.innerHTML = `<div><strong>🎯 ${q.title}</strong><br><small>${q.desc}</small></div>`;
 
                     let btn = document.createElement('button');
                     btn.className = 'choice-btn';
@@ -773,14 +801,14 @@
         }
         function closeActiveQuestsModal() { playSfx('click'); document.getElementById('active-quests-modal').classList.add('hidden'); }
 
-        // --- MEHRSCHRITT QUEST ENGINE MIT SELBER WÜRFELN ---
+        // --- QUEST STEP ENGINE ---
         function playQuestStep(quest) {
             playerData.currentActiveQuest = quest;
             let step = quest.steps[quest.currentStepIndex];
             let skillVal = playerData.skills[step.skill] || 10;
             let modifier = Math.floor((skillVal - 10) / 2);
 
-            document.getElementById('qa-title').innerText = `🎯 ${quest.title} (Schritt ${quest.currentStepIndex + 1}/${quest.steps.length})`;
+            document.getElementById('qa-title').innerText = `🎯 ${quest.title}`;
             document.getElementById('qa-story').innerText = step.text;
 
             let choicesContainer = document.getElementById('qa-choices');
@@ -800,14 +828,13 @@
             playSfx('click');
             let quest = playerData.currentActiveQuest;
             let step = quest.steps[quest.currentStepIndex];
-            let resultText = `\n\n--- ERGEBNIS FÜR SCHRITT ${quest.currentStepIndex + 1} (${step.skill.toUpperCase()}) ---`;
+            let resultText = `\n\n--- ERGEBNIS (${step.skill.toUpperCase()}) ---`;
 
             if (success) {
-                resultText += `\n✅ **Wurf bestanden!** Du meisterst die Herausforderung und ziehst weiter.`;
+                resultText += `\n✅ **Wurf bestanden!** Du meisterst diese Etappe und ziehst weiter.`;
                 quest.currentStepIndex++;
 
                 if (quest.currentStepIndex >= quest.steps.length) {
-                    // Quest komplett gewonnen!
                     resultText += `\n\n🏆 **EPISCHER ERFOLG! Quest abgeschlossen!** Belohnung: 🟡 ${quest.gold} Gold & ⭐ ${quest.xp} XP!`;
                     playerData.gold += quest.gold;
                     playerData.stats.totalGoldFound += quest.gold;
@@ -848,7 +875,7 @@
             playQuestStep(quest);
         }
 
-        // --- SELBER WÜRFELN WIDGET ---
+        // --- WÜRFEL WIDGET ---
         function rollD20Widget() {
             playSfx('dice');
             let roll = Math.floor(Math.random() * 20) + 1;
@@ -862,26 +889,10 @@
             playSfx('dice');
             let roll = Math.floor(Math.random() * 8) + 1;
             let weaponName = playerData.equipment.rhand ? playerData.equipment.rhand.name : "Fäuste";
-            document.getElementById('dice-widget-result').innerText = `Schaden (${weaponName}): ${roll}`;
+            let arrowBonus = playerData.equipment.arrows ? playerData.equipment.arrows.bonus : 0;
+            let totalDmg = roll + arrowBonus;
+            document.getElementById('dice-widget-result').innerText = `Schaden: ${roll} + ${arrowBonus} = ${totalDmg}`;
         }
-
-        const huntingBeasts = [
-            { id: 'mat_rabbit', name: "Wildhase", icon: "🐇", baseDiff: 8, rewardMat: { id: 'hase_fell', name: "Hasenfell", icon: "🐇", desc: "Weiches Fell.", cost: 10 }, xp: 10 },
-            { id: 'mat_wolf', name: "Waldwolf", icon: "🐺", baseDiff: 12, rewardMat: { id: 'wolf_fell', name: "Wolfsfell", icon: "🐺", desc: "Wolfsfell.", cost: 20 }, xp: 20 },
-            { id: 'mat_boar', name: "Wildschwein", icon: "🐗", baseDiff: 14, rewardMat: { id: 'schwein_hauer', name: "Eberhauer", icon: "🐗", desc: "Spitzer Hauer.", cost: 25 }, xp: 25 },
-            { id: 'mat_bear', name: "Grizzlybär", icon: "🐻", baseDiff: 17, rewardMat: { id: 'baeren_fell', name: "Bärenfell", icon: "🐻", desc: "Dichtes Bärenfell.", cost: 50 }, xp: 45 },
-            { id: 'mat_wyvern', name: "Wyvern", icon: "🐉", baseDiff: 20, rewardMat: { id: 'drachen_schuppe', name: "Drachenschuppe", icon: "🐉", desc: "Schuppe.", cost: 150 }, xp: 100 }
-        ];
-
-        const masterEquipmentList = [
-            { id: 'h1', name: "Lederkappe", icon: "🧢", type: "armor", slot: "helm", city: "aschenwald", cost: 15, desc: "Lederschutz." },
-            { id: 'c1', name: "Lederwams", icon: "🧥", type: "armor", slot: "chest", city: "aschenwald", cost: 25, desc: "Gegerbtes Leder." },
-            { id: 'w1', name: "Bronzeschwert", icon: "🗡️", type: "weapon", slot: "rhand", city: "eisenhall", cost: 40, desc: "Solide Klinge." }
-        ];
-
-        const monsterCraftingRecipes = [
-            { id: 'mc_1', name: "Geweih-Bogen", icon: "🏹", type: "weapon", slot: "rhand", req: { hirsch_geweih: 1 }, costGold: 30, cost: 30, desc: "Präziser Bogen." }
-        ];
 
         function openHuntModal() {
             playSfx('click');
@@ -940,17 +951,18 @@
         function openCraftingModal() {
             playSfx('click');
             let content = document.getElementById('crafting-list-content');
-            content.innerHTML = `<p style="font-size:0.8rem; color:#aaa; margin-bottom:0.8rem;">Stelle Ausrüstung her.</p>`;
+            content.innerHTML = `<p style="font-size:0.8rem; color:#aaa; margin-bottom:0.8rem;">Stelle aus Jagdbeute mächtige Ausrüstung her.</p>`;
             monsterCraftingRecipes.forEach(rec => {
                 let div = document.createElement('div');
                 div.className = 'quest-modal-item';
                 div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
-                div.innerHTML = `<div><strong>${rec.icon} ${rec.name}</strong><br><small>Preis: ${rec.costGold} Gold</small></div>`;
+                div.innerHTML = `<div><strong>${rec.icon} ${rec.name}</strong><br><small>${rec.desc}<br>Preis: ${rec.costGold} Gold</small></div>`;
                 let btn = document.createElement('button');
                 btn.className = 'choice-btn'; btn.style.padding = '0.3rem 0.8rem'; btn.style.fontSize = '0.8rem';
                 btn.innerText = 'Herstellen'; btn.onclick = () => craftMonsterItem(rec);
                 div.appendChild(btn); content.appendChild(div);
             });
+            document.getElementById('crafting-modal').classList.add('hidden'); // bugfix open
             document.getElementById('crafting-modal').classList.remove('hidden');
         }
         function closeCraftingModal() { playSfx('click'); document.getElementById('crafting-modal').classList.add('hidden'); }
@@ -976,7 +988,7 @@
                 let div = document.createElement('div');
                 div.className = 'quest-modal-item';
                 div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
-                div.innerHTML = `<div><strong>${item.icon} ${item.name}</strong><br><small>${item.cost} Gold</small></div>`;
+                div.innerHTML = `<div><strong>${item.icon} ${item.name}</strong><br><small>${item.desc} (${item.cost} Gold)</small></div>`;
                 let btn = document.createElement('button');
                 btn.className = 'choice-btn'; btn.style.padding = '0.3rem 0.8rem'; btn.style.fontSize = '0.8rem';
                 btn.innerText = 'Kaufen'; btn.onclick = () => buyItem(item);
@@ -1103,6 +1115,23 @@
             playerData.hp = 100;
             playerData.maxHp = 100;
 
+            // Rassen Boni anwenden
+            let r = races[playerData.race];
+            if (r && r.bonus) {
+                if (r.bonus.all) {
+                    Object.keys(playerData.skills).forEach(s => playerData.skills[s] += r.bonus.all);
+                }
+                if (r.bonus.hp) {
+                    playerData.maxHp += r.bonus.hp;
+                    playerData.hp = playerData.maxHp;
+                }
+                Object.entries(r.bonus).forEach(([skill, val]) => {
+                    if (playerData.skills[skill] !== undefined) {
+                        playerData.skills[skill] += val;
+                    }
+                });
+            }
+
             document.getElementById('char-creation').classList.add('hidden');
             document.getElementById('game-view').classList.remove('hidden');
             document.getElementById('sidebar').classList.remove('hidden');
@@ -1128,7 +1157,7 @@
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
                 document.getElementById('right-action-panel').classList.remove('hidden');
-                document.getElementById('craft-btn').classList.add('hidden');
+                document.getElementById('craft-btn').classList.remove('hidden');
                 document.getElementById('handbook-btn').classList.remove('hidden');
                 document.getElementById('quit-to-menu-btn').classList.remove('hidden');
                 document.getElementById('dice-widget').classList.remove('hidden');
