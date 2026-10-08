@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pfad des Helden - Episches D&D Selber-Würfeln RPG (Ultimate Edition)</title>
+    <title>Pfad des Helden - Episches D&D Selber-Würfeln RPG (Ultimate Edition mit Musik)</title>
     <style>
         :root {
             --bg-color: #0b0b0e;
@@ -175,6 +175,7 @@
 </head>
 <body>
 
+    <!-- YouTube Musikplayer Container -->
     <div id="youtube-player-container" style="display:none;"></div>
 
     <header>
@@ -248,7 +249,7 @@
                 <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate D&D Edition</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate D&D Edition mit Musik</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -258,19 +259,19 @@
                                 Kein Spielstand vorhanden
                             </div>
                         </div>
-                        <button class="choice-btn" onclick="openSettings()" style="text-align: center;">⚙️ Einstellungen</button>
+                        <button class="choice-btn" onclick="openSettings()" style="text-align: center;">⚙️ Einstellungen & Musik</button>
                     </div>
                 </div>
 
-                <!-- Einstellungen -->
+                <!-- Einstellungen (mit Musik-Lautstärkeregler) -->
                 <div id="settings-menu" class="hidden" style="max-width: 400px; margin: auto; text-align: left;">
-                    <h3 style="color: var(--accent-color); text-align: center;">🔊 Audio-Einstellungen</h3>
+                    <h3 style="color: var(--accent-color); text-align: center;">🔊 Audio & Musik</h3>
                     <div class="form-group">
                         <label>Lautstärke SFX:</label>
                         <input type="range" id="sfx-slider" min="0" max="100" value="80" oninput="updateSfxVolume(this.value)">
                     </div>
                     <div class="form-group" style="margin-top: 1rem;">
-                        <label>Lautstärke Musik:</label>
+                        <label>Lautstärke Hintergrundmusik (YouTube):</label>
                         <input type="range" id="music-slider" min="0" max="100" value="50" oninput="updateMusicVolume(this.value)">
                     </div>
                     <button class="choice-btn" onclick="closeSettings()" style="text-align: center; width: 100%; margin-top: 1rem;">Zurück</button>
@@ -432,9 +433,10 @@
     </div>
 
     <footer>
-        <p>Pfad des Helden – 30 Epische Quests, Alle Items & Selber-Würfeln</p>
+        <p>Pfad des Helden – 30 Epische Quests, Alle Items, Musik & Selber-Würfeln</p>
     </footer>
 
+    <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
@@ -597,20 +599,20 @@
             });
         });
 
-        // --- AUDIO & YOUTUBE ---
-        let ytPlayer = null;
-        let musicVolume = 50;
-
+        // --- YOUTUBE API FÜR HINTERGRUNDMUSIK ---
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-player-container', {
                 height: '0', width: '0', videoId: 'ipFaubyDUT4',
-                playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'ipFaubyDUT4' },
-                events: { 'onReady': (event) => { event.target.setVolume(musicVolume); } }
+                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'ipFaubyDUT4' },
+                events: { 'onReady': (event) => { event.target.setVolume(musicVolume); event.target.playVideo(); } }
             });
         }
+
         function updateMusicVolume(val) {
             musicVolume = parseInt(val);
-            if (ytPlayer && typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(musicVolume);
+            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(musicVolume);
+            }
         }
 
         let audioCtx = null;
@@ -620,6 +622,9 @@
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                ytPlayer.playVideo();
+            }
         }
 
         function playSfx(type = 'click') {
@@ -727,7 +732,7 @@
             `;
         }
 
-        // --- QUESTS ANNEHMEN (Ohne Schritte-Anzeige) ---
+        // --- QUESTS ANNEHMEN ---
         function openQuestGiverModal() {
             playSfx('click');
             let content = document.getElementById('questgiver-list-content');
@@ -784,7 +789,6 @@
                     div.style.display = 'flex';
                     div.style.justifyContent = 'space-between';
                     div.style.alignItems = 'center';
-                    // Versteckt die exakte Anzahl der Schritte für den Spieler
                     div.innerHTML = `<div><strong>🎯 ${q.title}</strong><br><small>${q.desc}</small></div>`;
 
                     let btn = document.createElement('button');
@@ -962,7 +966,6 @@
                 btn.innerText = 'Herstellen'; btn.onclick = () => craftMonsterItem(rec);
                 div.appendChild(btn); content.appendChild(div);
             });
-            document.getElementById('crafting-modal').classList.add('hidden'); // bugfix open
             document.getElementById('crafting-modal').classList.remove('hidden');
         }
         function closeCraftingModal() { playSfx('click'); document.getElementById('crafting-modal').classList.add('hidden'); }
@@ -1157,7 +1160,7 @@
                 document.getElementById('game-view').classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('hidden');
                 document.getElementById('right-action-panel').classList.remove('hidden');
-                document.getElementById('craft-btn').classList.remove('hidden');
+                document.getElementById('craft-btn').classList.add('hidden');
                 document.getElementById('handbook-btn').classList.remove('hidden');
                 document.getElementById('quit-to-menu-btn').classList.remove('hidden');
                 document.getElementById('dice-widget').classList.remove('hidden');
