@@ -175,6 +175,7 @@
 </head>
 <body>
 
+    <!-- YouTube Musikplayer Container -->
     <div id="youtube-player-container" style="display:none;"></div>
 
     <header>
@@ -248,7 +249,7 @@
                 <!-- Hauptmenü -->
                 <div id="main-menu" style="text-align: center; margin: auto; max-width: 320px; width: 100%;">
                     <h2 style="color: var(--accent-color); font-size: 2.2rem; margin-bottom: 0.5rem;">Pfad des Helden</h2>
-                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate D&D Edition</p>
+                    <p style="color: #aaa; margin-bottom: 2rem;">Ultimate D&D Edition mit Musik</p>
                     
                     <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
                         <button class="choice-btn" onclick="clickNewGame()" style="text-align: center;">⚔️ Neues Spiel</button>
@@ -258,18 +259,14 @@
                                 Kein Spielstand vorhanden
                             </div>
                         </div>
-                        <button class="choice-btn" onclick="openSettings()" style="text-align: center;">⚙️ Einstellungen</button>
+                        <button class="choice-btn" onclick="openSettings()" style="text-align: center;">⚙️ Einstellungen & Musik</button>
                     </div>
                 </div>
 
-                <!-- Einstellungen -->
+                <!-- Einstellungen (Nur noch Lautstärke Musik) -->
                 <div id="settings-menu" class="hidden" style="max-width: 400px; margin: auto; text-align: left;">
-                    <h3 style="color: var(--accent-color); text-align: center;">🔊 Audio-Einstellungen</h3>
+                    <h3 style="color: var(--accent-color); text-align: center;">🎵 Musik-Einstellungen</h3>
                     <div class="form-group">
-                        <label>Lautstärke SFX:</label>
-                        <input type="range" id="sfx-slider" min="0" max="100" value="80" oninput="updateSfxVolume(this.value)">
-                    </div>
-                    <div class="form-group" style="margin-top: 1rem;">
                         <label>Lautstärke Musik:</label>
                         <input type="range" id="music-slider" min="0" max="100" value="50" oninput="updateMusicVolume(this.value)">
                     </div>
@@ -444,9 +441,10 @@
     </div>
 
     <footer>
-        <p>Pfad des Helden – 30 Epische Quests, Alle Items & Selber-Würfeln</p>
+        <p>Pfad des Helden – 30 Epische Quests, Musik, Alle Items & Selber-Würfeln</p>
     </footer>
 
+    <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
@@ -539,7 +537,7 @@
 
         function generateStepsForQuest(title, city) {
             let steps = [];
-            let totalSteps = Math.floor(Math.random() * 6) + 10; // 10-15 Schritte
+            let totalSteps = Math.floor(Math.random() * 6) + 10;
             let skillsList = ['angriff', 'verteidigung', 'schleichen', 'jagd', 'magie', 'handel'];
 
             steps.push({
@@ -609,55 +607,40 @@
             });
         });
 
-        // --- AUDIO & YOUTUBE ---
+        // --- YOUTUBE API FÜR HINTERGRUNDMUSIK ---
         let ytPlayer = null;
         let musicVolume = 50;
 
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-player-container', {
                 height: '0', width: '0', videoId: 'ipFaubyDUT4',
-                playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'ipFaubyDUT4' },
-                events: { 'onReady': (event) => { event.target.setVolume(musicVolume); } }
+                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'ipFaubyDUT4' },
+                events: { 'onReady': (event) => { event.target.setVolume(musicVolume); event.target.playVideo(); } }
             });
         }
+
         function updateMusicVolume(val) {
             musicVolume = parseInt(val);
-            if (ytPlayer && typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(musicVolume);
+            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(musicVolume);
+            }
         }
 
-        let audioCtx = null;
         let playTimeInterval = null;
-        let sfxVolume = 0.8;
 
         function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                ytPlayer.playVideo();
+            }
         }
-
-        function playSfx(type = 'click') {
-            if (sfxVolume <= 0 || !audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type === 'dice' ? 'square' : 'sine';
-            osc.frequency.setValueAtTime(type === 'dice' ? 350 : 600, audioCtx.currentTime);
-            gain.gain.setValueAtTime(sfxVolume * 0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
-        function updateSfxVolume(val) { sfxVolume = val / 100; playSfx('click'); }
 
         function openSettings() {
-            playSfx('click');
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('char-creation').classList.add('hidden');
             document.getElementById('game-view').classList.add('hidden');
             document.getElementById('settings-menu').classList.remove('hidden');
         }
         function closeSettings() {
-            playSfx('click');
             document.getElementById('settings-menu').classList.add('hidden');
             if (!document.getElementById('game-view').classList.contains('hidden')) {
                 document.getElementById('game-view').classList.remove('hidden');
@@ -666,7 +649,6 @@
             }
         }
         function returnToMainMenuFromSettings() {
-            playSfx('click');
             document.getElementById('settings-menu').classList.add('hidden');
             document.getElementById('game-view').classList.add('hidden');
             document.getElementById('sidebar').classList.add('hidden');
@@ -680,7 +662,6 @@
         }
 
         function openHandbook() {
-            playSfx('click');
             const hours = Math.floor(playerData.playTimeMinutes / 60);
             const mins = playerData.playTimeMinutes % 60;
             document.getElementById('stats-content').innerHTML = `
@@ -692,11 +673,10 @@
             `;
             document.getElementById('handbook-modal').classList.remove('hidden');
         }
-        function closeHandbook() { playSfx('click'); document.getElementById('handbook-modal').classList.add('hidden'); }
+        function closeHandbook() { document.getElementById('handbook-modal').classList.add('hidden'); }
 
         // --- REISEKARTE ---
         function openTravelModal() {
-            playSfx('click');
             let content = document.getElementById('travel-list-content');
             content.innerHTML = `<p style="font-size:0.85rem; color:#aaa; margin-bottom:0.5rem;">Wähle eine Stadt zum Bereisen:</p>`;
             
@@ -710,10 +690,9 @@
             });
             document.getElementById('travel-modal').classList.remove('hidden');
         }
-        function closeTravelModal() { playSfx('click'); document.getElementById('travel-modal').classList.add('hidden'); }
+        function closeTravelModal() { document.getElementById('travel-modal').classList.add('hidden'); }
 
         function travelToCity(cityKey) {
-            playSfx('click');
             playerData.location = cityKey;
             advanceTime(2);
             updateCityHub();
@@ -741,7 +720,6 @@
 
         // --- QUESTS ANNEHMEN ---
         function openQuestGiverModal() {
-            playSfx('click');
             let content = document.getElementById('questgiver-list-content');
             content.innerHTML = '';
 
@@ -770,10 +748,9 @@
             }
             document.getElementById('questgiver-modal').classList.remove('hidden');
         }
-        function closeQuestGiverModal() { playSfx('click'); document.getElementById('questgiver-modal').classList.add('hidden'); }
+        function closeQuestGiverModal() { document.getElementById('questgiver-modal').classList.add('hidden'); }
 
         function acceptQuest(q) {
-            playSfx('click');
             playerData.quests.push(JSON.parse(JSON.stringify({ ...q, currentStepIndex: 0 })));
             alert(`📜 Quest angenommen: "${q.title}"! Du kannst sie im Reiter 'Aktive Quests' starten.`);
             closeQuestGiverModal();
@@ -783,7 +760,6 @@
 
         // --- AKTIVE QUESTS ---
         function openActiveQuestsModal() {
-            playSfx('click');
             let content = document.getElementById('active-quests-list-content');
             content.innerHTML = '';
 
@@ -810,9 +786,9 @@
             }
             document.getElementById('active-quests-modal').classList.remove('hidden');
         }
-        function closeActiveQuestsModal() { playSfx('click'); document.getElementById('active-quests-modal').classList.add('hidden'); }
+        function closeActiveQuestsModal() { document.getElementById('active-quests-modal').classList.add('hidden'); }
 
-        // --- QUEST STEP ENGINE (Selber würfeln) ---
+        // --- QUEST STEP ENGINE ---
         function playQuestStep(quest) {
             playerData.currentActiveQuest = quest;
             let step = quest.steps[quest.currentStepIndex];
@@ -836,7 +812,6 @@
         }
 
         function resolveQuestStep(success) {
-            playSfx('click');
             let quest = playerData.currentActiveQuest;
             let step = quest.steps[quest.currentStepIndex];
             let resultText = `\n\n--- ERGEBNIS (${step.skill.toUpperCase()}) ---`;
@@ -888,7 +863,6 @@
 
         // --- WÜRFEL WIDGET ---
         function rollD20Widget() {
-            playSfx('dice');
             let roll = Math.floor(Math.random() * 20) + 1;
             let text = `d20 Wurf: ${roll}`;
             if (roll === 20) text += " 🔥 NAT 20!";
@@ -897,17 +871,14 @@
         }
 
         function rollDamageWidget() {
-            playSfx('dice');
             let roll = Math.floor(Math.random() * 8) + 1;
-            let weaponName = playerData.equipment.rhand ? playerData.equipment.rhand.name : "Fäuste";
             let arrowBonus = playerData.equipment.arrows ? playerData.equipment.arrows.bonus : 0;
             let totalDmg = roll + arrowBonus;
             document.getElementById('dice-widget-result').innerText = `Schaden: ${roll} + ${arrowBonus} = ${totalDmg}`;
         }
 
-        // --- JAGD REVIER (Mit Selber Würfeln) ---
+        // --- JAGD REVIER ---
         function openHuntModal() {
-            playSfx('click');
             let content = document.getElementById('hunt-list-content');
             content.innerHTML = '';
             huntingBeasts.forEach(beast => {
@@ -922,7 +893,7 @@
             });
             document.getElementById('hunt-modal').classList.remove('hidden');
         }
-        function closeHuntModal() { playSfx('click'); document.getElementById('hunt-modal').classList.add('hidden'); }
+        function closeHuntModal() { document.getElementById('hunt-modal').classList.add('hidden'); }
 
         function startHuntAdventure(beast) {
             playerData.currentHuntBeast = beast;
@@ -946,7 +917,6 @@
         }
 
         function resolveHuntStep(success) {
-            playSfx('click');
             let beast = playerData.currentHuntBeast;
             advanceTime(1);
             let responseText = "";
@@ -993,7 +963,6 @@
         }
 
         function openCraftingModal() {
-            playSfx('click');
             let content = document.getElementById('crafting-list-content');
             content.innerHTML = `<p style="font-size:0.8rem; color:#aaa; margin-bottom:0.8rem;">Stelle aus Jagdbeute mächtige Ausrüstung her.</p>`;
             monsterCraftingRecipes.forEach(rec => {
@@ -1008,10 +977,9 @@
             });
             document.getElementById('crafting-modal').classList.remove('hidden');
         }
-        function closeCraftingModal() { playSfx('click'); document.getElementById('crafting-modal').classList.add('hidden'); }
+        function closeCraftingModal() { document.getElementById('crafting-modal').classList.add('hidden'); }
 
         function craftMonsterItem(rec) {
-            playSfx('click');
             if (playerData.gold < rec.costGold) { alert("Nicht genug Gold!"); return; }
             playerData.gold -= rec.costGold;
             playerData.inventory.push({ ...rec, condition: 100 });
@@ -1021,7 +989,6 @@
         }
 
         function openNpcModal() {
-            playSfx('click');
             let currentLoc = locations[playerData.location];
             document.getElementById('npc-modal-title').innerText = `👥 Händlerviertel in ${currentLoc.name}`;
             let content = document.getElementById('npc-list-content');
@@ -1040,10 +1007,9 @@
 
             document.getElementById('npc-modal').classList.remove('hidden');
         }
-        function closeNpcModal() { playSfx('click'); document.getElementById('npc-modal').classList.add('hidden'); }
+        function closeNpcModal() { document.getElementById('npc-modal').classList.add('hidden'); }
 
         function buyItem(item) {
-            playSfx('click');
             if (playerData.gold >= item.cost) {
                 if (playerData.inventory.length >= 20) { alert("Rucksack voll!"); return; }
                 playerData.gold -= item.cost;
@@ -1056,7 +1022,6 @@
         function handleInventoryClick(index) {
             let item = playerData.inventory[index];
             if (!item) return;
-            playSfx('click');
             playerData.selectedItemIndex = index;
             document.getElementById('modal-item-title').innerText = `${item.icon} ${item.name}`;
             document.getElementById('modal-item-desc').innerHTML = `<strong>Beschreibung:</strong><br>${item.desc}`;
@@ -1083,7 +1048,7 @@
             }
             document.getElementById('item-action-modal').classList.remove('hidden');
         }
-        function closeItemModal() { playSfx('click'); document.getElementById('item-action-modal').classList.add('hidden'); }
+        function closeItemModal() { document.getElementById('item-action-modal').classList.add('hidden'); }
 
         function equipItemFromInventory(index) {
             let item = playerData.inventory[index];
@@ -1099,7 +1064,6 @@
         function handleEquipmentSlotClick(slotName) {
             let equippedItem = playerData.equipment[slotName];
             if (!equippedItem) return;
-            playSfx('click');
             if (playerData.inventory.length >= 20) { alert("Rucksack voll!"); return; }
             playerData.equipment[slotName] = null;
             playerData.inventory.push(equippedItem);
@@ -1107,7 +1071,6 @@
         }
 
         function quitToMainMenu() {
-            playSfx('click');
             if (confirm("Spiel beenden?")) {
                 if (playTimeInterval) clearInterval(playTimeInterval);
                 document.getElementById('game-view').classList.add('hidden');
@@ -1139,7 +1102,6 @@
         }
 
         function clickNewGame() {
-            playSfx('click');
             if (localStorage.getItem('pfad_des_helden_save') && !confirm("Alten Spielstand überschreiben?")) return;
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('char-creation').classList.remove('hidden');
@@ -1147,7 +1109,6 @@
 
         function createHero() {
             initAudio();
-            playSfx('click');
             const nameInput = document.getElementById('hero-name').value.trim();
             if (nameInput) playerData.name = nameInput;
             playerData.difficulty = document.getElementById('hero-difficulty').value;
@@ -1191,7 +1152,6 @@
 
         function continueGame() {
             initAudio();
-            playSfx('click');
             const saved = localStorage.getItem('pfad_des_helden_save');
             if (saved) {
                 playerData = JSON.parse(saved);
